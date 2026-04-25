@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hotel Mirador - Lujo y confort en un entorno natural incomparable. Reserva tu estancia perfecta.">
+    <title>Hotel Mirador | Lujo y Naturaleza</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+
+    <style>
+    /* ── Auth Modal ─────────────────────────────────────── */
+    .auth-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    .auth-overlay.show { display: flex; }
+
+    .auth-modal {
+      background: #fff;
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 420px;
+      margin: 1rem;
+      position: relative;
+      box-shadow: 0 24px 60px rgba(0,0,0,.18);
+      animation: modalIn .25s ease;
+    }
+    @keyframes modalIn {
+      from { transform: translateY(24px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .auth-close {
+      position: absolute; top: 1rem; right: 1.2rem;
+      background: none; border: none;
+      font-size: 1.5rem; cursor: pointer; color: #888;
+    }
+    .auth-close:hover { color: #333; }
+
+    .auth-modal h2 {
+      text-align: center; font-size: 1.45rem;
+      font-weight: 700; color: #1a1a1a; margin-bottom: .3rem;
+    }
+    .auth-sub {
+      text-align: center; color: #777;
+      font-size: .9rem; margin-bottom: 1.6rem;
+    }
+    .auth-tabs {
+      display: flex; border-bottom: 2px solid #eee; margin-bottom: 1.5rem;
+    }
+    .auth-tab {
+      flex: 1; background: none; border: none;
+      padding: .65rem; font-size: .95rem; font-weight: 600;
+      color: #999; cursor: pointer;
+      border-bottom: 2px solid transparent; margin-bottom: -2px;
+      transition: all .2s;
+    }
+    .auth-tab.active { color: #c9a84c; border-bottom-color: #c9a84c; }
+
+    .auth-form { display: none; }
+    .auth-form.active { display: block; }
+
+    .auth-field { margin-bottom: 1rem; }
+    .auth-field label {
+      display: block; font-size: .83rem;
+      font-weight: 600; color: #444; margin-bottom: .3rem;
+    }
+    .auth-field input {
+      width: 100%; padding: .72rem 1rem;
+      border: 1.5px solid #ddd; border-radius: 8px;
+      font-size: .95rem; outline: none;
+      transition: border-color .2s; box-sizing: border-box;
+    }
+    .auth-field input:focus { border-color: #c9a84c; }
+
+    .auth-btn {
+      width: 100%; padding: .85rem;
+      background: #1a1a1a; color: #fff;
+      border: none; border-radius: 8px;
+      font-size: 1rem; font-weight: 600;
+      cursor: pointer; margin-top: .3rem; transition: background .2s;
+    }
+    .auth-btn:hover { background: #333; }
+    .auth-btn:disabled { background: #999; cursor: not-allowed; }
+
+    .auth-msg {
+      padding: .7rem 1rem; border-radius: 8px;
+      font-size: .87rem; margin-top: .8rem; display: none;
+    }
+    .auth-msg.error   { background: #fff1f1; color: #c0392b; display: block; }
+    .auth-msg.success { background: #f0fff4; color: #27ae60; display: block; }
+
+    .auth-switch {
+      text-align: center; margin-top: 1.1rem;
+      font-size: .87rem; color: #666;
+    }
+    .auth-switch span {
+      color: #c9a84c; font-weight: 600;
+      cursor: pointer; text-decoration: underline;
+    }
+
+    /* ── Botón login en navbar ──────────────────────────── */
+    .btn-login-nav {
+      background: none; border: 1.5px solid #c9a84c;
+      color: #c9a84c; padding: .4rem 1.1rem;
+      border-radius: 6px; font-size: .88rem;
+      font-weight: 600; cursor: pointer;
+      transition: all .2s; white-space: nowrap;
+    }
+    .btn-login-nav:hover { background: #c9a84c; color: #fff; }
+
+    /* ── Avatar usuario logueado ────────────────────────── */
+    .user-menu {
+      display: none; align-items: center;
+      gap: .5rem; cursor: pointer; position: relative;
+    }
+    .user-menu.visible { display: flex; }
+    .user-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #c9a84c; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .95rem;
+    }
+    .user-dropdown {
+      position: absolute; top: calc(100% + 10px); right: 0;
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.15);
+      min-width: 200px; overflow: hidden;
+      display: none; z-index: 1000;
+    }
+    .user-dropdown.show { display: block; }
+    .dd-nombre {
+      padding: .9rem 1rem .3rem;
+      font-weight: 700; color: #1a1a1a; font-size: .92rem;
+    }
+    .dd-email {
+      padding: 0 1rem .7rem;
+      color: #888; font-size: .78rem; border-bottom: 1px solid #eee;
+    }
+    .user-dropdown a, .user-dropdown button {
+      display: block; width: 100%; text-align: left;
+      padding: .7rem 1rem; background: none; border: none;
+      color: #333; font-size: .9rem; cursor: pointer;
+      text-decoration: none;
+    }
+    .user-dropdown a:hover, .user-dropdown button:hover {
+      background: #f8f4ee; color: #c9a84c;
+    }
+    .dd-logout { color: #e74c3c !important; }
+    .dd-logout:hover { background: #fff1f1 !important; color: #c0392b !important; }
+    </style>
+</head>
+<body>
+    <!-- ========== HEADER / NAVBAR ========== -->
+    <header class="header" id="header">
+        <nav class="navbar">
+            <a href="#inicio" class="logo">
+                <span class="logo-icon"><i class="fas fa-mountain"></i></span>
+                <span class="logo-text">HOTEL MIRADOR</span>
+            </a>
+            
+            <div class="lang-selector">
+                <button class="lang-btn active">ES</button>
+                <span class="lang-divider">|</span>
+                <button class="lang-btn">EN</button>
+            </div>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#inicio"       class="nav-link">Inicio</a></li>
+                <li><a href="#habitaciones" class="nav-link">Habitaciones</a></li>
+                <li><a href="#servicios"    class="nav-link">Servicios</a></li>
+                <li><a href="#galeria"      class="nav-link">Galería</a></li>
+                <li><a href="#hotel"        class="nav-link">El Hotel</a></li>
+                <li><a href="#contacto"     class="nav-link">Contacto</a></li>
+                <li><a href="#reservar"     class="nav-link btn-reservar">Reservar</a></li>
+                <!-- Botón login -->
+                <li id="navLoginItem">
+                    <button class="btn-login-nav" onclick="abrirAuth('login')">
+                        <i class="fas fa-user"></i> Iniciar sesión
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Avatar usuario (visible cuando está logueado) -->
+            <div class="user-menu" id="userMenu">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="dd-nombre"  id="ddNombre"></div>
+                    <div class="dd-email"   id="ddEmail"></div>
+                    <a href="#reservar">Mis reservaciones</a>
+                    <button class="dd-logout" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                    </button>
+                </div>
+            </div>
+            
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+                <span class="hamburger"></span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- ========== MODAL AUTENTICACIÓN ========== -->
+    <div class="auth-overlay" id="authOverlay">
+      <div class="auth-modal">
+        <button class="auth-close" id="authClose">&times;</button>
+        <h2>🏨 Hotel Mirador</h2>
+        <p class="auth-sub">Inicia sesión o crea tu cuenta</p>
+
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-tab="login">Iniciar sesión</button>
+          <button class="auth-tab"        data-tab="registro">Registrarse</button>
+        </div>
+
+        <!-- LOGIN -->
+        <div class="auth-form active" id="formLogin">
+          <div class="auth-field">
+            <label for="loginEmail">Correo electrónico</label>
+            <input type="email" id="loginEmail" placeholder="tu@correo.com"/>
+          </div>
+          <div class="auth-field">
+            <label for="loginPassword">Contraseña</label>
+            <input type="password" id="loginPassword" placeholder="••••••••"/>
+          </div>
+          <button class="auth-btn" id="loginBtn">Continuar</button>
+          <div class="auth-msg" id="loginMsg"></div>
+          <div class="auth-switch">
+            ¿No tienes cuenta? <span onclick="switchTab('registro')">Regístrate gratis</span>
+          </div>
+        </div>
+
+        <!-- REGISTRO -->
+        <div class="auth-form" id="formRegistro">
+          <div class="auth-field">
+            <label for="regNombre">Nombre completo</label>
+            <input type="text" id="regNombre" placeholder="María García"/>
+          </div>
+          <div class="auth-field">
+            <label for="regEmail">Correo electrónico</label>
+            <input type="email" id="regEmail" placeholder="tu@correo.com"/>
+          </div>
+          <div class="auth-field">
+            <label for="regTelefono">Teléfono (opcional)</label>
+            <input type="tel" id="regTelefono" placeholder="+57 300 123 4567"/>
+          </div>
+          <div class="auth-field">
+            <label for="regPassword">Contraseña</label>
+            <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres"/>
+          </div>
+          <button class="auth-btn" id="registroBtn">Crear cuenta</button>
+          <div class="auth-msg" id="registroMsg"></div>
+          <div class="auth-switch">
+            ¿Ya tienes cuenta? <span onclick="switchTab('login')">Inicia sesión</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== HERO SECTION ========== -->
+    <section class="hero" id="inicio">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">HOTEL MIRADOR</h1>
+            <p class="hero-subtitle">Donde el lujo se encuentra con la naturaleza</p>
+            <p class="hero-description">Descubre un oasis de tranquilidad con vistas panorámicas impresionantes</p>
+            <div class="hero-buttons">
+                <a href="#habitaciones" class="btn btn-primary">Ver Habitaciones</a>
+                <a href="#reservar" class="btn btn-secondary">Reservar Ahora</a>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <a href="#habitaciones" class="scroll-indicator">
+                <span>Explorar</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- ========== HABITACIONES SECTION ========== -->
+    <section class="section habitaciones" id="habitaciones">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Alojamiento</span>
+                <h2 class="section-title">Nuestras Habitaciones</h2>
+                <p class="section-description">Espacios diseñados para el descanso perfecto, con todas las comodidades que mereces</p>
+            </div>
+            <div class="rooms-grid">
+                <article class="room-card">
+                    <div class="room-image">
+                        <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80" alt="Suite Presidencial">
+                        <span class="room-badge">Premium</span>
+                    </div>
+                    <div class="room-content">
+                        <h3 class="room-title">Suite Presidencial</h3>
+                        <p class="room-description">Nuestra suite más exclusiva con terraza privada y vistas panorámicas a las montañas.</p>
+                        <ul class="room-features">
+                            <li><i class="fas fa-bed"></i> King Size</li>
+                            <li><i class="fas fa-ruler-combined"></i> 85 m²</li>
+                            <li><i class="fas fa-mountain"></i> Vista Montaña</li>
+                            <li><i class="fas fa-bath"></i> Jacuzzi</li>
+                        </ul>
+                        <div class="room-footer">
+                            <div class="room-price">
+                                <span class="price-label">Desde</span>
+                                <span class="price-value">$450.000</span>
+                                <span class="price-period">/ noche</span>
+                            </div>
+                            <a href="#reservar" class="btn btn-outline">Ver Más</a>
+                        </div>
+                    </div>
+                </article>
+                <article class="room-card">
+                    <div class="room-image">
+                        <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&q=80" alt="Habitación Doble">
+                        <span class="room-badge">Popular</span>
+                    </div>
+                    <div class="room-content">
+                        <h3 class="room-title">Habitación Doble</h3>
+                        <p class="room-description">Perfecta para parejas, con decoración elegante y todas las comodidades modernas.</p>
+                        <ul class="room-features">
+                            <li><i class="fas fa-bed"></i> Queen Size</li>
+                            <li><i class="fas fa-ruler-combined"></i> 45 m²</li>
+                            <li><i class="fas fa-tree"></i> Vista Jardín</li>
+                            <li><i class="fas fa-shower"></i> Ducha Lluvia</li>
+                        </ul>
+                        <div class="room-footer">
+                            <div class="room-price">
+                                <span class="price-label">Desde</span>
+                                <span class="price-value">$280.000</span>
+                                <span class="price-period">/ noche</span>
+                            </div>
+                            <a href="#reservar" class="btn btn-outline">Ver Más</a>
+                        </div>
+                    </div>
+                </article>
+                <article class="room-card">
+                    <div class="room-image">
+                        <img src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&q=80" alt="Suite Familiar">
+                    </div>
+                    <div class="room-content">
+                        <h3 class="room-title">Suite Familiar</h3>
+                        <p class="room-description">Amplio espacio para toda la familia con dos ambientes y área de entretenimiento.</p>
+                        <ul class="room-features">
+                            <li><i class="fas fa-bed"></i> 2 Camas</li>
+                            <li><i class="fas fa-ruler-combined"></i> 70 m²</li>
+                            <li><i class="fas fa-users"></i> 4 Personas</li>
+                            <li><i class="fas fa-tv"></i> Smart TV</li>
+                        </ul>
+                        <div class="room-footer">
+                            <div class="room-price">
+                                <span class="price-label">Desde</span>
+                                <span class="price-value">$380.000</span>
+                                <span class="price-period">/ noche</span>
+                            </div>
+                            <a href="#reservar" class="btn btn-outline">Ver Más</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SERVICIOS SECTION ========== -->
+    <section class="section servicios" id="servicios">
+        <div class="servicios-bg"></div>
+        <div class="container">
+            <div class="section-header light">
+                <span class="section-subtitle">Experiencias</span>
+                <h2 class="section-title">Servicios y Amenidades</h2>
+                <p class="section-description">Todo lo que necesitas para una estancia inolvidable</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card"><div class="service-icon"><i class="fas fa-swimming-pool"></i></div><h3 class="service-title">Piscina Infinita</h3><p class="service-description">Disfruta de nuestra piscina con vistas panorámicas y área de solárium.</p></div>
+                <div class="service-card"><div class="service-icon"><i class="fas fa-spa"></i></div><h3 class="service-title">Spa & Wellness</h3><p class="service-description">Tratamientos exclusivos para renovar cuerpo y mente.</p></div>
+                <div class="service-card"><div class="service-icon"><i class="fas fa-utensils"></i></div><h3 class="service-title">Restaurante Gourmet</h3><p class="service-description">Cocina de autor con ingredientes locales y vinos selectos.</p></div>
+                <div class="service-card"><div class="service-icon"><i class="fas fa-wifi"></i></div><h3 class="service-title">WiFi Gratis</h3><p class="service-description">Conexión de alta velocidad en todas las áreas del hotel.</p></div>
+                <div class="service-card"><div class="service-icon"><i class="fas fa-car"></i></div><h3 class="service-title">Estacionamiento</h3><p class="service-description">Parqueadero privado y seguro sin costo adicional.</p></div>
+                <div class="service-card"><div class="service-icon"><i class="fas fa-concierge-bell"></i></div><h3 class="service-title">Servicio 24/7</h3><p class="service-description">Atención personalizada las 24 horas del día.</p></div>
+                <div class="service-card"><div class="service-icon"><i class="fas fa-dumbbell"></i></div><h3 class="service-title">Gimnasio</h3><p class="service-description">Equipos de última generación para mantenerte activo.</p></div>
+                <div class="service-card"><div class="service-icon"><i class="fas fa-glass-cheers"></i></div><h3 class="service-title">Bar Lounge</h3><p class="service-description">Cócteles artesanales en un ambiente exclusivo.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== GALERÍA SECTION ========== -->
+    <section class="section galeria" id="galeria">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Descubre</span>
+                <h2 class="section-title">Nuestra Galería</h2>
+                <p class="section-description">Un vistazo a los espacios que harán memorable tu estadía</p>
+            </div>
+            <div class="gallery-container">
+                <div class="gallery-carousel" id="galleryCarousel">
+                    <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=80" alt="Exterior del Hotel"><div class="gallery-caption">Fachada Principal</div></div>
+                    <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1200&q=80" alt="Piscina"><div class="gallery-caption">Piscina Infinita</div></div>
+                    <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=1200&q=80" alt="Restaurante"><div class="gallery-caption">Restaurante Gourmet</div></div>
+                    <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1200&q=80" alt="Spa"><div class="gallery-caption">Área de Spa</div></div>
+                    <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=1200&q=80" alt="Habitación"><div class="gallery-caption">Suite de Lujo</div></div>
+                    <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1200&q=80" alt="Lobby"><div class="gallery-caption">Lobby Principal</div></div>
+                </div>
+                <button class="gallery-btn gallery-prev" id="galleryPrev" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
+                <button class="gallery-btn gallery-next" id="galleryNext" aria-label="Siguiente"><i class="fas fa-chevron-right"></i></button>
+                <div class="gallery-indicators" id="galleryIndicators"></div>
+            </div>
+            <div class="gallery-grid">
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=80" alt="Vista aérea"></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&q=80" alt="Terraza"></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=600&q=80" alt="Habitación detalle"></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=600&q=80" alt="Baño de lujo"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== EL HOTEL SECTION ========== -->
+    <section class="section el-hotel" id="hotel">
+        <div class="container">
+            <div class="hotel-content">
+                <div class="hotel-images">
+                    <div class="hotel-image-main"><img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80" alt="Hotel Mirador"></div>
+                    <div class="hotel-image-secondary"><img src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=600&q=80" alt="Interior del hotel"></div>
+                </div>
+                <div class="hotel-info">
+                    <span class="section-subtitle">Nuestra Historia</span>
+                    <h2 class="section-title">Bienvenidos a Hotel Mirador</h2>
+                    <p class="hotel-description">Desde 1985, Hotel Mirador ha sido sinónimo de elegancia, confort y hospitalidad excepcional. Ubicado en un enclave privilegiado con vistas impresionantes a las montañas, nuestro hotel combina la calidez de la tradición con las comodidades más modernas.</p>
+                    <p class="hotel-description">Cada rincón de nuestras instalaciones ha sido diseñado pensando en su bienestar. Desde nuestras habitaciones cuidadosamente decoradas hasta nuestros jardines paisajísticos, todo invita a la relajación y el disfrute.</p>
+                    <div class="hotel-features">
+                        <div class="hotel-feature"><div class="feature-number">40+</div><div class="feature-text">Años de Experiencia</div></div>
+                        <div class="hotel-feature"><div class="feature-number">50</div><div class="feature-text">Habitaciones</div></div>
+                        <div class="hotel-feature"><div class="feature-number">98%</div><div class="feature-text">Satisfacción</div></div>
+                    </div>
+                    <a href="#contacto" class="btn btn-primary">Conócenos Más</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== TESTIMONIOS ========== -->
+    <section class="section testimonios">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Opiniones</span>
+                <h2 class="section-title">Lo Que Dicen Nuestros Huéspedes</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="testimonial-text">"Una experiencia inolvidable. El personal es increíblemente atento y las vistas desde la habitación son espectaculares."</p>
+                    <div class="testimonial-author"><div class="author-avatar">MG</div><div class="author-info"><span class="author-name">María García</span><span class="author-location">Bogotá, Colombia</span></div></div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="testimonial-text">"El spa es de primera clase y el restaurante superó todas nuestras expectativas."</p>
+                    <div class="testimonial-author"><div class="author-avatar">CR</div><div class="author-info"><span class="author-name">Carlos Rodríguez</span><span class="author-location">Medellín, Colombia</span></div></div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="testimonial-text">"Celebramos nuestro aniversario aquí y fue mágico. La atención al detalle hizo todo perfecto."</p>
+                    <div class="testimonial-author"><div class="author-avatar">LP</div><div class="author-info"><span class="author-name">Laura y Pedro</span><span class="author-location">Cali, Colombia</span></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CONTACTO SECTION ========== -->
+    <section class="section contacto" id="contacto">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Contáctanos</span>
+                <h2 class="section-title">Estamos Para Servirte</h2>
+                <p class="section-description">¿Tienes alguna pregunta? Escríbenos y te responderemos a la brevedad</p>
+            </div>
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <div class="contact-item"><div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div><div class="contact-details"><h4>Ubicación</h4><p>Km 15 Vía a las Montañas<br>Villa de Leyva, Boyacá, Colombia</p></div></div>
+                    <div class="contact-item"><div class="contact-icon"><i class="fas fa-phone-alt"></i></div><div class="contact-details"><h4>Teléfono</h4><p>+57 (8) 732 1234<br>+57 310 123 4567</p></div></div>
+                    <div class="contact-item"><div class="contact-icon"><i class="fas fa-envelope"></i></div><div class="contact-details"><h4>Email</h4><p>reservas@hotelmirador.com<br>info@hotelmirador.com</p></div></div>
+                    <div class="contact-item"><div class="contact-icon"><i class="fas fa-clock"></i></div><div class="contact-details"><h4>Horario</h4><p>Check-in: 3:00 PM<br>Check-out: 12:00 PM</p></div></div>
+                </div>
+                <form class="contact-form" id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group"><label for="nombre">Nombre Completo *</label><input type="text" id="nombre" name="nombre" required placeholder="Tu nombre"><span class="error-message" id="nombreError"></span></div>
+                        <div class="form-group"><label for="email">Correo Electrónico *</label><input type="email" id="email" name="email" required placeholder="tu@email.com"><span class="error-message" id="emailError"></span></div>
+                    </div>
+                    <div class="form-group"><label for="telefono">Teléfono</label><input type="tel" id="telefono" name="telefono" placeholder="+57 300 123 4567"></div>
+                    <div class="form-group"><label for="mensaje">Mensaje *</label><textarea id="mensaje" name="mensaje" rows="5" required placeholder="¿En qué podemos ayudarte?"></textarea><span class="error-message" id="mensajeError"></span></div>
+                    <button type="submit" class="btn btn-primary btn-full"><span>Enviar Mensaje</span><i class="fas fa-paper-plane"></i></button>
+                    <div class="form-success" id="formSuccess"><i class="fas fa-check-circle"></i><p>¡Gracias! Tu mensaje ha sido enviado correctamente.</p></div>
+                </form>
+            </div>
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3971.123456789!2d-73.52!3d5.63!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNcKwMzcnNDguMCJOIDczwrAzMScxMi4wIlc!5e0!3m2!1ses!2sco!4v1234567890" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Ubicación Hotel Mirador"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== RESERVAR SECTION ========== -->
+    <section class="section reservar" id="reservar">
+        <div class="reservar-overlay"></div>
+        <div class="container">
+            <div class="reservar-content">
+                <h2 class="reservar-title">¿Listo para Vivir la Experiencia?</h2>
+                <p class="reservar-description">Reserva ahora y disfruta de tarifas exclusivas para tu próxima estancia</p>
+                <a href="tel:+573101234567" class="btn btn-primary btn-lg">
+                    <i class="fas fa-phone-alt"></i> Llamar Ahora
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#inicio" class="footer-logo"><i class="fas fa-mountain"></i><span>HOTEL MIRADOR</span></a>
+                    <p class="footer-tagline">Donde el lujo se encuentra con la naturaleza</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="TripAdvisor"><i class="fab fa-tripadvisor"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#habitaciones">Habitaciones</a></li>
+                        <li><a href="#servicios">Servicios</a></li>
+                        <li><a href="#galeria">Galería</a></li>
+                        <li><a href="#hotel">El Hotel</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contacto</h4>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> Km 15 Vía a las Montañas, Villa de Leyva</li>
+                        <li><i class="fas fa-phone-alt"></i> +57 (8) 732 1234</li>
+                        <li><i class="fas fa-envelope"></i> info@hotelmirador.com</li>
+                    </ul>
+                </div>
+                <div class="footer-newsletter">
+                    <h4>Newsletter</h4>
+                    <p>Recibe ofertas exclusivas y novedades</p>
+                    <form class="newsletter-form" id="newsletterForm">
+                        <input type="email" placeholder="Tu email" required>
+                        <button type="submit" aria-label="Suscribirse"><i class="fas fa-arrow-right"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Hotel Mirador. Todos los derechos reservados.</p>
+                <div class="footer-legal">
+                    <a href="#">Política de Privacidad</a>
+                    <a href="#">Términos y Condiciones</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#reservar" class="floating-btn" id="floatingBtn" aria-label="Reservar ahora">
+        <i class="fas fa-calendar-check"></i>
+        <span>Reservar</span>
+    </a>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script src="script.js"></script>
+    <script>
+    // ── Auth Config ────────────────────────────────────────
+    const API_AUTH = 'http://localhost:5000/api/v1/auth';
+    let usuarioActual = null;
+
+    // ── Elementos ──────────────────────────────────────────
+    const authOverlay = document.getElementById('authOverlay');
+    const authClose   = document.getElementById('authClose');
+    const loginBtn    = document.getElementById('loginBtn');
+    const registroBtn = document.getElementById('registroBtn');
+    const loginMsg    = document.getElementById('loginMsg');
+    const registroMsg = document.getElementById('registroMsg');
+    const userMenu    = document.getElementById('userMenu');
+    const userAvatar  = document.getElementById('userAvatar');
+    const userDropdown= document.getElementById('userDropdown');
+    const logoutBtn   = document.getElementById('logoutBtn');
+    const navLoginItem= document.getElementById('navLoginItem');
+
+    // ── Abrir / cerrar ──────────────────────────────────────
+    function abrirAuth(tab = 'login') {
+      authOverlay.classList.add('show');
+      switchTab(tab);
+      document.body.style.overflow = 'hidden';
+    }
+    function cerrarAuth() {
+      authOverlay.classList.remove('show');
+      document.body.style.overflow = '';
+      loginMsg.className = registroMsg.className = 'auth-msg';
+    }
+    authOverlay.addEventListener('click', e => { if (e.target === authOverlay) cerrarAuth(); });
+    authClose.addEventListener('click', cerrarAuth);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarAuth(); });
+
+    // ── Tabs ───────────────────────────────────────────────
+    function switchTab(tab) {
+      document.querySelectorAll('.auth-tab').forEach(t =>
+        t.classList.toggle('active', t.dataset.tab === tab));
+      document.getElementById('formLogin').classList.toggle('active',    tab === 'login');
+      document.getElementById('formRegistro').classList.toggle('active', tab === 'registro');
+      loginMsg.className = registroMsg.className = 'auth-msg';
+    }
+    document.querySelectorAll('.auth-tab').forEach(t =>
+      t.addEventListener('click', () => switchTab(t.dataset.tab)));
+
+    // ── Msg / Loading ───────────────────────────────────────
+    function msg(el, txt, tipo = 'error') { el.textContent = txt; el.className = `auth-msg ${tipo}`; }
+    function setLoading(btn, v, txt) { btn.disabled = v; btn.textContent = v ? 'Cargando...' : txt; }
+
+    // ── Login ───────────────────────────────────────────────
+    loginBtn.addEventListener('click', async () => {
+      const email    = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      if (!email || !password) return msg(loginMsg, 'Completa todos los campos');
+      setLoading(loginBtn, true, 'Continuar');
+      try {
+        const res  = await fetch(`${API_AUTH}/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password}) });
+        const data = await res.json();
+        if (!res.ok) return msg(loginMsg, data.error || 'Error al iniciar sesión');
+        guardarSesion(data.token, data.usuario);
+        msg(loginMsg, data.mensaje, 'success');
+        setTimeout(cerrarAuth, 1200);
+      } catch { msg(loginMsg, 'Error de conexión con el servidor'); }
+      finally { setLoading(loginBtn, false, 'Continuar'); }
+    });
+
+    // ── Registro ────────────────────────────────────────────
+    registroBtn.addEventListener('click', async () => {
+      const nombre   = document.getElementById('regNombre').value.trim();
+      const email    = document.getElementById('regEmail').value.trim();
+      const telefono = document.getElementById('regTelefono').value.trim();
+      const password = document.getElementById('regPassword').value;
+      if (!nombre || !email || !password) return msg(registroMsg, 'Nombre, email y contraseña son obligatorios');
+      if (password.length < 6) return msg(registroMsg, 'La contraseña debe tener mínimo 6 caracteres');
+      setLoading(registroBtn, true, 'Crear cuenta');
+      try {
+        const res  = await fetch(`${API_AUTH}/registro`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({nombre, email, telefono: telefono||null, password}) });
+        const data = await res.json();
+        if (!res.ok) return msg(registroMsg, data.error || 'Error al registrarse');
+        guardarSesion(data.token, data.usuario);
+        msg(registroMsg, data.mensaje, 'success');
+        setTimeout(cerrarAuth, 1200);
+      } catch { msg(registroMsg, 'Error de conexión con el servidor'); }
+      finally { setLoading(registroBtn, false, 'Crear cuenta'); }
+    });
+
+    // ── Sesión ──────────────────────────────────────────────
+    function guardarSesion(token, usuario) {
+      localStorage.setItem('hm_token',   token);
+      localStorage.setItem('hm_usuario', JSON.stringify(usuario));
+      usuarioActual = usuario;
+      actualizarUI();
+    }
+    function cerrarSesion() {
+      localStorage.removeItem('hm_token');
+      localStorage.removeItem('hm_usuario');
+      usuarioActual = null;
+      actualizarUI();
+    }
+    function actualizarUI() {
+      if (usuarioActual) {
+        navLoginItem.style.display = 'none';
+        userMenu.classList.add('visible');
+        userAvatar.textContent = usuarioActual.nombre.charAt(0).toUpperCase();
+        document.getElementById('ddNombre').textContent = usuarioActual.nombre;
+        document.getElementById('ddEmail').textContent  = usuarioActual.email;
+      } else {
+        navLoginItem.style.display = '';
+        userMenu.classList.remove('visible');
+      }
+    }
+
+    // ── Dropdown ────────────────────────────────────────────
+    userAvatar.addEventListener('click', e => { e.stopPropagation(); userDropdown.classList.toggle('show'); });
+    document.addEventListener('click',  () => userDropdown.classList.remove('show'));
+    logoutBtn.addEventListener('click', () => { cerrarSesion(); userDropdown.classList.remove('show'); });
+
+    // ── Cargar sesión al iniciar ────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      const token   = localStorage.getItem('hm_token');
+      const usuario = localStorage.getItem('hm_usuario');
+      if (token && usuario) { usuarioActual = JSON.parse(usuario); actualizarUI(); }
+    });
+
+    window.abrirAuth = abrirAuth;
+    window.switchTab = switchTab;
+    </script>
+</body>
+</html>
