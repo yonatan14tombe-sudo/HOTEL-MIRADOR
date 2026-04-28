@@ -389,15 +389,16 @@
     }
     .user-avatar:hover { transform: scale(1.05); }
     .user-dropdown {
-        position: absolute; top: calc(100% + 12px); right: 0;
+        position: fixed; top: 60px; right: 10px;
         background: #fff; border-radius: 12px;
         box-shadow: 0 8px 30px rgba(0,0,0,.15);
-        min-width: 442px; overflow-y: auto; max-height: 80vh;
+        width: calc(100vw - 20px); max-width: 360px;
+        overflow-y: auto; max-height: 80vh;
         display: none; z-index: 1000;
     }
     .user-dropdown.show { display: block; }
-    .dd-avatar-img { width: 100%; height: 455px; border-radius: 12px 12px 0 0; object-fit: cover; display: block; }
-    .dd-avatar-ph { width: 100%; height: 455px; background: #c9a84c; color: #1a1a1a; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 3rem; border-radius: 12px 12px 0 0; }
+    .dd-avatar-img { width: 100%; height: 150px; border-radius: 12px 12px 0 0; object-fit: cover; display: block; }
+    .dd-avatar-ph { width: 100%; height: 150px; background: #c9a84c; color: #1a1a1a; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 3rem; border-radius: 12px 12px 0 0; }
     .dd-header { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: .8rem 1.2rem .6rem; border-bottom: 1px solid #eee; }
     .dd-nombre {
         padding: 0;
@@ -1353,6 +1354,12 @@
         .form-row {
             grid-template-columns: 1fr;
         }
+    }
+    @media (max-width: 768px) {
+        .floating-btn { width: 48px; height: 48px; bottom: 20px; right: 15px; }
+        .floating-btn span { display: none; }
+        .floating-btn i { font-size: 1.2rem; }
+        .user-dropdown { min-width: 280px; right: -10px; }
     }
     </style>
 </head>
