@@ -15,7 +15,7 @@ const app = express();
 
 // Middlewares
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:5500', 'http://localhost:5500', 'http://192.168.101.3:3000'],
+  origin: ['http://localhost:3000', 'http://127.0.0.1:5500', 'http://localhost:5500', 'http://192.168.101.3:3000', 'https://hotelmiradorcolombia.netlify.app'],
   credentials: true
 }));
 
