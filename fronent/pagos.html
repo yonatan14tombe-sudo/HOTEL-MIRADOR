@@ -1059,7 +1059,7 @@
         try {
             // Crear la reserva en el backend
             const r = reservaData;
-            const res = await fetch('http://localhost:5000/api/v1/reservations', {
+            const res = await fetch('https://hotel-mirador-backend.onrender.com/api/v1/reservations', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1091,7 +1091,7 @@
             // Limpiar datos temporales
             localStorage.removeItem('pendingReserva');
             try {
-                const perfilRes = await fetch('http://localhost:5000/api/v1/auth/perfil', { headers: { 'Authorization': `Bearer ${token}` } });
+                const perfilRes = await fetch('https://hotel-mirador-backend.onrender.com/api/v1/auth/perfil', { headers: { 'Authorization': `Bearer ${token}` } });
                 if (perfilRes.ok) {
                     const perfilData = await perfilRes.json();
                     const usuarioActual = JSON.parse(localStorage.getItem('hm_usuario_actual') || '{}');
