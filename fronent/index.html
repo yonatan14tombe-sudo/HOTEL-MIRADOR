@@ -2702,5 +2702,12 @@
         setInterval(() => srvGo(1), 1000);
     });
     </script>
-</body>
+
+    <script>
+    // Mantener backend despierto
+    setInterval(function(){
+        fetch('https://hotel-mirador-backend.onrender.com/api/v1/rooms')
+        .catch(()=>{});
+    }, 840000); // cada 14 minutos
+    </script></body>
 </html>
