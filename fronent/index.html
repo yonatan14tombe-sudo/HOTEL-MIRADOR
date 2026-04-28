@@ -2386,28 +2386,7 @@
         const menuToggle = document.getElementById('menuToggle');
         const navMenu    = document.getElementById('navMenu');
         if (menuToggle) {
-            // Cerrar menú al hacer clic en enlaces
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                navMenu.classList.remove('active');
-                const ov = document.getElementById('menuOverlay');
-                if (ov) ov.style.display = 'none';
-            });
-        });
-
-        menuToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-            // Overlay
-            let overlay = document.getElementById('menuOverlay');
-            if (!overlay) {
-                overlay = document.createElement('div');
-                overlay.id = 'menuOverlay';
-                overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1001;display:none;';
-                overlay.onclick = () => { navMenu.classList.remove('active'); overlay.style.display='none'; };
-                document.body.appendChild(overlay);
-            }
-            overlay.style.display = navMenu.classList.contains('active') ? 'block' : 'none';
-        });
+    
         }
 
         // Header scroll
