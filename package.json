@@ -1,0 +1,7 @@
+{
+  "name": "hotel-mirador",
+  "scripts": {
+    "start": "cd backend && node src/index.js",
+    "build": "cd backend && npm install"
+  }
+}
