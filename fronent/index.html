@@ -2106,8 +2106,8 @@
 
     <script>
     // ========== CONFIGURACIÓN - CONECTADO AL BACKEND REAL ==========
-    const API_AUTH     = 'http://192.168.101.3:5000/api/v1/auth';
-    const API_RESERVAS = 'http://localhost:5000/api/v1/reservations/mis-reservas';
+    const API_AUTH     = 'https://hotel-mirador-backend.onrender.com/api/v1/auth';
+    const API_RESERVAS = 'https://hotel-mirador-backend.onrender.com/api/v1/reservations/mis-reservas';
 
     let usuarioActual = null;
 
@@ -2591,7 +2591,7 @@
         resp.textContent = 'Enviando...';
 
         try {
-            const res = await fetch('http://localhost:5000/api/v1/contacto', {
+            const res = await fetch('https://hotel-mirador-backend.onrender.com/api/v1/contacto', {
                 method: 'POST',
                 headers: {'Content-Type':'application/json'},
                 body: JSON.stringify({
