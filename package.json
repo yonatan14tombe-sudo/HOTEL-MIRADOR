@@ -1,7 +1,8 @@
 {
   "name": "hotel-mirador",
+  "version": "1.0.0",
   "scripts": {
-    "start": "cd backend && node src/index.js",
-    "build": "cd backend && npm install"
+    "build": "cd backend && npm install",
+    "start": "cd backend && node src/index.js"
   }
 }
