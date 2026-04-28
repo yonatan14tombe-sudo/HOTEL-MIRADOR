@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil | Hotel Mirador</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --gold: #c9a84c;
+            --gold-light: #f0e6c8;
+            --dark: #1a1a1a;
+            --gray: #666;
+            --light: #f0f2f5;
+            --white: #fff;
+            --border: #e0e0e0;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--light); color: var(--dark); }
+
+        .header {
+            background: var(--dark); padding: 15px 30px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .header-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .header-logo i { color: var(--gold); font-size: 1.3rem; }
+        .header-logo span { color: #fff; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; }
+        .btn-volver { color: rgba(255,255,255,0.7); text-decoration: none; font-size: .85rem; display: flex; align-items: center; gap: 6px; }
+        .btn-volver:hover { color: var(--gold); }
+
+        /* COVER */
+        .cover {
+            height: 260px; position: relative; overflow: hidden;
+            background: linear-gradient(135deg, #1a1a1a, #c9a84c);
+        }
+        .cover img { width: 100%; height: 100%; object-fit: cover; opacity: .4; }
+        .cover-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,.6)); }
+
+        /* PERFIL INFO */
+        .perfil-container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+
+        .perfil-header {
+            background: var(--white); border-radius: 0 0 16px 16px;
+            padding: 0 30px 20px; position: relative;
+            box-shadow: var(--shadow); margin-bottom: 20px;
+        }
+
+        .avatar-wrap {
+            position: relative; display: inline-block;
+            margin-top: -60px; margin-bottom: 10px;
+        }
+        .avatar-img {
+            width: 120px; height: 120px; border-radius: 50%;
+            object-fit: cover; border: 4px solid var(--white);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .avatar-ph {
+            width: 120px; height: 120px; border-radius: 50%;
+            background: var(--gold); color: var(--dark);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; font-weight: 700;
+            border: 4px solid var(--white);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .avatar-edit-btn {
+            position: absolute; bottom: 5px; right: 5px;
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--dark); color: var(--white);
+            border: 2px solid var(--white); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .75rem; transition: background .2s;
+        }
+        .avatar-edit-btn:hover { background: var(--gold); color: var(--dark); }
+
+        .perfil-info { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 15px; }
+        .perfil-nombre { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
+        .perfil-email { color: var(--gray); font-size: .85rem; margin-bottom: 6px; }
+        .perfil-rol { display: inline-block; background: var(--gold-light); color: var(--dark); padding: 4px 14px; border-radius: 20px; font-size: .75rem; font-weight: 700; }
+        .perfil-tel { color: var(--gray); font-size: .82rem; margin-top: 4px; }
+
+        .btn-editar {
+            padding: 10px 22px; background: var(--gold); color: var(--dark);
+            border: none; border-radius: 10px; font-family: 'Montserrat', sans-serif;
+            font-weight: 700; cursor: pointer; font-size: .88rem; transition: all .2s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-editar:hover { background: #b8943a; transform: translateY(-1px); }
+
+        /* GRID */
+        .perfil-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        .card {
+            background: var(--white); border-radius: 16px;
+            box-shadow: var(--shadow); overflow: hidden;
+        }
+        .card-header {
+            padding: 16px 20px; border-bottom: 1px solid #f0f0f0;
+            display: flex; align-items: center; gap: 10px;
+            font-weight: 700; font-size: .95rem;
+        }
+        .card-header i { color: var(--gold); }
+        .card-body { padding: 20px; }
+
+        /* Reservas */
+        .reserva-item {
+            background: var(--light); border-radius: 12px;
+            padding: 14px; margin-bottom: 10px;
+            border-left: 4px solid var(--gold);
+        }
+        .reserva-item:last-child { margin-bottom: 0; }
+        .reserva-nombre { font-weight: 700; font-size: .9rem; margin-bottom: 5px; }
+        .reserva-info { font-size: .78rem; color: var(--gray); margin-bottom: 3px; }
+        .reserva-estado {
+            display: inline-block; padding: 3px 10px; border-radius: 15px;
+            font-size: .72rem; font-weight: 700; margin-top: 5px;
+        }
+        .estado-confirmada { background: #d4edda; color: #155724; }
+        .estado-pendiente { background: #fff3cd; color: #856404; }
+        .estado-cancelada { background: #f8d7da; color: #721c24; }
+
+        /* Info personal */
+        .info-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 0; border-bottom: 1px solid #f5f5f5; font-size: .88rem;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: var(--gray); display: flex; align-items: center; gap: 8px; }
+        .info-label i { color: var(--gold); width: 16px; }
+        .info-value { font-weight: 600; }
+
+        /* Estadísticas */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .stat-item { text-align: center; padding: 15px 10px; background: var(--light); border-radius: 10px; }
+        .stat-num { font-size: 1.6rem; font-weight: 700; color: var(--gold); }
+        .stat-lbl { font-size: .72rem; color: var(--gray); margin-top: 3px; }
+
+        /* MODAL EDITAR */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,.7); backdrop-filter: blur(6px);
+            z-index: 9999; align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: var(--white); border-radius: 20px;
+            width: 100%; max-width: 460px; overflow: hidden;
+            animation: modalIn .3s ease;
+        }
+        @keyframes modalIn { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .modal-header {
+            background: var(--dark); padding: 20px 25px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-header h3 { color: var(--white); font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; }
+        .modal-close { background: none; border: none; color: rgba(255,255,255,.7); font-size: 1.2rem; cursor: pointer; }
+        .modal-close:hover { color: var(--white); }
+        .modal-body { padding: 25px; }
+
+        /* Paso verificar contraseña */
+        .paso { display: none; }
+        .paso.activo { display: block; }
+
+        .lock-icon { text-align: center; margin-bottom: 20px; }
+        .lock-icon i { font-size: 3rem; color: var(--gold); }
+        .lock-icon p { color: var(--gray); font-size: .88rem; margin-top: 8px; line-height: 1.5; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: .78rem; font-weight: 700; color: var(--gray); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
+        .form-group input {
+            width: 100%; padding: 11px 14px; border: 1.5px solid var(--border);
+            border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: .9rem;
+            outline: none; transition: border-color .2s;
+        }
+        .form-group input:focus { border-color: var(--gold); }
+
+        .avatar-upload-modal { text-align: center; margin-bottom: 15px; }
+        .avatar-preview-modal {
+            width: 80px; height: 80px; border-radius: 50%;
+            margin: 0 auto 8px; overflow: hidden; cursor: pointer;
+            border: 3px solid var(--gold); position: relative;
+        }
+        .avatar-preview-modal img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-preview-modal .ph { width: 100%; height: 100%; background: var(--gold); color: var(--dark); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 700; }
+        .avatar-preview-modal .overlay { position: absolute; inset: 0; background: rgba(0,0,0,.4); display: none; align-items: center; justify-content: center; color: var(--white); font-size: .75rem; }
+        .avatar-preview-modal:hover .overlay { display: flex; }
+
+        .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-modal { flex: 1; padding: 12px; border: none; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-weight: 700; cursor: pointer; font-size: .9rem; transition: all .2s; }
+        .btn-modal.primary { background: var(--gold); color: var(--dark); }
+        .btn-modal.primary:hover { background: #b8943a; }
+        .btn-modal.secondary { background: var(--light); color: var(--dark); }
+
+        .error-msg { color: #ef4444; font-size: .8rem; margin-top: 8px; display: none; }
+        .error-msg.show { display: block; }
+        .success-msg { color: #10b981; font-size: .8rem; margin-top: 8px; display: none; }
+        .success-msg.show { display: block; }
+
+        /* Toast */
+        .toast { position: fixed; bottom: 30px; right: 30px; background: var(--dark); color: var(--white); padding: 14px 20px; border-radius: 12px; font-size: .88rem; font-weight: 500; box-shadow: 0 8px 25px rgba(0,0,0,.2); transform: translateY(100px); opacity: 0; transition: all .3s; z-index: 99999; }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { border-left: 4px solid #10b981; }
+        .toast.error { border-left: 4px solid #ef4444; }
+
+        /* Sin reservas */
+        .empty { text-align: center; padding: 30px; color: var(--gray); }
+        .empty i { font-size: 2rem; color: var(--border); display: block; margin-bottom: 10px; }
+
+        @media (max-width: 768px) {
+            .perfil-grid { grid-template-columns: 1fr; }
+            .header { padding: 15px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="header-logo">
+            <i class="fas fa-mountain"></i>
+            <span>HOTEL MIRADOR</span>
+        </a>
+        <a href="index.html" class="btn-volver">
+            <i class="fas fa-arrow-left"></i> Volver al inicio
+        </a>
+    </header>
+
+    <!-- Cover -->
+    <div class="cover">
+        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80" alt="cover">
+        <div class="cover-overlay"></div>
+    </div>
+
+    <div class="perfil-container">
+        <!-- Header perfil -->
+        <div class="perfil-header">
+            <div class="avatar-wrap">
+                <div id="avatarContainer">
+                    <div class="avatar-ph" id="avatarPh">Y</div>
+                </div>
+                <button class="avatar-edit-btn" onclick="abrirEditar()" title="Editar perfil">
+                    <i class="fas fa-pen"></i>
+                </button>
+            </div>
+            <div class="perfil-info">
+                <div>
+                    <div class="perfil-nombre" id="perfilNombre">Cargando...</div>
+                    <div class="perfil-email" id="perfilEmail">—</div>
+                    <div class="perfil-tel" id="perfilTel"></div>
+                    <span class="perfil-rol" id="perfilRol">usuario</span>
+                </div>
+                <button class="btn-editar" onclick="abrirEditar()">
+                    <i class="fas fa-pen"></i> Editar perfil
+                </button>
+            </div>
+        </div>
+
+        <!-- Grid -->
+        <div class="perfil-grid">
+            <!-- Información personal -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-user"></i> Información Personal
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid" style="margin-bottom:20px">
+                        <div class="stat-item">
+                            <div class="stat-num" id="statReservas">0</div>
+                            <div class="stat-lbl">Reservas</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-num" id="statNoches">0</div>
+                            <div class="stat-lbl">Noches</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-num" id="statGasto">$0</div>
+                            <div class="stat-lbl">Gastado</div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label"><i class="fas fa-user"></i> Nombre</span>
+                        <span class="info-value" id="infoNombre">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label"><i class="fas fa-envelope"></i> Correo</span>
+                        <span class="info-value" id="infoEmail">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label"><i class="fas fa-phone"></i> Teléfono</span>
+                        <span class="info-value" id="infoTel">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label"><i class="fas fa-shield-alt"></i> Rol</span>
+                        <span class="info-value" id="infoRol">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label"><i class="fas fa-calendar"></i> Miembro desde</span>
+                        <span class="info-value" id="infoFecha">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mis reservas -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-calendar-alt"></i> Mis Reservaciones
+                </div>
+                <div class="card-body" id="reservasContainer">
+                    <div class="empty">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Cargando reservaciones...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Perfil -->
+    <div class="modal-overlay" id="modalEditar">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">🔐 Verificar identidad</h3>
+                <button class="modal-close" onclick="cerrarModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+
+                <!-- PASO 1: Verificar contraseña -->
+                <div class="paso activo" id="paso1">
+                    <div class="lock-icon">
+                        <i class="fas fa-lock"></i>
+                        <p>Por seguridad, ingresa tu contraseña actual para poder editar tu perfil.</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña actual</label>
+                        <input type="password" id="passVerificar" placeholder="••••••••">
+                    </div>
+                    <div class="error-msg" id="errorPass">❌ Contraseña incorrecta</div>
+                    <div class="modal-btns">
+                        <button class="btn-modal secondary" onclick="cerrarModal()">Cancelar</button>
+                        <button class="btn-modal primary" onclick="verificarPassword()">
+                            <i class="fas fa-unlock"></i> Verificar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PASO 2: Editar perfil -->
+                <div class="paso" id="paso2">
+                    <div class="avatar-upload-modal">
+                        <div class="avatar-preview-modal" onclick="document.getElementById('fotoInputPerfil').click()">
+                            <div class="ph" id="modalAvatarPh">Y</div>
+                            <img id="modalAvatarImg" src="" style="display:none">
+                            <div class="overlay"><i class="fas fa-camera"></i></div>
+                        </div>
+                        <input type="file" id="fotoInputPerfil" accept="image/*" style="display:none" onchange="subirFotoPerfil(this)">
+                        <small style="color:#aaa;font-size:.72rem">Haz clic para cambiar tu foto</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre completo</label>
+                        <input type="text" id="editNombre" placeholder="Tu nombre">
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="tel" id="editTelefono" placeholder="+57 300 123 4567">
+                    </div>
+                    <div class="form-group">
+                        <label>Nueva contraseña (opcional)</label>
+                        <input type="password" id="editPassword" placeholder="Dejar vacío para no cambiar">
+                    </div>
+                    <div class="success-msg" id="successEdit">✅ Perfil actualizado exitosamente</div>
+                    <div class="error-msg" id="errorEdit"></div>
+                    <div class="modal-btns">
+                        <button class="btn-modal secondary" onclick="cerrarModal()">Cancelar</button>
+                        <button class="btn-modal primary" onclick="guardarPerfil()">
+                            <i class="fas fa-save"></i> Guardar cambios
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+    const API = 'http://192.168.101.3:5000/api/v1';
+    let usuario = null;
+    let token   = null;
+    let nuevaFotoUrl = null;
+
+    const rolLabels = { usuario: '👤 Usuario', cliente: '🛎️ Cliente', guia: '🧭 Guía Turístico', admin: '👑 Administrador' };
+
+    window.addEventListener('DOMContentLoaded', async () => {
+        token   = localStorage.getItem('hm_token');
+        const u = localStorage.getItem('hm_usuario_actual');
+
+        if (!token || !u) {
+            window.location.href = 'index.html';
+            return;
+        }
+
+        usuario = JSON.parse(u);
+
+        // Siempre actualizar datos desde el backend
+        try {
+            const res  = await fetch(`${API}/auth/perfil`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                usuario = { ...usuario, ...data };
+                localStorage.setItem('hm_usuario_actual', JSON.stringify(usuario));
+            }
+        } catch(e) { console.log('No se pudo actualizar perfil'); }
+
+        cargarPerfil();
+        cargarReservas();
+    });
+
+    function cargarPerfil() {
+        const inicial = usuario.nombre.charAt(0).toUpperCase();
+
+        // Avatar
+        if (usuario.foto) {
+            document.getElementById('avatarContainer').innerHTML =
+                `<img src="${usuario.foto}" class="avatar-img" alt="${usuario.nombre}">`;
+        } else {
+            document.getElementById('avatarPh').textContent = inicial;
+        }
+
+        // Info
+        document.getElementById('perfilNombre').textContent = usuario.nombre;
+        document.getElementById('perfilEmail').textContent  = usuario.email;
+        document.getElementById('perfilTel').textContent    = usuario.telefono ? '📞 ' + usuario.telefono : '';
+        document.getElementById('perfilRol').textContent    = rolLabels[usuario.rol] || usuario.rol;
+        document.getElementById('infoNombre').textContent   = usuario.nombre;
+        document.getElementById('infoEmail').textContent    = usuario.email;
+        document.getElementById('infoTel').textContent      = usuario.telefono || 'No registrado';
+        document.getElementById('infoRol').textContent      = rolLabels[usuario.rol] || usuario.rol;
+
+        // Fecha de registro
+        if (usuario.createdAt) {
+            const fecha = new Date(usuario.createdAt).toLocaleDateString('es-CO', { year:'numeric', month:'long', day:'numeric' });
+            document.getElementById('infoFecha').textContent = fecha;
+        }
+
+        // Modal avatar
+        document.getElementById('modalAvatarPh').textContent = inicial;
+        if (usuario.foto) {
+            document.getElementById('modalAvatarImg').src = usuario.foto;
+            document.getElementById('modalAvatarImg').style.display = 'block';
+            document.getElementById('modalAvatarPh').style.display = 'none';
+        }
+    }
+
+    async function cargarReservas() {
+        try {
+            const res  = await fetch(`${API}/reservations`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            const container = document.getElementById('reservasContainer');
+
+            if (!res.ok || !Array.isArray(data) || data.length === 0) {
+                container.innerHTML = `
+                    <div class="empty">
+                        <i class="fas fa-calendar-times"></i>
+                        <p>No tienes reservaciones aún</p>
+                        <a href="reservas.html" style="color:var(--gold);font-weight:600;font-size:.85rem;margin-top:8px;display:inline-block">
+                            ¡Reserva ahora!
+                        </a>
+                    </div>`;
+                return;
+            }
+
+            // Estadísticas
+            const totalNoches = data.reduce((acc, r) => {
+                if (r.fechaEntrada && r.fechaSalida) {
+                    return acc + Math.ceil((new Date(r.fechaSalida) - new Date(r.fechaEntrada)) / (1000*60*60*24));
+                }
+                return acc;
+            }, 0);
+            const totalGasto = data.reduce((acc, r) => acc + (r.precioTotal || 0), 0);
+
+            document.getElementById('statReservas').textContent = data.length;
+            document.getElementById('statNoches').textContent   = totalNoches;
+            document.getElementById('statGasto').textContent    = '$' + (totalGasto/1000).toFixed(0) + 'k';
+
+            // Lista de reservas
+            container.innerHTML = data.map(r => {
+                const hab    = r.habitacionId?.nombre || r.habitacionId || 'Habitación';
+                const entrada = r.fechaEntrada ? new Date(r.fechaEntrada).toLocaleDateString('es-CO') : '—';
+                const salida  = r.fechaSalida  ? new Date(r.fechaSalida).toLocaleDateString('es-CO')  : '—';
+                const estado  = r.estado || 'pendiente';
+                return `
+                    <div class="reserva-item">
+                        <div class="reserva-nombre">${hab}</div>
+                        <div class="reserva-info"><i class="fas fa-calendar" style="color:var(--gold)"></i> ${entrada} → ${salida}</div>
+                        <div class="reserva-info"><i class="fas fa-dollar-sign" style="color:var(--gold)"></i> $${(r.precioTotal||0).toLocaleString()}</div>
+                        ${r.codigoReserva ? `<div class="reserva-info"><i class="fas fa-ticket-alt" style="color:var(--gold)"></i> ${r.codigoReserva}</div>` : ''}
+                        <span class="reserva-estado estado-${estado}">${estado === 'confirmada' ? '✓ Confirmada' : estado === 'pendiente' ? '⏳ Pendiente' : estado === 'cancelada' ? '✗ Cancelada' : estado}</span>
+                        ${estado === 'pendiente' ? `<button onclick="cancelarReserva('${r._id}')" style="margin-top:10px;background:rgba(231,76,60,.15);color:#e74c3c;border:1px solid rgba(231,76,60,.3);padding:6px 14px;border-radius:8px;font-size:.75rem;cursor:pointer;font-weight:600;">✕ Cancelar reserva</button>` : ''}
+                    </div>`;
+            }).join('');
+
+        } catch (e) {
+            document.getElementById('reservasContainer').innerHTML =
+                '<div class="empty"><i class="fas fa-exclamation-triangle"></i><p>Error al cargar reservaciones</p></div>';
+        }
+    }
+
+    // ===== MODAL EDITAR =====
+    async function cancelarReserva(id) {
+        if (!confirm("¿Seguro que deseas cancelar esta reserva?")) return;
+        try {
+            const res = await fetch(`${API}/reservations/${id}/cancelar`, {
+                method: "PUT",
+                headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }
+            });
+            if (res.ok) { alert("✅ Reserva cancelada exitosamente"); cargarReservas(); }
+            else { const d = await res.json(); alert("Error: " + (d.error || "No se pudo cancelar")); }
+        } catch(e) { alert("Error de conexión"); }
+    }
+    function abrirEditar() {
+        document.getElementById('paso1').className = 'paso activo';
+        document.getElementById('paso2').className = 'paso';
+        document.getElementById('passVerificar').value = '';
+        document.getElementById('errorPass').className = 'error-msg';
+        document.getElementById('modalTitle').textContent = '🔐 Verificar identidad';
+        document.getElementById('modalEditar').classList.add('show');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => document.getElementById('passVerificar').focus(), 300);
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalEditar').classList.remove('show');
+        document.body.style.overflow = '';
+        nuevaFotoUrl = null;
+    }
+
+    async function verificarPassword() {
+        const pass = document.getElementById('passVerificar').value;
+        const errorEl = document.getElementById('errorPass');
+
+        if (!pass) {
+            errorEl.textContent = '⚠️ Ingresa tu contraseña';
+            errorEl.className = 'error-msg show';
+            return;
+        }
+
+        try {
+            const res  = await fetch(`${API}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: usuario.email, password: pass })
+            });
+
+            if (!res.ok) {
+                errorEl.textContent = '❌ Contraseña incorrecta';
+                errorEl.className = 'error-msg show';
+                document.getElementById('passVerificar').style.borderColor = '#ef4444';
+                return;
+            }
+
+            // Contraseña correcta - pasar al paso 2
+            document.getElementById('paso1').className = 'paso';
+            document.getElementById('paso2').className = 'paso activo';
+            document.getElementById('modalTitle').textContent = '✏️ Editar Perfil';
+            document.getElementById('editNombre').value   = usuario.nombre || '';
+            document.getElementById('editTelefono').value = usuario.telefono || '';
+            document.getElementById('editPassword').value = '';
+
+        } catch (e) {
+            errorEl.textContent = '❌ Error de conexión';
+            errorEl.className = 'error-msg show';
+        }
+    }
+
+    let subiendoFoto = false;
+
+    async function subirFotoPerfil(input) {
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+
+        // Preview
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById('modalAvatarImg').src = e.target.result;
+            document.getElementById('modalAvatarImg').style.display = 'block';
+            document.getElementById('modalAvatarPh').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+
+        // Subir a Cloudinary
+        subiendoFoto = true;
+        const btn = document.querySelector('.btn-modal.primary');
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo foto...'; }
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', 'hotel-mirador');
+            formData.append('folder', 'hotel-mirador/usuarios');
+            const res  = await fetch('https://api.cloudinary.com/v1_1/doqqzkabi/image/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.secure_url) {
+                nuevaFotoUrl = data.secure_url;
+                console.log('Foto subida OK:', nuevaFotoUrl);
+            }
+        } catch(e) { console.log('Error foto:', e); }
+        finally {
+            subiendoFoto = false;
+            if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Guardar cambios'; }
+        }
+    }
+
+    async function guardarPerfil() {
+        const nombre   = document.getElementById('editNombre').value.trim();
+        const telefono = document.getElementById('editTelefono').value.trim();
+        const password = document.getElementById('editPassword').value;
+        const errorEl  = document.getElementById('errorEdit');
+        const successEl = document.getElementById('successEdit');
+
+        if (!nombre) {
+            errorEl.textContent = '⚠️ El nombre es obligatorio';
+            errorEl.className = 'error-msg show';
+            return;
+        }
+
+        try {
+            const body = { nombre, telefono };
+            if (nuevaFotoUrl) body.foto = nuevaFotoUrl;
+            if (password && password.length >= 6) body.password = password;
+
+            const res = await fetch(`${API}/auth/perfil`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(body)
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                errorEl.textContent = data.error || 'Error al guardar';
+                errorEl.className = 'error-msg show';
+                return;
+            }
+
+            // Actualizar localStorage
+            const usuarioActualizado = { ...usuario, nombre, telefono, foto: nuevaFotoUrl || usuario.foto };
+            localStorage.setItem('hm_usuario_actual', JSON.stringify(usuarioActualizado));
+            usuario = usuarioActualizado;
+
+            successEl.className = 'success-msg show';
+            errorEl.className = 'error-msg';
+
+            setTimeout(() => {
+                cerrarModal();
+                cargarPerfil();
+                mostrarToast('✅ Perfil actualizado', 'success');
+            }, 1200);
+
+        } catch(e) {
+            errorEl.textContent = 'Error de conexión';
+            errorEl.className = 'error-msg show';
+        }
+    }
+
+    // Enter en verificar contraseña
+    document.getElementById('passVerificar').addEventListener('keydown', e => {
+        if (e.key === 'Enter') verificarPassword();
+    });
+
+    // Cerrar modal al hacer clic fuera
+    document.getElementById('modalEditar').addEventListener('click', e => {
+        if (e.target === document.getElementById('modalEditar')) cerrarModal();
+    });
+
+    function mostrarToast(msg, tipo = 'success') {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.className = `toast ${tipo} show`;
+        setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+    </script>
+</body>
+</html>

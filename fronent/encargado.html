@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Encargado — Hotel Mirador</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --gold: #c9a84c;
+            --gold-dark: #b8943a;
+            --bg: #0a0a0a;
+            --surface: #141414;
+            --surface2: #1e1e1e;
+            --surface3: #2a2a2a;
+            --border: rgba(201,168,76,.15);
+            --text: #f0f0f0;
+            --text-muted: #888;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --info: #3498db;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px; min-height: 100vh; background: var(--surface);
+            border-right: 1px solid var(--border); display: flex; flex-direction: column;
+            position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+            transition: transform .3s;
+        }
+        .sidebar-logo {
+            padding: 30px 25px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .sidebar-logo .logo-icon { color: var(--gold); font-size: 1.5rem; }
+        .sidebar-logo .logo-text { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; }
+        .sidebar-logo .logo-sub { font-size: .65rem; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; }
+        .sidebar-nav { flex: 1; padding: 20px 0; overflow-y: auto; }
+        .nav-section { padding: 8px 25px; font-size: .65rem; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; margin-top: 10px; }
+        .nav-item {
+            display: flex; align-items: center; gap: 12px; padding: 12px 25px;
+            color: var(--text-muted); cursor: pointer; transition: all .2s;
+            border-left: 3px solid transparent; font-size: .85rem; font-weight: 500;
+            text-decoration: none;
+        }
+        .nav-item:hover { color: var(--text); background: rgba(255,255,255,.03); }
+        .nav-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(201,168,76,.05); }
+        .nav-item .badge {
+            margin-left: auto; background: var(--danger); color: #fff;
+            font-size: .65rem; padding: 2px 7px; border-radius: 20px; font-weight: 700;
+        }
+        .nav-item .badge.gold { background: var(--gold); color: #1a1a1a; }
+        .sidebar-user {
+            padding: 20px 25px; border-top: 1px solid var(--border);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .sidebar-avatar {
+            width: 38px; height: 38px; border-radius: 50%; background: var(--gold);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: #1a1a1a; font-size: .9rem; overflow: hidden; flex-shrink: 0;
+        }
+        .sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .sidebar-user-info .name { font-size: .85rem; font-weight: 600; }
+        .sidebar-user-info .role { font-size: .7rem; color: var(--gold); }
+
+        /* MAIN */
+        .main { margin-left: 260px; flex: 1; min-height: 100vh; }
+        .topbar {
+            background: var(--surface); border-bottom: 1px solid var(--border);
+            padding: 18px 35px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .topbar-title { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 600; }
+        .topbar-actions { display: flex; gap: 12px; align-items: center; }
+        .btn {
+            padding: 9px 20px; border-radius: 8px; border: none; cursor: pointer;
+            font-family: 'Montserrat', sans-serif; font-size: .8rem; font-weight: 600;
+            transition: all .2s; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-gold { background: var(--gold); color: #1a1a1a; }
+        .btn-gold:hover { background: var(--gold-dark); }
+        .btn-outline { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-outline:hover { color: var(--text); border-color: var(--gold); }
+        .btn-danger { background: rgba(231,76,60,.15); color: var(--danger); border: 1px solid rgba(231,76,60,.3); }
+        .btn-success { background: rgba(46,204,113,.15); color: var(--success); border: 1px solid rgba(46,204,113,.3); }
+        .btn-sm { padding: 6px 14px; font-size: .75rem; }
+
+        /* CONTENT */
+        .content { padding: 35px; }
+        .panel { display: none; }
+        .panel.active { display: block; animation: fadeIn .3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* STATS */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 35px; }
+        .stat-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+            padding: 25px; display: flex; align-items: center; gap: 18px;
+            transition: transform .2s, border-color .2s;
+        }
+        .stat-card:hover { transform: translateY(-3px); border-color: var(--gold); }
+        .stat-icon {
+            width: 50px; height: 50px; border-radius: 12px; display: flex;
+            align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;
+        }
+        .stat-icon.gold { background: rgba(201,168,76,.15); color: var(--gold); }
+        .stat-icon.green { background: rgba(46,204,113,.15); color: var(--success); }
+        .stat-icon.blue { background: rgba(52,152,219,.15); color: var(--info); }
+        .stat-icon.red { background: rgba(231,76,60,.15); color: var(--danger); }
+        .stat-value { font-size: 2rem; font-weight: 700; font-family: 'Cormorant Garamond', serif; line-height: 1; }
+        .stat-label { font-size: .75rem; color: var(--text-muted); margin-top: 4px; }
+
+        /* TABLES */
+        .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+        .table-header { padding: 20px 25px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .table-header h3 { font-size: 1rem; font-weight: 600; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { padding: 12px 20px; text-align: left; font-size: .7rem; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        td { padding: 14px 20px; font-size: .85rem; border-bottom: 1px solid rgba(255,255,255,.04); }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255,255,255,.02); }
+
+        /* BADGES */
+        .badge-status {
+            padding: 4px 12px; border-radius: 20px; font-size: .7rem; font-weight: 700;
+            display: inline-block;
+        }
+        .badge-pendiente { background: rgba(243,156,18,.15); color: var(--warning); }
+        .badge-confirmada { background: rgba(46,204,113,.15); color: var(--success); }
+        .badge-cancelada { background: rgba(231,76,60,.15); color: var(--danger); }
+        .badge-respondido { background: rgba(52,152,219,.15); color: var(--info); }
+        .badge-sin-responder { background: rgba(231,76,60,.15); color: var(--danger); }
+
+        /* LOADING */
+        .loading { text-align: center; padding: 50px; color: var(--text-muted); }
+        .loading i { font-size: 2rem; animation: spin 1s linear infinite; display: block; margin-bottom: 15px; color: var(--gold); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* EMPTY */
+        .empty { text-align: center; padding: 50px; color: var(--text-muted); }
+        .empty i { font-size: 2.5rem; display: block; margin-bottom: 15px; opacity: .3; }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,.85);
+            z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(8px);
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+            width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto;
+            animation: fadeIn .3s ease; position: relative;
+        }
+        .modal-head { padding: 25px 30px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .modal-head h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; }
+        .modal-body { padding: 25px 30px; }
+        .modal-close { background: rgba(255,255,255,.1); border: none; color: var(--text); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1rem; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: .75rem; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 10px; padding: 12px 15px; color: var(--text);
+            font-family: 'Montserrat', sans-serif; font-size: .85rem; outline: none;
+            transition: border-color .2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); }
+        .form-group select option { background: var(--surface2); }
+
+        /* SEARCH */
+        .search-bar {
+            background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+            padding: 10px 15px; color: var(--text); font-family: 'Montserrat', sans-serif;
+            font-size: .85rem; outline: none; width: 220px; transition: border-color .2s;
+        }
+        .search-bar:focus { border-color: var(--gold); }
+
+        /* TICKET CARD */
+        .ticket-card {
+            background: var(--surface2); border: 1px solid var(--border); border-radius: 14px;
+            padding: 20px; margin-bottom: 15px; transition: border-color .2s;
+        }
+        .ticket-card:hover { border-color: var(--gold); }
+        .ticket-head { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+        .ticket-nombre { font-weight: 600; font-size: .95rem; }
+        .ticket-email { font-size: .8rem; color: var(--text-muted); margin-top: 3px; }
+        .ticket-msg { color: var(--text-muted); font-size: .85rem; line-height: 1.6; margin-bottom: 15px; }
+        .ticket-foot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .ticket-date { font-size: .75rem; color: var(--text-muted); }
+
+        /* GUIA CARD */
+        .guia-card {
+            background: var(--surface2); border: 1px solid var(--border); border-radius: 14px;
+            padding: 20px; display: flex; align-items: center; gap: 15px; margin-bottom: 15px;
+            transition: border-color .2s;
+        }
+        .guia-card:hover { border-color: var(--gold); }
+        .guia-avatar { width: 55px; height: 55px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #1a1a1a; font-size: 1.1rem; overflow: hidden; flex-shrink: 0; }
+        .guia-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .guia-info { flex: 1; }
+        .guia-nombre { font-weight: 600; font-size: .95rem; }
+        .guia-especialidad { font-size: .8rem; color: var(--gold); margin-top: 3px; }
+        .guia-tours { font-size: .75rem; color: var(--text-muted); margin-top: 3px; }
+
+        /* BACK BTN */
+        .back-btn { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-size: .85rem; margin-bottom: 25px; transition: color .2s; }
+        .back-btn:hover { color: var(--gold); }
+
+        /* MOBILE */
+        .menu-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main { margin-left: 0; }
+            .menu-toggle { display: block; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .content { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon"><i class="fas fa-mountain"></i></div>
+        <div>
+            <div class="logo-text">MIRADOR</div>
+            <div class="logo-sub">Panel Encargado</div>
+        </div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section">Principal</div>
+        <a class="nav-item active" onclick="showPanel('dashboard')" href="#">
+            <i class="fas fa-chart-line"></i> Dashboard
+        </a>
+        <div class="nav-section">Gestión</div>
+        <a class="nav-item" onclick="showPanel('tickets')" href="#">
+            <i class="fas fa-ticket-alt"></i> Tickets / Mensajes
+            <span class="badge" id="badge-tickets">0</span>
+        </a>
+        <a class="nav-item" onclick="showPanel('reservaciones')" href="#">
+            <i class="fas fa-calendar-check"></i> Reservaciones
+            <span class="badge gold" id="badge-reservas">0</span>
+        </a>
+        <a class="nav-item" onclick="showPanel('guias')" href="#">
+            <i class="fas fa-map-marked-alt"></i> Guías Turísticos
+        </a>
+        <div class="nav-section">Sistema</div>
+        <a class="nav-item" href="admin.html">
+            <i class="fas fa-shield-alt"></i> Panel Admin
+        </a>
+        <a class="nav-item" href="index.html">
+            <i class="fas fa-home"></i> Volver al sitio
+        </a>
+    </nav>
+    <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sidebarAvatar">E</div>
+        <div class="sidebar-user-info">
+            <div class="name" id="sidebarNombre">Encargado</div>
+            <div class="role" id="sidebarRol">👑 Admin</div>
+        </div>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+    <div class="topbar">
+        <div style="display:flex;align-items:center;gap:15px;">
+            <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
+                <i class="fas fa-bars"></i>
+            </button>
+            <span class="topbar-title" id="topbarTitle">Dashboard</span>
+        </div>
+        <div class="topbar-actions">
+            <button class="btn btn-outline btn-sm" onclick="recargarTodo()"><i class="fas fa-sync-alt"></i> Actualizar</button>
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- ===== DASHBOARD ===== -->
+        <div class="panel active" id="panel-dashboard">
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-icon red"><i class="fas fa-envelope"></i></div>
+                    <div><div class="stat-value" id="stat-tickets">—</div><div class="stat-label">Tickets sin responder</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon gold"><i class="fas fa-calendar"></i></div>
+                    <div><div class="stat-value" id="stat-pendientes">—</div><div class="stat-label">Reservas pendientes</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                    <div><div class="stat-value" id="stat-confirmadas">—</div><div class="stat-label">Reservas confirmadas</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="fas fa-compass"></i></div>
+                    <div><div class="stat-value" id="stat-guias">—</div><div class="stat-label">Guías activos</div></div>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:25px;margin-bottom:25px;" id="dashGrids">
+                <!-- Últimos tickets -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3><i class="fas fa-ticket-alt" style="color:var(--gold);margin-right:8px;"></i>Últimos Tickets</h3>
+                        <button class="btn btn-outline btn-sm" onclick="showPanel('tickets')">Ver todos</button>
+                    </div>
+                    <div id="dash-tickets-list" class="loading"><i class="fas fa-spinner"></i>Cargando...</div>
+                </div>
+                <!-- Últimas reservas -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3><i class="fas fa-calendar-check" style="color:var(--gold);margin-right:8px;"></i>Últimas Reservas</h3>
+                        <button class="btn btn-outline btn-sm" onclick="showPanel('reservaciones')">Ver todas</button>
+                    </div>
+                    <div id="dash-reservas-list" class="loading"><i class="fas fa-spinner"></i>Cargando...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TICKETS ===== -->
+        <div class="panel" id="panel-tickets">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;flex-wrap:wrap;gap:15px;">
+                <div>
+                    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;">Tickets & Mensajes</h2>
+                    <p style="color:var(--text-muted);font-size:.85rem;margin-top:5px;">Solicitudes de servicios y mensajes de contacto</p>
+                </div>
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                    <select id="filtroTickets" onchange="cargarTickets()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:.8rem;outline:none;">
+                        <option value="">Todos</option>
+                        <option value="false">Sin responder</option>
+                        <option value="true">Respondidos</option>
+                    </select>
+                </div>
+            </div>
+            <div id="tickets-list"><div class="loading"><i class="fas fa-spinner"></i>Cargando tickets...</div></div>
+        </div>
+
+        <!-- ===== RESERVACIONES ===== -->
+        <div class="panel" id="panel-reservaciones">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;flex-wrap:wrap;gap:15px;">
+                <div>
+                    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;">Reservaciones</h2>
+                    <p style="color:var(--text-muted);font-size:.85rem;margin-top:5px;">Gestión de todas las reservas del hotel</p>
+                </div>
+                <select id="filtroReservas" onchange="cargarReservas()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:.8rem;outline:none;">
+                    <option value="">Todas</option>
+                    <option value="pendiente">Pendientes</option>
+                    <option value="confirmada">Confirmadas</option>
+                    <option value="cancelada">Canceladas</option>
+                </select>
+            </div>
+            <div class="table-card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Huésped</th>
+                                <th>Habitación</th>
+                                <th>Fechas</th>
+                                <th>Huéspedes</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservas-tbody">
+                            <tr><td colspan="7" class="loading"><i class="fas fa-spinner" style="animation:spin 1s linear infinite;"></i> Cargando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== GUÍAS ===== -->
+        <div class="panel" id="panel-guias">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;flex-wrap:wrap;gap:15px;">
+                <div>
+                    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;">Guías Turísticos</h2>
+                    <p style="color:var(--text-muted);font-size:.85rem;margin-top:5px;">Equipo de guías disponibles para tours</p>
+                </div>
+            </div>
+            <div id="guias-list"><div class="loading"><i class="fas fa-spinner"></i>Cargando guías...</div></div>
+        </div>
+
+    </div>
+</main>
+
+<!-- MODAL CAMBIAR ESTADO RESERVA -->
+<div class="modal-overlay" id="modalEstado">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3>Cambiar Estado</h3>
+            <button class="modal-close" onclick="cerrarModal('modalEstado')">✕</button>
+        </div>
+        <div class="modal-body">
+            <p style="color:var(--text-muted);margin-bottom:20px;font-size:.9rem;">Reserva: <strong id="modalReservaId" style="color:var(--gold);"></strong></p>
+            <div class="form-group">
+                <label>Nuevo Estado</label>
+                <select id="nuevoEstado">
+                    <option value="pendiente">⏳ Pendiente</option>
+                    <option value="confirmada">✅ Confirmada</option>
+                    <option value="cancelada">❌ Cancelada</option>
+                </select>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:20px;">
+                <button class="btn btn-gold" style="flex:1;" onclick="guardarEstado()">Guardar Cambio</button>
+                <button class="btn btn-outline" onclick="cerrarModal('modalEstado')">Cancelar</button>
+            </div>
+            <div id="estadoMsg" style="margin-top:12px;text-align:center;font-size:.85rem;display:none;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL VER TICKET -->
+<div class="modal-overlay" id="modalTicket">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3>Detalle del Ticket</h3>
+            <button class="modal-close" onclick="cerrarModal('modalTicket')">✕</button>
+        </div>
+        <div class="modal-body" id="modalTicketBody"></div>
+    </div>
+</div>
+
+<script>
+    const API = 'http://localhost:5000/api/v1';
+    let reservaSeleccionada = null;
+
+    // ===== AUTH =====
+    function getToken() { return localStorage.getItem('hm_token'); }
+
+    function authHeaders() {
+        return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` };
+    }
+
+    // ===== INIT =====
+    async function init() {
+        // Usar usuario guardado localmente
+        const usuarioLocal = JSON.parse(localStorage.getItem("hm_usuario_actual") || "null");
+        if (usuarioLocal && ["admin","encargado"].includes(usuarioLocal.rol)) {
+            document.getElementById("sidebarNombre").textContent = usuarioLocal.nombre || "Encargado";
+            document.getElementById("sidebarRol").textContent = usuarioLocal.rol === "admin" ? "👑 Admin" : "🏨 Encargado";
+            const av = document.getElementById("sidebarAvatar");
+            if (usuarioLocal.foto) { av.innerHTML = `<img src="${usuarioLocal.foto}" alt="">`; }
+            else { av.textContent = (usuarioLocal.nombre || "E")[0].toUpperCase(); }
+            cargarDashboard();
+            return;
+        }
+        const token = getToken();
+        if (!token) { window.location.href = 'index.html'; return; }
+        try {
+            const res = await fetch(`${API}/auth/profile`, { headers: authHeaders() });
+            const user = await res.json();
+            if (!['admin', 'encargado'].includes(user.rol)) {
+                alert('No tienes permisos para acceder a este panel.');
+                window.location.href = 'index.html'; return;
+            }
+            document.getElementById('sidebarNombre').textContent = user.nombre || 'Encargado';
+            document.getElementById('sidebarRol').textContent = user.rol === 'admin' ? '👑 Admin' : '🏨 Encargado';
+            const av = document.getElementById('sidebarAvatar');
+            if (user.fotoPerfil) { av.innerHTML = `<img src="${user.fotoPerfil}" alt="">`; }
+            else { av.textContent = (user.nombre || 'E')[0].toUpperCase(); }
+        } catch(e) { console.error("ERROR AUTH:", e); alert("Error: " + e.message); return; }
+        cargarDashboard();
+    }
+
+    // ===== PANELS =====
+    function showPanel(id) {
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById(`panel-${id}`).classList.add('active');
+        event.currentTarget && event.currentTarget.classList.add('active');
+        const titles = { dashboard: 'Dashboard', tickets: 'Tickets & Mensajes', reservaciones: 'Reservaciones', guias: 'Guías Turísticos' };
+        document.getElementById('topbarTitle').textContent = titles[id] || id;
+        if (id === 'tickets') cargarTickets();
+        if (id === 'reservaciones') cargarReservas();
+        if (id === 'guias') cargarGuias();
+        if (window.innerWidth < 768) document.getElementById('sidebar').classList.remove('open');
+    }
+
+    // ===== DASHBOARD =====
+    async function cargarDashboard() {
+        try {
+            const [ticketsRes, reservasRes, guiasRes] = await Promise.all([
+                fetch(`${API}/contacto`, { headers: authHeaders() }),
+                fetch(`${API}/reservations/admin/todas`, { headers: authHeaders() }),
+                fetch(`${API}/guides`, { headers: authHeaders() })
+            ]);
+            const tickets = await ticketsRes.json();
+            const reservas = await reservasRes.json();
+            const guias = await guiasRes.json();
+
+            const sinResponder = Array.isArray(tickets) ? tickets.filter(t => !t.respondido).length : 0;
+            const pendientes = Array.isArray(reservas) ? reservas.filter(r => r.estado === 'pendiente').length : 0;
+            const confirmadas = Array.isArray(reservas) ? reservas.filter(r => r.estado === 'confirmada').length : 0;
+
+            document.getElementById('stat-tickets').textContent = sinResponder;
+            document.getElementById('stat-pendientes').textContent = pendientes;
+            document.getElementById('stat-confirmadas').textContent = confirmadas;
+            document.getElementById('stat-guias').textContent = Array.isArray(guias) ? guias.length : '—';
+            document.getElementById('badge-tickets').textContent = sinResponder;
+            document.getElementById('badge-reservas').textContent = pendientes;
+
+            // Últimos tickets
+            const tl = document.getElementById('dash-tickets-list');
+            if (Array.isArray(tickets) && tickets.length > 0) {
+                tl.innerHTML = tickets.slice(0,4).map(t => `
+                    <div style="padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;gap:10px;">
+                        <div>
+                            <div style="font-size:.85rem;font-weight:600;">${t.nombre}</div>
+                            <div style="font-size:.75rem;color:var(--text-muted);margin-top:2px;">${(t.mensaje||'').substring(0,50)}...</div>
+                        </div>
+                        <span class="badge-status ${t.respondido ? 'badge-respondido' : 'badge-sin-responder'}">${t.respondido ? 'Respondido' : 'Pendiente'}</span>
+                    </div>`).join('');
+            } else { tl.innerHTML = '<div class="empty"><i class="fas fa-inbox"></i>Sin tickets</div>'; }
+
+            // Últimas reservas
+            const rl = document.getElementById('dash-reservas-list');
+            if (Array.isArray(reservas) && reservas.length > 0) {
+                rl.innerHTML = reservas.slice(0,4).map(r => `
+                    <div style="padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;gap:10px;">
+                        <div>
+                            <div style="font-size:.85rem;font-weight:600;">${r.habitacionId?.nombre || r.habitacionId?.tipo || 'Habitación'}</div>
+                            <div style="font-size:.75rem;color:var(--text-muted);margin-top:2px;">${new Date(r.fechaEntrada).toLocaleDateString('es-CO')} → ${new Date(r.fechaSalida).toLocaleDateString('es-CO')}</div>
+                        </div>
+                        <span class="badge-status badge-${r.estado}">${r.estado}</span>
+                    </div>`).join('');
+            } else { rl.innerHTML = '<div class="empty"><i class="fas fa-calendar"></i>Sin reservas</div>'; }
+
+        } catch(e) { console.error(e); }
+    }
+
+    // ===== TICKETS =====
+    async function cargarTickets() {
+        const filtro = document.getElementById('filtroTickets').value;
+        const url = filtro !== '' ? `${API}/contacto?respondido=${filtro}` : `${API}/contacto`;
+        const list = document.getElementById('tickets-list');
+        list.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i>Cargando...</div>';
+        try {
+            const res = await fetch(url, { headers: authHeaders() });
+            const tickets = await res.json();
+            if (!Array.isArray(tickets) || tickets.length === 0) {
+                list.innerHTML = '<div class="empty"><i class="fas fa-inbox"></i>No hay tickets</div>'; return;
+            }
+            list.innerHTML = tickets.map(t => `
+                <div class="ticket-card">
+                    <div class="ticket-head">
+                        <div>
+                            <div class="ticket-nombre">${t.nombre}</div>
+                            <div class="ticket-email">${t.email}${t.telefono ? ' · 📞 ' + t.telefono : ''}</div>
+                        </div>
+                        <span class="badge-status ${t.respondido ? 'badge-respondido' : 'badge-sin-responder'}">${t.respondido ? '✓ Respondido' : '⏳ Sin responder'}</span>
+                    </div>
+                    <div class="ticket-msg">${t.mensaje}</div>
+                    <div class="ticket-foot">
+                        <span class="ticket-date"><i class="fas fa-clock"></i> ${new Date(t.createdAt).toLocaleString('es-CO')}</span>
+                        <div style="display:flex;gap:8px;">
+                            ${!t.respondido ? `<button class="btn btn-success btn-sm" onclick="marcarRespondido('${t._id}')"><i class="fas fa-check"></i> Marcar respondido</button>` : ''}
+                            <button class="btn btn-outline btn-sm" onclick="verTicket('${t._id}')"><i class="fas fa-eye"></i> Ver</button>
+                        </div>
+                    </div>
+                </div>`).join('');
+        } catch(e) { list.innerHTML = '<div class="empty"><i class="fas fa-exclamation-circle"></i>Error al cargar tickets</div>'; }
+    }
+
+    async function marcarRespondido(id) {
+        try {
+            const res = await fetch(`${API}/contacto/${id}/respondido`, { method: 'PATCH', headers: authHeaders() });
+            if (res.ok) { cargarTickets(); cargarDashboard(); }
+        } catch(e) { alert('Error al actualizar'); }
+    }
+
+    let ticketsCache = [];
+    async function verTicket(id) {
+        try {
+            const res = await fetch(`${API}/contacto`, { headers: authHeaders() });
+            const tickets = await res.json();
+            const t = tickets.find(x => x._id === id);
+            if (!t) return;
+            document.getElementById('modalTicketBody').innerHTML = `
+                <div style="margin-bottom:15px;">
+                    <div style="font-size:1.1rem;font-weight:600;margin-bottom:5px;">${t.nombre}</div>
+                    <div style="color:var(--text-muted);font-size:.85rem;">${t.email}</div>
+                    ${t.telefono ? `<div style="color:var(--text-muted);font-size:.85rem;">📞 ${t.telefono}</div>` : ''}
+                </div>
+                <div style="background:var(--surface2);border-radius:10px;padding:15px;margin-bottom:15px;">
+                    <div style="font-size:.7rem;color:var(--gold);letter-spacing:2px;margin-bottom:8px;">MENSAJE</div>
+                    <p style="color:var(--text);line-height:1.7;font-size:.9rem;">${t.mensaje}</p>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                    <span style="font-size:.8rem;color:var(--text-muted);">${new Date(t.createdAt).toLocaleString('es-CO')}</span>
+                    <span class="badge-status ${t.respondido ? 'badge-respondido' : 'badge-sin-responder'}">${t.respondido ? '✓ Respondido' : '⏳ Sin responder'}</span>
+                </div>
+                ${!t.respondido ? `<button class="btn btn-success" style="width:100%;margin-top:15px;" onclick="marcarRespondido('${t._id}');cerrarModal('modalTicket')"><i class="fas fa-check"></i> Marcar como respondido</button>` : ''}`;
+            document.getElementById('modalTicket').classList.add('show');
+        } catch(e) {}
+    }
+
+    // ===== RESERVACIONES =====
+    async function cargarReservas() {
+        const filtro = document.getElementById('filtroReservas').value;
+        const tbody = document.getElementById('reservas-tbody');
+        tbody.innerHTML = '<tr><td colspan="7" class="loading"><i class="fas fa-spinner" style="animation:spin 1s linear infinite;margin-right:8px;"></i>Cargando...</td></tr>';
+        try {
+            const res = await fetch(`${API}/reservations/admin/todas`, { headers: authHeaders() });
+            let reservas = await res.json();
+            if (!Array.isArray(reservas)) { tbody.innerHTML = '<tr><td colspan="7" class="empty">Error al cargar</td></tr>'; return; }
+            if (filtro) reservas = reservas.filter(r => r.estado === filtro);
+            if (reservas.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="empty"><i class="fas fa-calendar"></i> No hay reservas</td></tr>'; return; }
+            tbody.innerHTML = reservas.map(r => `
+                <tr>
+                    <td>
+                        <div style="font-weight:600;">${r.usuarioId?.nombre || 'Usuario'}</div>
+                        <div style="font-size:.75rem;color:var(--text-muted);">${r.usuarioId?.email || ''}</div>
+                    </td>
+                    <td>${r.habitacionId?.nombre || r.habitacionId?.tipo || 'Habitación'}</td>
+                    <td>
+                        <div style="font-size:.8rem;">${new Date(r.fechaEntrada).toLocaleDateString('es-CO')}</div>
+                        <div style="font-size:.75rem;color:var(--text-muted);">→ ${new Date(r.fechaSalida).toLocaleDateString('es-CO')}</div>
+                    </td>
+                    <td>${r.huespedes}</td>
+                    <td style="color:var(--gold);font-weight:600;">$${(r.precioTotal||0).toLocaleString()}</td>
+                    <td><span class="badge-status badge-${r.estado}">${r.estado}</span></td>
+                    <td>
+                        <button class="btn btn-outline btn-sm" onclick="abrirModalEstado('${r._id}','${r.estado}')">
+                            <i class="fas fa-edit"></i> Estado
+                        </button>
+                    </td>
+                </tr>`).join('');
+        } catch(e) { tbody.innerHTML = '<tr><td colspan="7" class="empty">Error al cargar reservaciones</td></tr>'; }
+    }
+
+    function abrirModalEstado(id, estadoActual) {
+        reservaSeleccionada = id;
+        document.getElementById('modalReservaId').textContent = id.slice(-8).toUpperCase();
+        document.getElementById('nuevoEstado').value = estadoActual;
+        document.getElementById('estadoMsg').style.display = 'none';
+        document.getElementById('modalEstado').classList.add('show');
+    }
+
+    async function guardarEstado() {
+        const estado = document.getElementById('nuevoEstado').value;
+        const msg = document.getElementById('estadoMsg');
+        try {
+            const res = await fetch(`${API}/reservations/${reservaSeleccionada}/cancelar`, {
+                method: 'PUT', headers: authHeaders(),
+                body: JSON.stringify({ estado })
+            });
+            if (res.ok) {
+                msg.style.display = 'block'; msg.style.color = 'var(--success)';
+                msg.textContent = '✅ Estado actualizado correctamente';
+                setTimeout(() => { cerrarModal('modalEstado'); cargarReservas(); cargarDashboard(); }, 1200);
+            } else {
+                msg.style.display = 'block'; msg.style.color = 'var(--danger)';
+                msg.textContent = 'Error al actualizar el estado';
+            }
+        } catch(e) { msg.style.display = 'block'; msg.style.color = 'var(--danger)'; msg.textContent = 'Error de conexión'; }
+    }
+
+    // ===== GUÍAS =====
+    async function cargarGuias() {
+        const list = document.getElementById('guias-list');
+        list.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i>Cargando guías...</div>';
+        try {
+            const res = await fetch(`${API}/guides`, { headers: authHeaders() });
+            const guias = await res.json();
+            if (!Array.isArray(guias) || guias.length === 0) {
+                list.innerHTML = '<div class="empty"><i class="fas fa-compass"></i>No hay guías registrados</div>'; return;
+            }
+            list.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:15px;">` +
+                guias.map(g => `
+                <div class="guia-card">
+                    <div class="guia-avatar">
+                        ${g.fotoPerfil ? `<img src="${g.fotoPerfil}" alt="">` : (g.usuarioId?.nombre || 'G')[0].toUpperCase()}
+                    </div>
+                    <div class="guia-info">
+                        <div class="guia-nombre">${g.usuarioId?.nombre || 'Guía'}</div>
+                        <div class="guia-especialidad">${g.especialidad || 'Turismo general'}</div>
+                        <div class="guia-tours">📍 ${g.zonas?.join(', ') || 'Zona no especificada'}</div>
+                        <div class="guia-tours">⭐ ${g.calificacion || '5.0'} · ${g.toursCompletados || 0} tours</div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <a href="perfil-guia.html?id=${g._id}" class="btn btn-outline btn-sm"><i class="fas fa-eye"></i> Ver</a>
+                    </div>
+                </div>`).join('') + '</div>';
+        } catch(e) { list.innerHTML = '<div class="empty"><i class="fas fa-exclamation-circle"></i>Error al cargar guías</div>'; }
+    }
+
+    // ===== UTILS =====
+    function cerrarModal(id) { document.getElementById(id).classList.remove('show'); }
+    function recargarTodo() { cargarDashboard(); }
+
+    document.querySelectorAll('.modal-overlay').forEach(m => {
+        m.addEventListener('click', e => { if (e.target === m) m.classList.remove('show'); });
+    });
+
+    init();
+</script>
+</body>
+</html>

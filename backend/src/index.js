@@ -1,42 +1,101 @@
+// src/index.js
 const express = require('express');
-const cors    = require('cors');
-const morgan  = require('morgan');
-require('dotenv').config();
+const cors = require('cors');
+const morgan = require('morgan');
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 
-const connectDB       = require('./config/db');
-const authRouter = require('./routes/auth');
-const habitacionesRouter  = require('./routes/habitaciones');
-const reservacionesRouter = require('./routes/reservaciones');
-const contactoRouter      = require('./routes/contacto');
-const newsletterRouter    = require('./routes/newsletter');
+// Cargar variables de entorno
+dotenv.config();
+
+// Conectar a MongoDB
+const connectDB = require('./config/db');
 
 const app = express();
 
-// ── Conexión DB ───────────────────────────────────────────
-connectDB();
+// Middlewares
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://127.0.0.1:5500', 'http://localhost:5500', 'http://192.168.101.3:3000'],
+  credentials: true
+}));
 
-// ── Middlewares ───────────────────────────────────────────
-app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
-// ── Rutas ─────────────────────────────────────────────────
-app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/habitaciones',  habitacionesRouter);
-app.use('/api/v1/reservaciones', reservacionesRouter);
-app.use('/api/v1/contacto',      contactoRouter);
-app.use('/api/v1/newsletter',    newsletterRouter);
-
-// ── Health ────────────────────────────────────────────────
-app.get('/', (req, res) => {
-  res.json({ message: '🏨 Hotel Mirador API funcionando', version: '1.0.0' });
+// Health check mejorado
+app.get('/api/v1/health', (req, res) => {
+  const dbState = mongoose.connection.readyState;
+  const dbStatus = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting'
+  };
+  
+  res.json({
+    status: 'OK',
+    message: 'Hotel Mirador API funcionando correctamente',
+    database: dbStatus[dbState] || 'unknown',
+    timestamp: new Date()
+  });
 });
 
-// ── Error handler global ──────────────────────────────────
+// Importar rutas
+const authRoutes = require('./routes/authRoutes');
+const contactoRoutes = require('./routes/contacto');
+const roomRoutes = require('./routes/roomRoutes');
+const reservationRoutes = require('./routes/reservationRoutes');
+const guideRoutes = require('./routes/guideRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+
+// Rutas API
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/contacto', contactoRoutes);
+app.use('/api/v1/rooms', roomRoutes);
+app.use('/api/v1/reservations', reservationRoutes);
+app.use('/api/v1/guides', guideRoutes);
+app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/upload', require('./routes/uploadRoutes'));
+
+// Ruta para /habitaciones (transforma images a imagenes)
+app.get("/api/v1/habitaciones", async (req, res) => {
+  try {
+    const Room = require("./models/Room");
+    const rooms = await Room.find();
+    const transformed = rooms.map(room => ({
+      ...room.toObject(),
+      imagenes: room.images || []
+    }));
+    res.json(transformed);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 404
+app.use('*', (req, res) => {
+  res.status(404).json({ error: 'Ruta no encontrada' });
+});
+
+// Error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor' });
+  console.error('Error:', err.stack);
+  res.status(err.status || 500).json({
+    error: err.message || 'Error interno del servidor'
+  });
 });
 
+// Iniciar servidor SOLO después de conectar a la DB
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ Servidor corriendo en http://localhost:${PORT}`));
+
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`📋 API Health: http://localhost:${PORT}/api/v1/health`);
+    console.log(`💾 Base de datos: ${mongoose.connection.db.databaseName}`);
+  });
+}).catch(err => {
+  console.error('❌ No se pudo iniciar el servidor:', err);
+  process.exit(1);
+});

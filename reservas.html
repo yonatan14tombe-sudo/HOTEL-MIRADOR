@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Reservas - Hotel Mirador</title>
+  <style>
+    :root{--card-bg:#fff;--accent:#1f6feb;--muted:#666}
+    body{font-family:Inter,system-ui,Arial;background:#f4f6fb;margin:0;padding:24px;color:#111}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+    .card{background:var(--card-bg);border-radius:10px;box-shadow:0 6px 18px rgba(15,23,42,0.08);overflow:hidden;display:flex;flex-direction:column}
+    .carousel{position:relative;display:block;aspect-ratio:16/10;background:#e9eef8;overflow:hidden}
+    .carousel img{width:100%;height:100%;object-fit:cover;display:block;transform:translateZ(0)}
+    .controls{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:8px 12px;pointer-events:none}
+    .btn{background:rgba(0,0,0,0.35);border:none;color:#fff;padding:8px;border-radius:6px;cursor:pointer;pointer-events:auto}
+    .dots{position:absolute;left:50%;transform:translateX(-50%);bottom:8px;display:flex;gap:6px}
+    .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.6);cursor:pointer;opacity:0.9}
+    .dot.active{background:var(--accent)}
+    .meta{padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .title{font-weight:600}
+    .counter{font-size:13px;color:var(--muted)}
+    @media (hover:hover){ .controls .btn{opacity:0;transition:opacity .18s} .carousel:hover .controls .btn{opacity:1} }
+  </style>
+</head>
+<body>
+  <h1>Habitaciones</h1>
+  <div id="grid" class="grid">Cargando...</div>
+
+  <template id="card-template">
+    <article class="card">
+      <div class="carousel" data-index="0">
+        <div class="controls">
+          <button class="btn prev" type="button" aria-label="Anterior">&lt;</button>
+          <button class="btn next" type="button" aria-label="Siguiente">&gt;</button>
+        </div>
+        <div class="dots" aria-hidden="true"></div>
+      </div>
+      <div class="meta">
+        <div>
+          <div class="title"></div>
+          <div class="counter"></div>
+        </div>
+        <div class="price"></div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    const API = '/api/habitaciones'; // ajusta si tu endpoint es distinto
+
+    // Helper: crea elemento img con lazy loading
+    function makeImg(src, alt='') {
+      const img = document.createElement('img');
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.src = src;
+      img.alt = alt;
+      return img;
+    }
+
+    // Renderiza una tarjeta con carrusel independiente
+    function renderCard(h) {
+      const tpl = document.getElementById('card-template');
+      const node = tpl.content.firstElementChild.cloneNode(true);
+      const carousel = node.querySelector('.carousel');
+      const dots = carousel.querySelector('.dots');
+      const prevBtn = carousel.querySelector('.prev');
+      const nextBtn = carousel.querySelector('.next');
+      const titleEl = node.querySelector('.title');
+      const counterEl = node.querySelector('.counter');
+      const priceEl = node.querySelector('.price');
+
+      titleEl.textContent = h.nombre || ('Habitación ' + (h.numero || ''));
+      priceEl.textContent = h.precio ? (h.precio + ' €') : '';
+      const imgs = Array.isArray(h.imagenes) && h.imagenes.length ? h.imagenes : ['https://via.placeholder.com/800x500?text=Sin+imagen'];
+
+      // llenar imágenes y dots
+      imgs.forEach((src, i) => {
+        const img = makeImg(src, titleEl.textContent + ' foto ' + (i+1));
+        img.style.display = (i===0 ? 'block' : 'none');
+        img.dataset.slide = i;
+        carousel.appendChild(img);
+
+        const d = document.createElement('button');
+        d.className = 'dot' + (i===0 ? ' active' : '');
+        d.type = 'button';
+        d.dataset.index = i;
+        d.addEventListener('click', () => show(i));
+        dots.appendChild(d);
+      });
+
+      // estado e interfaz
+      let idx = 0;
+      function show(newIndex) {
+        if (newIndex === idx) return;
+        const imgsEls = Array.from(carousel.querySelectorAll('img'));
+        imgsEls[idx].style.display = 'none';
+        imgsEls[newIndex].style.display = 'block';
+        const dotEls = Array.from(dots.children);
+        dotEls[idx].classList.remove('active');
+        dotEls[newIndex].classList.add('active');
+        idx = newIndex;
+        counterEl.textContent = (idx+1) + ' / ' + imgsEls.length;
+      }
+      prevBtn.addEventListener('click', () => show((idx - 1 + imgs.length) % imgs.length));
+      nextBtn.addEventListener('click', () => show((idx + 1) % imgs.length));
+
+      // Touch support mínimo
+      let startX = null;
+      carousel.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, {passive:true});
+      carousel.addEventListener('touchend', e => {
+        if (startX === null) return;
+        const endX = e.changedTouches[0].clientX;
+        const dx = endX - startX;
+        if (Math.abs(dx) > 40) {
+          if (dx < 0) nextBtn.click(); else prevBtn.click();
+        }
+        startX = null;
+      });
+
+      // contador inicial
+      counterEl.textContent = '1 / ' + imgs.length;
+      return node;
+    }
+
+    // Fetch y montaje
+    async function init() {
+      const grid = document.getElementById('grid');
+      try {
+        const res = await fetch(API);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        grid.innerHTML = '';
+        if (!Array.isArray(data) || data.length === 0) {
+          grid.textContent = 'No hay habitaciones.';
+          return;
+        }
+        data.forEach(h => grid.appendChild(renderCard(h)));
+      } catch (err) {
+        console.error(err);
+        grid.innerHTML = '<p>Error al cargar habitaciones. Comprueba el API en ' + API + '</p>';
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

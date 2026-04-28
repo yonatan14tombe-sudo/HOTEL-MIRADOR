@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <meta name="description" content="Hotel Mirador - Lujo y confort en un entorno natural incomparable. Reserva tu estancia perfecta.">
     <title>Hotel Mirador | Lujo y Naturaleza</title>
     
@@ -14,156 +17,1343 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Custom Styles -->
-    <link rel="stylesheet" href="styles.css">
-
     <style>
-    /* ── Auth Modal ─────────────────────────────────────── */
+    /* ========== RESET & BASE ========== */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: 'Montserrat', sans-serif;
+        color: #2c2c2c;
+        overflow-x: hidden;
+        background-color: #fff;
+    }
+
+    h1, h2, h3, h4, .logo-text, .room-title, .section-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
+    }
+
+    .container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 0 30px;
+    }
+
+    /* ========== HEADER ========== */
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: transparent;
+        z-index: 1000;
+        transition: all 0.4s ease;
+        padding: 20px 0;
+    }
+
+    .header.scrolled {
+        background: #1a1a1a;
+        padding: 12px 0;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 40px 0 40px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        z-index: 1001;
+    }
+
+    .logo-icon {
+        font-size: 28px;
+        color: #c9a84c;
+    }
+
+    .logo-text {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        color: #fff;
+    }
+
+    .header.scrolled .logo-text {
+        color: #fff;
+    }
+
+    .lang-selector {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-left: auto;
+        margin-right: 30px;
+    }
+
+    .lang-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        color: rgba(255,255,255,0.7);
+        transition: color 0.3s;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .lang-btn.active {
+        color: #c9a84c;
+    }
+
+    .lang-divider {
+        color: rgba(255,255,255,0.5);
+    }
+
+    .header.scrolled .lang-btn,
+    .header.scrolled .lang-divider {
+        color: rgba(255,255,255,0.7);
+    }
+
+    .nav-menu {
+        display: flex;
+        list-style: none;
+        gap: 35px;
+        align-items: center;
+    }
+
+    .nav-link {
+        text-decoration: none;
+        color: #fff;
+        font-weight: 500;
+        font-size: 14px;
+        letter-spacing: 1px;
+        transition: color 0.3s;
+        text-transform: uppercase;
+    }
+
+    .nav-link:hover {
+        color: #c9a84c;
+    }
+
+    .btn-reservar {
+        margin-right: 15px;
+        background: #c9a84c;
+        color: #1a1a1a;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-weight: 600;
+    }
+
+    .btn-reservar:hover {
+        background: #b8943a;
+        color: #fff;
+    }
+
+    .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        z-index: 1001;
+    }
+
+    .hamburger {
+        display: block;
+        width: 25px;
+        height: 2px;
+        background: #fff;
+        position: relative;
+        transition: all 0.3s;
+    }
+
+    .hamburger::before,
+    .hamburger::after {
+        content: '';
+        position: absolute;
+        width: 25px;
+        height: 2px;
+        background: #fff;
+        transition: all 0.3s;
+    }
+
+    .hamburger::before {
+        top: -8px;
+    }
+
+    .hamburger::after {
+        bottom: -8px;
+    }
+
+    /* ========== AUTH MODAL ========== */
     .auth-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(4px);
-      z-index: 9999;
-      align-items: center;
-      justify-content: center;
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,.7); backdrop-filter: blur(8px);
+        z-index: 9999; align-items: center; justify-content: center;
     }
     .auth-overlay.show { display: flex; }
 
     .auth-modal {
-      background: #fff;
-      border-radius: 16px;
-      padding: 2.5rem 2rem;
-      width: 100%;
-      max-width: 420px;
-      margin: 1rem;
-      position: relative;
-      box-shadow: 0 24px 60px rgba(0,0,0,.18);
-      animation: modalIn .25s ease;
+        background: #fff; border-radius: 24px;
+        width: 100%; max-width: 460px; margin: 1rem;
+        position: relative; overflow: hidden;
+        box-shadow: 0 30px 80px rgba(0,0,0,.25);
+        animation: modalIn .35s cubic-bezier(.34,1.56,.64,1);
     }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     @keyframes modalIn {
-      from { transform: translateY(24px); opacity: 0; }
-      to   { transform: translateY(0);    opacity: 1; }
+        from { transform: translateY(40px) scale(.95); opacity: 0; }
+        to   { transform: translateY(0) scale(1); opacity: 1; }
     }
-    .auth-close {
-      position: absolute; top: 1rem; right: 1.2rem;
-      background: none; border: none;
-      font-size: 1.5rem; cursor: pointer; color: #888;
-    }
-    .auth-close:hover { color: #333; }
 
-    .auth-modal h2 {
-      text-align: center; font-size: 1.45rem;
-      font-weight: 700; color: #1a1a1a; margin-bottom: .3rem;
+    /* Header del modal */
+    .auth-modal-header {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        padding: 30px 30px 20px; text-align: center; position: relative;
     }
-    .auth-sub {
-      text-align: center; color: #777;
-      font-size: .9rem; margin-bottom: 1.6rem;
+    .auth-modal-header::after {
+        content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+        height: 20px; background: #fff; border-radius: 20px 20px 0 0;
     }
+    .auth-hotel-icon {
+        width: 60px; height: 60px; background: #c9a84c; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 12px; font-size: 1.5rem;
+    }
+    .auth-modal-header h2 {
+        color: #fff; font-family: 'Cormorant Garamond', serif;
+        font-size: 1.5rem; margin-bottom: 4px; letter-spacing: 1px;
+    }
+    .auth-modal-header p { color: rgba(255,255,255,.6); font-size: .82rem; }
+
+    .auth-close {
+        position: absolute; top: 12px; right: 12px;
+        background: rgba(255,255,255,.15); border: none;
+        width: 32px; height: 32px; border-radius: 50%;
+        font-size: 1rem; cursor: pointer; color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        transition: background .2s;
+    }
+    .auth-close:hover { background: rgba(255,255,255,.3); }
+
+    .auth-modal-body { padding: 0 28px 28px; }
+
     .auth-tabs {
-      display: flex; border-bottom: 2px solid #eee; margin-bottom: 1.5rem;
+        display: flex; border-bottom: 2px solid #f0f0f0; margin-bottom: 22px;
     }
     .auth-tab {
-      flex: 1; background: none; border: none;
-      padding: .65rem; font-size: .95rem; font-weight: 600;
-      color: #999; cursor: pointer;
-      border-bottom: 2px solid transparent; margin-bottom: -2px;
-      transition: all .2s;
+        flex: 1; background: none; border: none;
+        padding: .85rem; font-size: .9rem; font-weight: 600;
+        color: #aaa; cursor: pointer;
+        border-bottom: 2px solid transparent; margin-bottom: -2px;
+        transition: all .2s; font-family: 'Montserrat', sans-serif;
     }
     .auth-tab.active { color: #c9a84c; border-bottom-color: #c9a84c; }
 
     .auth-form { display: none; }
     .auth-form.active { display: block; }
 
-    .auth-field { margin-bottom: 1rem; }
+    /* Avatar upload */
+    .avatar-upload {
+        text-align: center; margin-bottom: 18px;
+    }
+    .avatar-preview {
+        width: 70px; height: 70px; border-radius: 50%;
+        background: #f0e6c8; border: 3px solid #c9a84c;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 8px; cursor: pointer; overflow: hidden;
+        transition: all .2s; position: relative;
+    }
+    .avatar-preview:hover { border-color: #b8943a; }
+    .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar-preview i { font-size: 1.8rem; color: #c9a84c; }
+    .avatar-preview .avatar-overlay {
+        position: absolute; inset: 0; background: rgba(0,0,0,.4);
+        display: none; align-items: center; justify-content: center; color: #fff; font-size: .75rem; font-weight: 600;
+    }
+    .avatar-preview:hover .avatar-overlay { display: flex; }
+    .avatar-upload small { color: #aaa; font-size: .72rem; }
+
+    .auth-field { margin-bottom: 14px; }
     .auth-field label {
-      display: block; font-size: .83rem;
-      font-weight: 600; color: #444; margin-bottom: .3rem;
+        display: flex; align-items: center; gap: 6px;
+        font-size: .78rem; font-weight: 700; color: #555;
+        margin-bottom: 5px; text-transform: uppercase; letter-spacing: .5px;
     }
+    .auth-field label i { color: #c9a84c; font-size: .75rem; }
+
+    .auth-field .input-wrap { position: relative; }
+    .auth-field .input-wrap i {
+        position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+        color: #ccc; font-size: .85rem; pointer-events: none;
+    }
+    .auth-field .input-wrap.has-icon input { padding-right: 35px; }
+
     .auth-field input {
-      width: 100%; padding: .72rem 1rem;
-      border: 1.5px solid #ddd; border-radius: 8px;
-      font-size: .95rem; outline: none;
-      transition: border-color .2s; box-sizing: border-box;
+        width: 100%; padding: 11px 14px;
+        border: 1.5px solid #e8e8e8; border-radius: 12px;
+        font-size: .9rem; outline: none;
+        transition: all .2s; font-family: 'Montserrat', sans-serif;
+        background: #fafafa;
     }
-    .auth-field input:focus { border-color: #c9a84c; }
+    .auth-field input:focus { border-color: #c9a84c; background: #fff; box-shadow: 0 0 0 3px rgba(201,168,76,.1); }
+    .auth-field input.input-error { border-color: #ef4444; background: #fff5f5; }
+    .auth-field input.input-ok { border-color: #10b981; }
+    .auth-field .field-error { font-size: .72rem; color: #ef4444; margin-top: 4px; display: none; }
+    .auth-field .field-error.show { display: block; }
+
+    /* Password strength */
+    .password-strength { margin-top: 6px; }
+    .strength-bar { height: 4px; border-radius: 2px; background: #eee; margin-bottom: 3px; overflow: hidden; }
+    .strength-fill { height: 100%; border-radius: 2px; transition: all .3s; width: 0; }
+    .strength-text { font-size: .72rem; color: #aaa; }
 
     .auth-btn {
-      width: 100%; padding: .85rem;
-      background: #1a1a1a; color: #fff;
-      border: none; border-radius: 8px;
-      font-size: 1rem; font-weight: 600;
-      cursor: pointer; margin-top: .3rem; transition: background .2s;
+        width: 100%; padding: 13px;
+        background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+        color: #fff; border: none; border-radius: 12px;
+        font-size: .95rem; font-weight: 700;
+        cursor: pointer; margin-top: 6px;
+        transition: all .2s; font-family: 'Montserrat', sans-serif;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
     }
-    .auth-btn:hover { background: #333; }
-    .auth-btn:disabled { background: #999; cursor: not-allowed; }
+    .auth-btn:hover { background: linear-gradient(135deg, #c9a84c 0%, #b8943a 100%); transform: translateY(-1px); }
+    .auth-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
 
     .auth-msg {
-      padding: .7rem 1rem; border-radius: 8px;
-      font-size: .87rem; margin-top: .8rem; display: none;
+        padding: .75rem 1rem; border-radius: 10px;
+        font-size: .84rem; margin-top: 12px; display: none;
+        display: flex; align-items: center; gap: 8px;
     }
-    .auth-msg.error   { background: #fff1f1; color: #c0392b; display: block; }
-    .auth-msg.success { background: #f0fff4; color: #27ae60; display: block; }
+    .auth-msg.error   { background: #fff1f1; color: #c0392b; display: flex; border: 1px solid #fecaca; }
+    .auth-msg.success { background: #f0fff4; color: #27ae60; display: flex; border: 1px solid #bbf7d0; }
 
     .auth-switch {
-      text-align: center; margin-top: 1.1rem;
-      font-size: .87rem; color: #666;
+        text-align: center; margin-top: 16px;
+        font-size: .84rem; color: #888;
     }
     .auth-switch span {
-      color: #c9a84c; font-weight: 600;
-      cursor: pointer; text-decoration: underline;
+        color: #c9a84c; font-weight: 700;
+        cursor: pointer;
+    }
+    .auth-switch span:hover { text-decoration: underline; }
+
+    .auth-divider {
+        display: flex; align-items: center; gap: 10px;
+        margin: 15px 0; color: #ccc; font-size: .78rem;
+    }
+    .auth-divider::before, .auth-divider::after {
+        content: ''; flex: 1; height: 1px; background: #eee;
     }
 
-    /* ── Botón login en navbar ──────────────────────────── */
+    /* Botón login nav */
     .btn-login-nav {
-      background: none; border: 1.5px solid #c9a84c;
-      color: #c9a84c; padding: .4rem 1.1rem;
-      border-radius: 6px; font-size: .88rem;
-      font-weight: 600; cursor: pointer;
-      transition: all .2s; white-space: nowrap;
+        background: none; border: 1.5px solid #c9a84c;
+        color: #c9a84c; padding: .5rem 1.3rem;
+        border-radius: 30px; font-size: .88rem;
+        font-weight: 600; cursor: pointer;
+        transition: all .2s;
+        font-family: 'Montserrat', sans-serif;
     }
-    .btn-login-nav:hover { background: #c9a84c; color: #fff; }
+    .btn-login-nav:hover { background: #c9a84c; color: #1a1a1a; }
 
-    /* ── Avatar usuario logueado ────────────────────────── */
+    /* User menu */
     .user-menu {
-      display: none; align-items: center;
-      gap: .5rem; cursor: pointer; position: relative;
+        display: none; align-items: center;
+        gap: .6rem; cursor: pointer;
+        position: relative;
+        margin-left: 20px;
     }
     .user-menu.visible { display: flex; }
     .user-avatar {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: #c9a84c; color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: .95rem;
+        width: 40px; height: 40px; border-radius: 50%;
+        background: #c9a84c; color: #1a1a1a;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 1rem;
+        transition: transform 0.2s;
     }
+    .user-avatar:hover { transform: scale(1.05); }
     .user-dropdown {
-      position: absolute; top: calc(100% + 10px); right: 0;
-      background: #fff; border-radius: 10px;
-      box-shadow: 0 8px 30px rgba(0,0,0,.15);
-      min-width: 200px; overflow: hidden;
-      display: none; z-index: 1000;
+        position: absolute; top: calc(100% + 12px); right: 0;
+        background: #fff; border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0,0,0,.15);
+        min-width: 442px; overflow-y: auto; max-height: 80vh;
+        display: none; z-index: 1000;
     }
     .user-dropdown.show { display: block; }
+    .dd-avatar-img { width: 100%; height: 455px; border-radius: 12px 12px 0 0; object-fit: cover; display: block; }
+    .dd-avatar-ph { width: 100%; height: 455px; background: #c9a84c; color: #1a1a1a; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 3rem; border-radius: 12px 12px 0 0; }
+    .dd-header { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: .8rem 1.2rem .6rem; border-bottom: 1px solid #eee; }
     .dd-nombre {
-      padding: .9rem 1rem .3rem;
-      font-weight: 700; color: #1a1a1a; font-size: .92rem;
+        padding: 0;
+        font-weight: 700; color: #fff; font-size: 1rem;
     }
     .dd-email {
-      padding: 0 1rem .7rem;
-      color: #888; font-size: .78rem; border-bottom: 1px solid #eee;
+        padding: 0;
+        color: rgba(255,255,255,.6); font-size: .8rem;
     }
     .user-dropdown a, .user-dropdown button {
-      display: block; width: 100%; text-align: left;
-      padding: .7rem 1rem; background: none; border: none;
-      color: #333; font-size: .9rem; cursor: pointer;
-      text-decoration: none;
+        display: block; width: 100%; text-align: left;
+        padding: .8rem 1.2rem; background: none; border: none;
+        color: #333; font-size: .9rem; cursor: pointer;
+        text-decoration: none;
+        transition: background 0.2s;
     }
     .user-dropdown a:hover, .user-dropdown button:hover {
-      background: #f8f4ee; color: #c9a84c;
+        background: #f8f4ee; color: #c9a84c;
     }
-    .dd-logout { color: #e74c3c !important; }
+    .dd-logout { color: #e74c3c !important; border-top: 1px solid #eee; }
     .dd-logout:hover { background: #fff1f1 !important; color: #c0392b !important; }
+
+    /* ========== HERO ========== */
+    .hero {
+        height: 100vh;
+        background: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1920&q=80') center/cover no-repeat;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.4));
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        padding: 0 20px;
+    }
+
+    .hero-title {
+        font-size: 4.5rem;
+        color: #fff;
+        letter-spacing: 4px;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero-subtitle {
+        font-size: 1.5rem;
+        color: #c9a84c;
+        margin-bottom: 15px;
+        font-weight: 400;
+    }
+
+    .hero-description {
+        font-size: 1.1rem;
+        color: rgba(255,255,255,0.9);
+        margin-bottom: 30px;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 30px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        font-size: 1rem;
+        cursor: pointer;
+        border: none;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .btn-primary {
+        background: #c9a84c;
+        color: #1a1a1a;
+    }
+
+    .btn-primary:hover {
+        background: #b8943a;
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background: transparent;
+        color: #fff;
+        border: 2px solid #c9a84c;
+    }
+
+    .btn-secondary:hover {
+        background: #c9a84c;
+        color: #1a1a1a;
+        transform: translateY(-2px);
+    }
+
+    .hero-scroll {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+    }
+
+    .scroll-indicator {
+        color: #fff;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        transition: transform 0.3s;
+    }
+
+    .scroll-indicator:hover {
+        transform: translateY(5px);
+    }
+
+    /* ========== SECTIONS ========== */
+    .section {
+        padding: 100px 0;
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .section-subtitle {
+        font-size: 1rem;
+        color: #c9a84c;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        color: #1a1a1a;
+        margin-bottom: 15px;
+    }
+
+    .section-description {
+        font-size: 1rem;
+        color: #666;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .section-header.light .section-title {
+        color: #fff;
+    }
+
+    .section-header.light .section-description {
+        color: rgba(255,255,255,0.8);
+    }
+
+    /* Rooms Grid */
+    .rooms-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 40px;
+    }
+
+    .room-card {
+        background: #fff;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+
+    .room-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .room-image {
+        position: relative;
+        height: 250px;
+        overflow: hidden;
+    }
+
+    .room-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
+
+    .room-card:hover .room-image img {
+        transform: scale(1.1);
+    }
+
+    .room-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #c9a84c;
+        color: #1a1a1a;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .room-content {
+        padding: 25px;
+    }
+
+    .room-title {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    .room-description {
+        color: #666;
+        margin-bottom: 15px;
+        line-height: 1.6;
+    }
+
+    .room-features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        list-style: none;
+        margin-bottom: 20px;
+    }
+
+    .room-features li {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.85rem;
+        color: #666;
+    }
+
+    .room-features i {
+        color: #c9a84c;
+        width: 18px;
+    }
+
+    .room-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid #eee;
+        padding-top: 20px;
+    }
+
+    .room-price {
+        display: flex;
+        align-items: baseline;
+        gap: 5px;
+    }
+
+    .price-label {
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    .price-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #c9a84c;
+    }
+
+    .price-period {
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 2px solid #c9a84c;
+        color: #c9a84c;
+        padding: 6px 18px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .btn-outline:hover {
+        background: #c9a84c;
+        color: #1a1a1a;
+    }
+
+    /* Services */
+    .servicios {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+        position: relative;
+    }
+
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 40px;
+    }
+
+    .service-card {
+        text-align: center;
+        padding: 30px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 20px;
+        transition: all 0.3s;
+    }
+
+    .service-card:hover {
+        background: rgba(255,255,255,0.1);
+        transform: translateY(-5px);
+    }
+
+    .service-icon {
+        font-size: 2.5rem;
+        color: #c9a84c;
+        margin-bottom: 20px;
+    }
+
+    .service-title {
+        font-size: 1.3rem;
+        color: #fff;
+        margin-bottom: 10px;
+    }
+
+    .service-description {
+        color: rgba(255,255,255,0.7);
+        line-height: 1.6;
+    }
+
+    /* Gallery */
+    .gallery-container {
+        position: relative;
+        max-width: 1000px;
+        margin: 0 auto 40px;
+        overflow: hidden;
+        border-radius: 20px;
+    }
+
+    .gallery-carousel {
+        display: flex;
+        transition: transform 0.5s ease;
+    }
+
+    .gallery-slide {
+        min-width: 100%;
+        position: relative;
+    }
+
+    .gallery-slide img {
+        width: 100%;
+        height: 500px;
+        object-fit: cover;
+    }
+
+    .gallery-caption {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        background: rgba(0,0,0,0.7);
+        color: #fff;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-size: 0.9rem;
+    }
+
+    .gallery-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0,0,0,0.5);
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        cursor: pointer;
+        color: #fff;
+        transition: all 0.3s;
+        z-index: 10;
+    }
+
+    .gallery-btn:hover {
+        background: #c9a84c;
+    }
+
+    .gallery-prev {
+        left: 20px;
+    }
+
+    .gallery-next {
+        right: 20px;
+    }
+
+    .gallery-indicators {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #ccc;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .indicator.active {
+        background: #c9a84c;
+        width: 25px;
+        border-radius: 10px;
+    }
+
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-top: 40px;
+    }
+
+    .gallery-item {
+        border-radius: 15px;
+        overflow: hidden;
+        height: 200px;
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+
+    .gallery-item:hover img {
+        transform: scale(1.05);
+    }
+
+    /* El Hotel */
+    .hotel-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: center;
+    }
+
+    .hotel-images {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .hotel-image-main img,
+    .hotel-image-secondary img {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 20px;
+    }
+
+    .hotel-image-main img {
+        height: 400px;
+    }
+
+    .hotel-description {
+        margin-bottom: 20px;
+        line-height: 1.8;
+        color: #555;
+    }
+
+    .hotel-features {
+        display: flex;
+        gap: 30px;
+        margin: 30px 0;
+    }
+
+    .hotel-feature {
+        text-align: center;
+    }
+
+    .feature-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #c9a84c;
+    }
+
+    .feature-text {
+        font-size: 0.85rem;
+        color: #666;
+    }
+
+    /* Testimonios */
+    .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+    }
+
+    .testimonial-card {
+        background: #fff;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        transition: transform 0.3s;
+    }
+
+    .testimonial-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .testimonial-stars {
+        color: #ffc107;
+        margin-bottom: 15px;
+    }
+
+    .testimonial-text {
+        font-style: italic;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        color: #555;
+    }
+
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        border-top: 1px solid #eee;
+        padding-top: 20px;
+    }
+
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #c9a84c;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #1a1a1a;
+    }
+
+    .author-name {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 3px;
+    }
+
+    .author-location {
+        font-size: 0.8rem;
+        color: #888;
+    }
+
+    /* Contacto */
+    .contact-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 50px;
+        margin-bottom: 50px;
+    }
+
+    .contact-item {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .contact-icon {
+        width: 50px;
+        height: 50px;
+        background: #f8f4ee;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #c9a84c;
+        font-size: 1.2rem;
+    }
+
+    .contact-details h4 {
+        margin-bottom: 5px;
+    }
+
+    .contact-details p {
+        color: #666;
+        line-height: 1.5;
+    }
+
+    .contact-form {
+        background: #f9f9f9;
+        padding: 30px;
+        border-radius: 20px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-family: 'Montserrat', sans-serif;
+        transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #c9a84c;
+    }
+
+    .error-message {
+        color: #e74c3c;
+        font-size: 0.75rem;
+        margin-top: 5px;
+        display: block;
+    }
+
+    .btn-full {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .form-success {
+        display: none;
+        align-items: center;
+        gap: 10px;
+        background: #d4edda;
+        padding: 12px;
+        border-radius: 10px;
+        margin-top: 15px;
+        color: #155724;
+    }
+
+    .form-success.show {
+        display: flex;
+    }
+
+    .map-container {
+        border-radius: 20px;
+        overflow: hidden;
+        margin-top: 30px;
+    }
+
+    /* Reservar CTA */
+    .reservar {
+        background: url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1920&q=80') center/cover fixed;
+        position: relative;
+        text-align: center;
+    }
+
+    .reservar-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+    }
+
+    .reservar-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .reservar-title {
+        font-size: 2.5rem;
+        color: #fff;
+        margin-bottom: 15px;
+    }
+
+    .reservar-description {
+        color: rgba(255,255,255,0.9);
+        margin-bottom: 30px;
+        font-size: 1.1rem;
+    }
+
+    .btn-lg {
+        padding: 15px 40px;
+        font-size: 1.1rem;
+    }
+
+    /* Footer */
+    .footer {
+        background: #1a1a1a;
+        padding: 60px 0 20px;
+        color: #fff;
+    }
+
+    .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 50px;
+        margin-bottom: 40px;
+    }
+
+    .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.5rem;
+        font-weight: 700;
+        text-decoration: none;
+        color: #fff;
+        margin-bottom: 15px;
+        font-family: 'Cormorant Garamond', serif;
+    }
+
+    .footer-logo i {
+        color: #c9a84c;
+    }
+
+    .footer-tagline {
+        color: rgba(255,255,255,0.7);
+        margin-bottom: 20px;
+    }
+
+    .footer-social {
+        display: flex;
+        gap: 15px;
+    }
+
+    .footer-social a {
+        width: 35px;
+        height: 35px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        transition: all 0.3s;
+    }
+
+    .footer-social a:hover {
+        background: #c9a84c;
+        transform: translateY(-3px);
+    }
+
+    .footer-links h4,
+    .footer-contact h4,
+    .footer-newsletter h4 {
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+    }
+
+    .footer-links ul,
+    .footer-contact ul {
+        list-style: none;
+    }
+
+    .footer-links li,
+    .footer-contact li {
+        margin-bottom: 10px;
+    }
+
+    .footer-links a {
+        color: rgba(255,255,255,0.7);
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .footer-links a:hover,
+    .footer-contact li:hover {
+        color: #c9a84c;
+    }
+
+    .footer-contact li {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        color: rgba(255,255,255,0.7);
+    }
+
+    .footer-contact i {
+        width: 20px;
+        color: #c9a84c;
+    }
+
+    .footer-newsletter p {
+        color: rgba(255,255,255,0.7);
+        margin-bottom: 15px;
+    }
+
+    .newsletter-form {
+        display: flex;
+    }
+
+    .newsletter-form input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 30px 0 0 30px;
+        outline: none;
+    }
+
+    .newsletter-form button {
+        padding: 10px 15px;
+        background: #c9a84c;
+        border: none;
+        border-radius: 0 30px 30px 0;
+        cursor: pointer;
+        color: #1a1a1a;
+        transition: background 0.3s;
+    }
+
+    .newsletter-form button:hover {
+        background: #b8943a;
+    }
+
+    .footer-bottom {
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .footer-legal {
+        display: flex;
+        gap: 20px;
+    }
+
+    .footer-legal a {
+        color: rgba(255,255,255,0.5);
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: color 0.3s;
+    }
+
+    .footer-legal a:hover {
+        color: #c9a84c;
+    }
+
+    /* Floating Button */
+    .floating-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #c9a84c;
+        color: #1a1a1a;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        z-index: 999;
+        transition: all 0.3s;
+    }
+
+    .floating-btn:hover {
+        transform: scale(1.1);
+        background: #b8943a;
+    }
+
+    .floating-btn i {
+        font-size: 1.3rem;
+    }
+
+    .floating-btn span {
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .container {
+            padding: 0 20px;
+        }
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 70%;
+            height: 100vh;
+            background: #1a1a1a;
+            flex-direction: column;
+            justify-content: center;
+            transition: right 0.3s;
+            z-index: 999;
+        }
+        .nav-menu.active {
+            right: 0;
+        }
+        .menu-toggle {
+            display: block;
+        }
+        .hotel-content,
+        .contact-wrapper {
+            grid-template-columns: 1fr;
+        }
+        .gallery-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .hero-title {
+            font-size: 2.5rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .rooms-grid {
+            grid-template-columns: 1fr;
+        }
+        .services-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .gallery-grid {
+            grid-template-columns: 1fr;
+        }
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
     </style>
 </head>
 <body>
@@ -182,14 +1372,12 @@
             </div>
             
             <ul class="nav-menu" id="navMenu">
-                <li><a href="#inicio"       class="nav-link">Inicio</a></li>
+                <li><a href="#inicio" class="nav-link">Inicio</a></li>
                 <li><a href="#habitaciones" class="nav-link">Habitaciones</a></li>
-                <li><a href="#servicios"    class="nav-link">Servicios</a></li>
-                <li><a href="#galeria"      class="nav-link">Galería</a></li>
-                <li><a href="#hotel"        class="nav-link">El Hotel</a></li>
-                <li><a href="#contacto"     class="nav-link">Contacto</a></li>
-                <li><a href="#reservar"     class="nav-link btn-reservar">Reservar</a></li>
-                <!-- Botón login -->
+                <li><a href="#servicios" class="nav-link">Servicios</a></li>
+                <li><a href="#hotel" class="nav-link">El Hotel</a></li>
+                <li><a href="#contacto" class="nav-link">Contacto</a></li>
+                <li><a href="reservas.html" class="nav-link btn-reservar">Reservar</a></li>
                 <li id="navLoginItem">
                     <button class="btn-login-nav" onclick="abrirAuth('login')">
                         <i class="fas fa-user"></i> Iniciar sesión
@@ -197,16 +1385,46 @@
                 </li>
             </ul>
 
-            <!-- Avatar usuario (visible cuando está logueado) -->
             <div class="user-menu" id="userMenu">
                 <div class="user-avatar" id="userAvatar">U</div>
                 <div class="user-dropdown" id="userDropdown">
-                    <div class="dd-nombre"  id="ddNombre"></div>
-                    <div class="dd-email"   id="ddEmail"></div>
-                    <a href="#reservar">Mis reservaciones</a>
-                    <button class="dd-logout" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-                    </button>
+                    <div class="dd-header">
+                        <div id="ddAvatarContainer">
+                            <div class="dd-avatar-ph" id="ddAvatarPh">U</div>
+                        </div>
+                        <div>
+                            <div class="dd-nombre" id="ddNombre">Usuario</div>
+                            <div class="dd-email" id="ddEmail">correo@email.com</div>
+                            <span class="dd-rol" id="ddRol">usuario</span>
+                        </div>
+                    </div>
+                    <div class="dd-menu">
+                        <a href="perfil.html"><i class="fas fa-user-circle"></i> Mi perfil</a>
+                        <a href="#" id="misReservasLink">
+                            <i class="fas fa-calendar-alt"></i> Mis reservaciones
+                        </a>
+                        <a href="reservas.html">
+                            <i class="fas fa-bed"></i> Reservar habitación
+                        </a>
+                        <a href="guias.html">
+                            <i class="fas fa-compass"></i> Guías turísticos
+                        </a>
+                        <a href="#" id="miGuiaLink" style="display:none;">
+                            <i class="fas fa-map-marked-alt"></i> Mi guía asignado
+                        </a>
+                        <a href="perfil-guia.html" id="linkPerfilGuia" style="display:none;">
+                            <i class="fas fa-user-edit"></i> Mi perfil de guía
+                        </a>
+                        <a href="encargado.html" id="linkEncargado" style="display:none;">
+                            <i class="fas fa-concierge-bell"></i> Panel Encargado
+                        </a>
+                        <a href="admin.html" id="linkAdmin" style="display:none;">
+                            <i class="fas fa-shield-alt"></i> Panel Admin
+                        </a>
+                        <button class="dd-logout" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -218,70 +1436,165 @@
 
     <!-- ========== MODAL AUTENTICACIÓN ========== -->
     <div class="auth-overlay" id="authOverlay">
-      <div class="auth-modal">
-        <button class="auth-close" id="authClose">&times;</button>
-        <h2>🏨 Hotel Mirador</h2>
-        <p class="auth-sub">Inicia sesión o crea tu cuenta</p>
+        <div class="auth-modal">
+            <!-- Header -->
+            <div class="auth-modal-header">
+                <button class="auth-close" id="authClose"><i class="fas fa-times"></i></button>
+                <div class="auth-hotel-icon">🏨</div>
+                <h2>Hotel Mirador</h2>
+                <p>Tu paraíso en el Caribe colombiano</p>
+            </div>
 
-        <div class="auth-tabs">
-          <button class="auth-tab active" data-tab="login">Iniciar sesión</button>
-          <button class="auth-tab"        data-tab="registro">Registrarse</button>
-        </div>
+            <div class="auth-modal-body">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="login">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar sesión
+                    </button>
+                    <button class="auth-tab" data-tab="registro">
+                        <i class="fas fa-user-plus"></i> Registrarse
+                    </button>
+                </div>
 
-        <!-- LOGIN -->
-        <div class="auth-form active" id="formLogin">
-          <div class="auth-field">
-            <label for="loginEmail">Correo electrónico</label>
-            <input type="email" id="loginEmail" placeholder="tu@correo.com"/>
-          </div>
-          <div class="auth-field">
-            <label for="loginPassword">Contraseña</label>
-            <input type="password" id="loginPassword" placeholder="••••••••"/>
-          </div>
-          <button class="auth-btn" id="loginBtn">Continuar</button>
-          <div class="auth-msg" id="loginMsg"></div>
-          <div class="auth-switch">
-            ¿No tienes cuenta? <span onclick="switchTab('registro')">Regístrate gratis</span>
-          </div>
-        </div>
+                <!-- LOGIN -->
+                <div class="auth-form active" id="formLogin">
+                    <div class="auth-field">
+                        <label><i class="fas fa-envelope"></i> Correo electrónico</label>
+                        <div class="input-wrap has-icon">
+                            <input type="email" id="loginEmail" placeholder="tu@correo.com"/>
+                            <i class="fas fa-at"></i>
+                        </div>
+                        <div class="field-error" id="loginEmailError"></div>
+                    </div>
+                    <div class="auth-field">
+                        <label><i class="fas fa-lock"></i> Contraseña</label>
+                        <div class="input-wrap has-icon">
+                            <input type="password" id="loginPassword" placeholder="••••••••"/>
+                            <i class="fas fa-eye" style="cursor:pointer" onclick="togglePass('loginPassword', this)"></i>
+                        </div>
+                        <div class="field-error" id="loginPassError"></div>
+                    </div>
+                    <button class="auth-btn" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Ingresar
+                    </button>
+                    <div class="auth-msg" id="loginMsg" style="display:none;"></div>
+                    <div class="auth-switch">
+                        ¿No tienes cuenta? <span onclick="switchTab('registro')">Regístrate gratis</span>
+                    </div>
+                </div>
 
-        <!-- REGISTRO -->
-        <div class="auth-form" id="formRegistro">
-          <div class="auth-field">
-            <label for="regNombre">Nombre completo</label>
-            <input type="text" id="regNombre" placeholder="María García"/>
-          </div>
-          <div class="auth-field">
-            <label for="regEmail">Correo electrónico</label>
-            <input type="email" id="regEmail" placeholder="tu@correo.com"/>
-          </div>
-          <div class="auth-field">
-            <label for="regTelefono">Teléfono (opcional)</label>
-            <input type="tel" id="regTelefono" placeholder="+57 300 123 4567"/>
-          </div>
-          <div class="auth-field">
-            <label for="regPassword">Contraseña</label>
-            <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres"/>
-          </div>
-          <button class="auth-btn" id="registroBtn">Crear cuenta</button>
-          <div class="auth-msg" id="registroMsg"></div>
-          <div class="auth-switch">
-            ¿Ya tienes cuenta? <span onclick="switchTab('login')">Inicia sesión</span>
-          </div>
+                <!-- REGISTRO -->
+                <div class="auth-form" id="formRegistro">
+                    <!-- Avatar -->
+                    <div class="avatar-upload">
+                        <div class="avatar-preview" onclick="document.getElementById('avatarInput').click()">
+                            <i class="fas fa-user" id="avatarIcon"></i>
+                            <img id="avatarPreviewImg" src="" style="display:none">
+                            <div class="avatar-overlay"><i class="fas fa-camera"></i> Cambiar</div>
+                        </div>
+                        <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="previsualizarAvatar(this)">
+                        <small>📸 Agrega tu foto (opcional)</small>
+                    </div>
+
+                    <div class="auth-field">
+                        <label><i class="fas fa-user"></i> Nombre completo</label>
+                        <div class="input-wrap has-icon">
+                            <input type="text" id="regNombre" placeholder="María García" oninput="validarNombre()"/>
+                            <i class="fas fa-check" id="iconNombre" style="color:#10b981;display:none"></i>
+                        </div>
+                        <div class="field-error" id="errorNombre"></div>
+                    </div>
+                    <div class="auth-field">
+                        <label><i class="fas fa-envelope"></i> Correo electrónico</label>
+                        <div class="input-wrap has-icon">
+                            <input type="email" id="regEmail" placeholder="tu@correo.com" oninput="validarEmail()"/>
+                            <i class="fas fa-check" id="iconEmail" style="color:#10b981;display:none"></i>
+                        </div>
+                        <div class="field-error" id="errorEmail"></div>
+                    </div>
+                    <div class="auth-field">
+                        <label><i class="fas fa-phone"></i> Teléfono (opcional)</label>
+                        <div class="input-wrap has-icon">
+                            <input type="tel" id="regTelefono" placeholder="+57 300 123 4567"/>
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                    </div>
+                    <div class="auth-field">
+                        <label><i class="fas fa-lock"></i> Contraseña</label>
+                        <div class="input-wrap has-icon">
+                            <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres"
+                                oninput="validarPassword()" />
+                            <i class="fas fa-eye" style="cursor:pointer" onclick="togglePass('regPassword', this)"></i>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+                            <div class="strength-text" id="strengthText"></div>
+                        </div>
+                        <div class="field-error" id="errorPassword"></div>
+                    </div>
+                    <button class="auth-btn" id="registroBtn">
+                        <i class="fas fa-user-plus"></i> Crear mi cuenta
+                    </button>
+                    <div class="auth-msg" id="registroMsg" style="display:none;"></div>
+                    <div class="auth-switch">
+                        ¿Ya tienes cuenta? <span onclick="switchTab('login')">Inicia sesión</span>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
+
+    <!-- Modal de reservaciones -->
+    <div class="auth-overlay" id="reservasModal" style="z-index: 10000; align-items: flex-start; justify-content: flex-end; padding: 0;">
+        <div class="auth-modal" style="max-width: 400px; height: 100vh; border-radius: 0; margin: 0; display: flex; flex-direction: column; animation: slideInRight .35s ease;">
+            <button class="auth-close" onclick="cerrarReservasModal()">&times;</button>
+            <h2>📋 Mis Reservaciones</h2>
+            <div id="reservasContent" style="flex: 1; overflow-y: auto; padding: 20px;">
+                <p style="text-align: center; color: #666;">Cargando tus reservaciones...</p>
+            </div>
+        </div>
     </div>
 
     <!-- ========== HERO SECTION ========== -->
-    <section class="hero" id="inicio">
-        <div class="hero-overlay"></div>
+    <section class="hero" id="inicio" style="position:relative;overflow:hidden;">
+        <!-- CARRUSEL DE FONDO -->
+        <div id="hero-bg" style="position:absolute;inset:0;z-index:0;overflow:hidden;">
+            <div id="hero-slides" style="display:flex;width:1200%;height:100%;transition:transform 1.2s cubic-bezier(.77,0,.18,1);">
+                <div style="min-width:8.333%;height:100%;background:url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1920&q=80') center/cover no-repeat;"></div>
+                <div style="min-width:8.333%;height:100%;background:url('https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=1920&q=80') center/cover no-repeat;"></div>
+                <div style="min-width:8.333%;height:100%;background:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80') center/cover no-repeat;"></div>
+                <div style="min-width:8.333%;height:100%;background:url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1920&q=80') center/cover no-repeat;"></div>
+                <div style="min-width:8.333%;height:100%;background:url('https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1920&q=80') center/cover no-repeat;"></div>
+                <div style="min-width:8.333%;height:100%;background:url('https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1920&q=80') center/cover no-repeat;"></div>
+                <div style="min-width:8.333%;height:100%;background:url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1920&q=80') center/cover no-repeat;"></div>
+                <div style="min-width:8.333%;height:100%;background:url('https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1920&q=80') center/cover no-repeat;"></div>
+                <div style="min-width:8.333%;height:100%;background:url('https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=1920&q=80') center/cover no-repeat;"></div>
+                <div style="min-width:8.333%;height:100%;background:url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1920&q=80') center/cover no-repeat;"></div>
+                <div style="min-width:8.333%;height:100%;background:url('https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=1920&q=80') center/cover no-repeat;"></div>
+                <div style="min-width:8.333%;height:100%;background:url('https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=1920&q=80') center/cover no-repeat;"></div>
+            </div>
+        </div>
+        <div class="hero-overlay" style="z-index:1;background:linear-gradient(135deg,rgba(0,0,0,.55),rgba(0,0,0,.35));"></div>
+        <script>
+        (function(){
+            let hi = 0;
+            const total = 12;
+            setInterval(function(){
+                hi = (hi+1) % total;
+                document.getElementById('hero-slides').style.transform = 'translateX(-' + (hi * 8.333) + '%)';
+            }, 3000);
+        })();
+        </script>
         <div class="hero-content">
-            <h1 class="hero-title">HOTEL MIRADOR</h1>
+            <h1 class="hero-title" style="font-family:'Cormorant Garamond',serif;font-size:5.5rem;font-weight:700;color:#fff;letter-spacing:8px;text-shadow:0 4px 30px rgba(0,0,0,.5);line-height:1.1;margin-bottom:10px;">
+    <span style="display:block;font-size:1rem;font-weight:400;letter-spacing:12px;color:#c9a84c;text-transform:uppercase;margin-bottom:15px;">✦ Bienvenidos a ✦</span>
+    HOTEL MIRADOR
+    <span style="display:block;width:80px;height:2px;background:linear-gradient(to right,transparent,#c9a84c,transparent);margin:15px auto 0;"></span>
+</h1>
             <p class="hero-subtitle">Donde el lujo se encuentra con la naturaleza</p>
             <p class="hero-description">Descubre un oasis de tranquilidad con vistas panorámicas impresionantes</p>
             <div class="hero-buttons">
                 <a href="#habitaciones" class="btn btn-primary">Ver Habitaciones</a>
-                <a href="#reservar" class="btn btn-secondary">Reservar Ahora</a>
+                <a href="reservas.html" class="btn btn-secondary">Reservar Ahora</a>
             </div>
         </div>
         <div class="hero-scroll">
@@ -293,165 +1606,364 @@
     </section>
 
     <!-- ========== HABITACIONES SECTION ========== -->
-    <section class="section habitaciones" id="habitaciones">
+    <section class="section habitaciones" id="habitaciones" style="background:url('https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=1920&q=80') center/cover no-repeat;padding:80px 0;position:relative;">
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.45);"></div>
+    <div style="position:relative;z-index:1;">
         <div class="container">
-            <div class="section-header">
-                <span class="section-subtitle">Alojamiento</span>
-                <h2 class="section-title">Nuestras Habitaciones</h2>
-                <p class="section-description">Espacios diseñados para el descanso perfecto, con todas las comodidades que mereces</p>
+            <div class="section-header" style="margin-bottom:50px;">
+                <span class="section-subtitle" style="color:#c9a84c;">Alojamiento</span>
+                <h2 class="section-title" style="color:#fff;">Nuestras Habitaciones</h2>
+                <p class="section-description" style="color:#aaa;">20 espacios únicos ordenados del más acogedor al más exclusivo</p>
             </div>
-            <div class="rooms-grid">
-                <article class="room-card">
-                    <div class="room-image">
-                        <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80" alt="Suite Presidencial">
-                        <span class="room-badge">Premium</span>
-                    </div>
-                    <div class="room-content">
-                        <h3 class="room-title">Suite Presidencial</h3>
-                        <p class="room-description">Nuestra suite más exclusiva con terraza privada y vistas panorámicas a las montañas.</p>
-                        <ul class="room-features">
-                            <li><i class="fas fa-bed"></i> King Size</li>
-                            <li><i class="fas fa-ruler-combined"></i> 85 m²</li>
-                            <li><i class="fas fa-mountain"></i> Vista Montaña</li>
-                            <li><i class="fas fa-bath"></i> Jacuzzi</li>
-                        </ul>
-                        <div class="room-footer">
-                            <div class="room-price">
-                                <span class="price-label">Desde</span>
-                                <span class="price-value">$450.000</span>
-                                <span class="price-period">/ noche</span>
-                            </div>
-                            <a href="#reservar" class="btn btn-outline">Ver Más</a>
+
+            <!-- CARRUSEL PRINCIPAL -->
+            <div style="position:relative;max-width:900px;margin:0 auto;">
+
+                <!-- Tarjeta activa -->
+                <div id="hc-card" style="background:#1a1a1a;border-radius:24px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.6);transition:opacity .3s;">
+                    <div style="position:relative;height:420px;overflow:hidden;">
+                        <img id="hc-img" src="" alt="" style="width:100%;height:100%;object-fit:cover;transition:transform .5s;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,rgba(0,0,0,.1) 55%);"></div>
+                        <!-- Badge tipo -->
+                        <div id="hc-badge" style="position:absolute;top:20px;left:20px;padding:6px 18px;border-radius:20px;font-size:.8rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;"></div>
+                        <!-- Número de habitación -->
+                        <div id="hc-num" style="position:absolute;top:20px;right:20px;background:rgba(0,0,0,.5);color:#fff;padding:5px 14px;border-radius:20px;font-size:.85rem;font-weight:600;"></div>
+                        <!-- Precio grande sobre imagen -->
+                        <div style="position:absolute;bottom:20px;left:25px;">
+                            <div id="hc-name" style="font-family:'Cormorant Garamond',serif;font-size:2rem;color:#fff;font-weight:700;text-shadow:0 2px 10px rgba(0,0,0,.5);"></div>
+                            <div id="hc-price" style="font-size:1.6rem;font-weight:800;color:#c9a84c;"></div>
                         </div>
+                        <!-- Contador -->
+                        <div id="hc-counter" style="position:absolute;bottom:20px;right:20px;background:rgba(0,0,0,.5);color:#fff;font-size:.85rem;padding:5px 12px;border-radius:20px;"></div>
                     </div>
-                </article>
-                <article class="room-card">
-                    <div class="room-image">
-                        <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&q=80" alt="Habitación Doble">
-                        <span class="room-badge">Popular</span>
+                    <div style="padding:25px 30px;">
+                        <p id="hc-desc" style="color:#bbb;line-height:1.7;margin-bottom:18px;font-size:.95rem;"></p>
+                        <div id="hc-feats" style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:22px;"></div>
+                        <a href="reservas.html" style="display:inline-block;background:#c9a84c;color:#1a1a1a;padding:12px 32px;border-radius:30px;font-weight:700;text-decoration:none;font-size:.95rem;transition:background .2s;" onmouseover="this.style.background='#b8943a'" onmouseout="this.style.background='#c9a84c'">
+                            <i class="fas fa-calendar-check"></i> Reservar esta habitación
+                        </a>
                     </div>
-                    <div class="room-content">
-                        <h3 class="room-title">Habitación Doble</h3>
-                        <p class="room-description">Perfecta para parejas, con decoración elegante y todas las comodidades modernas.</p>
-                        <ul class="room-features">
-                            <li><i class="fas fa-bed"></i> Queen Size</li>
-                            <li><i class="fas fa-ruler-combined"></i> 45 m²</li>
-                            <li><i class="fas fa-tree"></i> Vista Jardín</li>
-                            <li><i class="fas fa-shower"></i> Ducha Lluvia</li>
-                        </ul>
-                        <div class="room-footer">
-                            <div class="room-price">
-                                <span class="price-label">Desde</span>
-                                <span class="price-value">$280.000</span>
-                                <span class="price-period">/ noche</span>
-                            </div>
-                            <a href="#reservar" class="btn btn-outline">Ver Más</a>
-                        </div>
-                    </div>
-                </article>
-                <article class="room-card">
-                    <div class="room-image">
-                        <img src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&q=80" alt="Suite Familiar">
-                    </div>
-                    <div class="room-content">
-                        <h3 class="room-title">Suite Familiar</h3>
-                        <p class="room-description">Amplio espacio para toda la familia con dos ambientes y área de entretenimiento.</p>
-                        <ul class="room-features">
-                            <li><i class="fas fa-bed"></i> 2 Camas</li>
-                            <li><i class="fas fa-ruler-combined"></i> 70 m²</li>
-                            <li><i class="fas fa-users"></i> 4 Personas</li>
-                            <li><i class="fas fa-tv"></i> Smart TV</li>
-                        </ul>
-                        <div class="room-footer">
-                            <div class="room-price">
-                                <span class="price-label">Desde</span>
-                                <span class="price-value">$380.000</span>
-                                <span class="price-period">/ noche</span>
-                            </div>
-                            <a href="#reservar" class="btn btn-outline">Ver Más</a>
-                        </div>
-                    </div>
-                </article>
+                </div>
+
+                <!-- Botones prev/next -->
+                <button onclick="hcGo(-1)" style="position:absolute;top:200px;left:-25px;width:50px;height:50px;border-radius:50%;background:#c9a84c;border:none;color:#1a1a1a;font-size:1.2rem;cursor:pointer;box-shadow:0 5px 20px rgba(0,0,0,.4);transition:transform .2s;z-index:10;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">❮</button>
+                <button onclick="hcGo(1)"  style="position:absolute;top:200px;right:-25px;width:50px;height:50px;border-radius:50%;background:#c9a84c;border:none;color:#1a1a1a;font-size:1.2rem;cursor:pointer;box-shadow:0 5px 20px rgba(0,0,0,.4);transition:transform .2s;z-index:10;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">❯</button>
             </div>
+
+            <!-- Barra de progreso -->
+            <div style="max-width:900px;margin:20px auto 0;background:#333;border-radius:10px;height:4px;overflow:hidden;">
+                <div id="hc-progress" style="height:100%;background:#c9a84c;border-radius:10px;transition:width .3s;"></div>
+            </div>
+
+            <!-- Miniaturas -->
+            <div id="hc-thumbs" style="display:flex;gap:10px;overflow-x:auto;max-width:900px;margin:20px auto 0;padding-bottom:10px;scrollbar-width:thin;scrollbar-color:#c9a84c #333;"></div>
+
         </div>
     </section>
 
+    <script>
+    const HC_ROOMS = [
+        {nombre:"Habitación Brisa Marina",tipo:"sencilla",precio:180000,img:"https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800",desc:"Despierta con la brisa del mar Caribe. Acogedora y fresca con decoración náutica artesanal.",camas:"Doble",tamanio:25,cap:2},
+        {nombre:"Nido del Pescador",tipo:"sencilla",precio:185000,img:"https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800",desc:"Con encanto rústico caribeño y vistas al pueblo pesquero. Auténtica y llena de historia local.",camas:"Sencilla",tamanio:24,cap:2},
+        {nombre:"Vista Jardín Tropical",tipo:"sencilla",precio:190000,img:"https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800",desc:"Rodeada de vegetación exuberante. Tu ventana es una pintura viva de flores tropicales.",camas:"Doble",tamanio:26,cap:2},
+        {nombre:"Refugio Caribeño",tipo:"sencilla",precio:195000,img:"https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800",desc:"Pequeño paraíso con hamacas y decoración de colores vibrantes. El Caribe en su máxima expresión.",camas:"Doble",tamanio:25,cap:2},
+        {nombre:"Suite Coral",tipo:"doble",precio:280000,img:"https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800",desc:"Inspirada en los arrecifes de coral. Elegante con baño de mármol y vista parcial al mar.",camas:"Queen Size",tamanio:38,cap:3},
+        {nombre:"Balcón del Atlántico",tipo:"doble",precio:295000,img:"https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800",desc:"Amplio balcón privado con vista panorámica al Atlántico. Perfecta para amaneceres inolvidables.",camas:"Queen Size",tamanio:40,cap:3},
+        {nombre:"Terraza Palmera",tipo:"doble",precio:310000,img:"https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800",desc:"Terraza privada rodeada de palmeras reales. Desayuno incluido con frutas tropicales de la región.",camas:"Queen Size",tamanio:42,cap:3},
+        {nombre:"Vista Bahía",tipo:"doble",precio:320000,img:"https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800",desc:"Vistas directas a la bahía desde la cama. Diseño contemporáneo con toques coloniales caribeños.",camas:"King Size",tamanio:44,cap:3},
+        {nombre:"Villa Familiar Caribe",tipo:"familiar",precio:380000,img:"https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800",desc:"Espacio generoso para toda la familia con zona de juegos y dos ambientes independientes.",camas:"2 Camas",tamanio:60,cap:5},
+        {nombre:"Suite Dos Mundos",tipo:"familiar",precio:395000,img:"https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800",desc:"Dos habitaciones conectadas con sala común. Ideal para familias que buscan confort y privacidad.",camas:"2 Camas",tamanio:65,cap:5},
+        {nombre:"Paraíso en Familia",tipo:"familiar",precio:420000,img:"https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800",desc:"Diseñada para crear recuerdos. Piscina privada pequeña, área de BBQ y jardín tropical.",camas:"3 Camas",tamanio:70,cap:6},
+        {nombre:"Casa de la Laguna",tipo:"familiar",precio:450000,img:"https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800",desc:"Frente a la laguna esmeralda. Kayaks incluidos y acceso exclusivo al muelle privado del hotel.",camas:"3 Camas",tamanio:75,cap:6},
+        {nombre:"Suite Ejecutiva Caribe",tipo:"premium",precio:550000,img:"https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800",desc:"Para el viajero exigente. Sala de trabajo, cama King premium y servicio de mayordomo.",camas:"King Size",tamanio:55,cap:2},
+        {nombre:"Suite Puesta de Sol",tipo:"premium",precio:620000,img:"https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800",desc:"Orientada al oeste para vivir los atardeceres más espectaculares del Caribe colombiano.",camas:"King Size",tamanio:58,cap:2},
+        {nombre:"Penthouse Arrecife",tipo:"premium",precio:650000,img:"https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800",desc:"Terraza panorámica de 360°, jacuzzi exterior y bar privado con vista al arrecife de coral.",camas:"King Size",tamanio:80,cap:3},
+        {nombre:"Loft Marina",tipo:"premium",precio:680000,img:"https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800",desc:"Diseño arquitectónico único de doble altura. Vistas directas a la marina y al horizonte caribeño.",camas:"King Size",tamanio:85,cap:3},
+        {nombre:"Villa VIP Ámbar",tipo:"suite",precio:950000,img:"https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800",desc:"Villa independiente con piscina privada, jardín tropical, cocina equipada y mayordomo 24h.",camas:"King Size",tamanio:120,cap:4},
+        {nombre:"Suite Imperial Caribe",tipo:"suite",precio:1100000,img:"https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800",desc:"La suite más solicitada. Decoración de autor, bañera exenta con vista al mar y champagne de bienvenida.",camas:"King Size",tamanio:140,cap:2},
+        {nombre:"Penthouse Estrella del Mar",tipo:"suite",precio:1350000,img:"https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800",desc:"Ocupa todo el último piso. Terraza privada de 200m², telescopio estelar y chef privado incluido.",camas:"King Size",tamanio:200,cap:4},
+        {nombre:"La Joya del Caribe",tipo:"suite",precio:1800000,img:"https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800",desc:"Nuestra joya absoluta. Experiencia inigualable con helipad, piscina infinita privada y servicio White Glove.",camas:"King Size",tamanio:280,cap:4}
+    ];
+
+    const HC_COLORS = {sencilla:"#6bcb77",doble:"#4d96ff",familiar:"#ff9f43",premium:"#c9a84c",suite:"#e74c3c"};
+    const HC_LABELS = {sencilla:"Sencilla",doble:"Doble",familiar:"Familiar",premium:"Premium",suite:"Suite de Lujo"};
+    const HC_ICONS  = {wifi:"📶",tv:"📺",aire:"❄️",minibar:"🍷",jacuzzi:"🛁",terraza:"🌴",piscina:"🏊"};
+
+    let hcIdx = 0;
+    let hcTimer = null;
+
+    function hcRender(idx) {
+        const r = HC_ROOMS[idx];
+        const card = document.getElementById("hc-card");
+        card.style.opacity = "0";
+        setTimeout(() => {
+            document.getElementById("hc-img").src   = r.img;
+            document.getElementById("hc-img").alt   = r.nombre;
+            document.getElementById("hc-name").textContent  = r.nombre;
+            document.getElementById("hc-price").textContent = "$" + r.precio.toLocaleString("es-CO") + " / noche";
+            document.getElementById("hc-desc").textContent  = r.desc;
+            document.getElementById("hc-num").textContent   = "Hab. " + (idx+1) + " de " + HC_ROOMS.length;
+            document.getElementById("hc-counter").textContent = (idx+1) + " / " + HC_ROOMS.length;
+            document.getElementById("hc-progress").style.width = ((idx+1)/HC_ROOMS.length*100) + "%";
+
+            const badge = document.getElementById("hc-badge");
+            badge.textContent = HC_LABELS[r.tipo] || r.tipo;
+            badge.style.background = HC_COLORS[r.tipo] || "#888";
+            badge.style.color = r.tipo === "premium" ? "#1a1a1a" : "#fff";
+
+            const feats = document.getElementById("hc-feats");
+            feats.innerHTML = [
+                `<span style="color:#aaa;font-size:.85rem;"><i class="fas fa-bed" style="color:#c9a84c;margin-right:5px;"></i>${r.camas}</span>`,
+                `<span style="color:#aaa;font-size:.85rem;"><i class="fas fa-ruler-combined" style="color:#c9a84c;margin-right:5px;"></i>${r.tamanio} m²</span>`,
+                `<span style="color:#aaa;font-size:.85rem;"><i class="fas fa-users" style="color:#c9a84c;margin-right:5px;"></i>${r.cap} personas</span>`
+            ].join("");
+
+            // Miniaturas activas
+            document.querySelectorAll(".hc-thumb").forEach((t,i) => {
+                t.style.opacity = i === idx ? "1" : "0.4";
+                t.style.border  = i === idx ? "2px solid #c9a84c" : "2px solid transparent";
+                t.style.transform = i === idx ? "scale(1.08)" : "scale(1)";
+                if (i === idx) { const tb = document.getElementById("hc-thumbs"); tb.scrollLeft = t.offsetLeft - tb.offsetWidth/2 + t.offsetWidth/2; }
+            });
+
+            card.style.opacity = "1";
+        }, 200);
+    }
+
+    function hcGo(dir) {
+        hcIdx = (hcIdx + dir + HC_ROOMS.length) % HC_ROOMS.length;
+        hcRender(hcIdx);
+        hcResetTimer();
+    }
+
+    function hcGoTo(idx) {
+        hcIdx = idx;
+        hcRender(idx);
+        hcResetTimer();
+    }
+
+    function hcResetTimer() {
+        clearInterval(hcTimer);
+        hcTimer = setInterval(() => { hcIdx = (hcIdx+1) % HC_ROOMS.length; hcRender(hcIdx); }, 1000);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const thumbs = document.getElementById("hc-thumbs");
+        HC_ROOMS.forEach((r,i) => {
+            const t = document.createElement("div");
+            t.className = "hc-thumb";
+            t.style.cssText = "flex-shrink:0;width:80px;height:60px;border-radius:10px;overflow:hidden;cursor:pointer;transition:all .3s;opacity:0.4;border:2px solid transparent;";
+            t.innerHTML = `<img src="${r.img}" style="width:100%;height:100%;object-fit:cover;" alt="${r.nombre}">`;
+            t.addEventListener("click", () => hcGoTo(i));
+            thumbs.appendChild(t);
+        });
+        hcRender(0);
+        hcResetTimer();
+    });
+    </script>
+
     <!-- ========== SERVICIOS SECTION ========== -->
-    <section class="section servicios" id="servicios">
-        <div class="servicios-bg"></div>
-        <div class="container">
-            <div class="section-header light">
-                <span class="section-subtitle">Experiencias</span>
-                <h2 class="section-title">Servicios y Amenidades</h2>
-                <p class="section-description">Todo lo que necesitas para una estancia inolvidable</p>
+    <!-- ========== SERVICIOS ========== -->
+    <section class="section servicios" id="servicios" style="padding:0;background:url('https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=1920&q=80') center/cover no-repeat;">
+        <!-- HERO VIDEO -->
+        <div style="position:relative;height:420px;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+            <video autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;">
+                <source src="https://cdn.coverr.co/videos/coverr-aerial-view-of-a-forest-1562/1080p.mp4" type="video/mp4">
+            </video>
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,.55);z-index:1;"></div>
+            <div style="position:relative;z-index:2;text-align:center;color:#fff;padding:0 20px;">
+                <span style="color:#c9a84c;letter-spacing:4px;font-size:.85rem;font-weight:600;text-transform:uppercase;">Experiencias</span>
+                <h2 style="font-family:'Cormorant Garamond',serif;font-size:3.5rem;margin:15px 0 10px;text-shadow:0 2px 20px rgba(0,0,0,.5);">Servicios & Amenidades</h2>
+                <p style="font-size:1.1rem;opacity:.9;max-width:600px;margin:0 auto;">Todo lo que necesitas para una estancia inolvidable en el corazón de la naturaleza</p>
             </div>
-            <div class="services-grid">
-                <div class="service-card"><div class="service-icon"><i class="fas fa-swimming-pool"></i></div><h3 class="service-title">Piscina Infinita</h3><p class="service-description">Disfruta de nuestra piscina con vistas panorámicas y área de solárium.</p></div>
-                <div class="service-card"><div class="service-icon"><i class="fas fa-spa"></i></div><h3 class="service-title">Spa & Wellness</h3><p class="service-description">Tratamientos exclusivos para renovar cuerpo y mente.</p></div>
-                <div class="service-card"><div class="service-icon"><i class="fas fa-utensils"></i></div><h3 class="service-title">Restaurante Gourmet</h3><p class="service-description">Cocina de autor con ingredientes locales y vinos selectos.</p></div>
-                <div class="service-card"><div class="service-icon"><i class="fas fa-wifi"></i></div><h3 class="service-title">WiFi Gratis</h3><p class="service-description">Conexión de alta velocidad en todas las áreas del hotel.</p></div>
-                <div class="service-card"><div class="service-icon"><i class="fas fa-car"></i></div><h3 class="service-title">Estacionamiento</h3><p class="service-description">Parqueadero privado y seguro sin costo adicional.</p></div>
-                <div class="service-card"><div class="service-icon"><i class="fas fa-concierge-bell"></i></div><h3 class="service-title">Servicio 24/7</h3><p class="service-description">Atención personalizada las 24 horas del día.</p></div>
-                <div class="service-card"><div class="service-icon"><i class="fas fa-dumbbell"></i></div><h3 class="service-title">Gimnasio</h3><p class="service-description">Equipos de última generación para mantenerte activo.</p></div>
-                <div class="service-card"><div class="service-icon"><i class="fas fa-glass-cheers"></i></div><h3 class="service-title">Bar Lounge</h3><p class="service-description">Cócteles artesanales en un ambiente exclusivo.</p></div>
+        </div>
+        <!-- CARRUSEL SERVICIOS -->
+        <div style="background:url('https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=1920&q=80') center/cover no-repeat;padding:60px 0 40px;position:relative;">
+            <div class="container">
+                <div style="position:relative;overflow:hidden;">
+                    <div id="srv-track" style="display:flex;transition:transform .6s cubic-bezier(.77,0,.18,1);gap:24px;padding:10px 4px 30px;">
+                    </div>
+                    <button onclick="srvGo(-1)" style="position:absolute;left:0;top:45%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:#c9a84c;border:none;color:#1a1a1a;font-size:1.3rem;cursor:pointer;z-index:10;box-shadow:0 5px 20px rgba(0,0,0,.5);">❮</button>
+                    <button onclick="srvGo(1)"  style="position:absolute;right:0;top:45%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:#c9a84c;border:none;color:#1a1a1a;font-size:1.3rem;cursor:pointer;z-index:10;box-shadow:0 5px 20px rgba(0,0,0,.5);">❯</button>
+                </div>
+                <!-- Dots -->
+                </div><div id="srv-dots" style="display:flex;justify-content:center;gap:8px;padding:10px 0 40px;"></div>
+            </div>
+        </div>
+        <!-- TARJETAS -->
+        <div style="background:rgba(0,0,0,.5);padding:80px 0;">
+            <div class="container">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px;">
+
+                    <div onclick="abrirServicio('piscina')" style="cursor:pointer;position:relative;height:320px;border-radius:20px;overflow:hidden;box-shadow:0 15px 40px rgba(0,0,0,.4);transition:transform .3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                        <img src="https://images.unsplash.com/photo-1540541338287-41700207dee6?w=600&q=80" style="width:100%;height:100%;object-fit:cover;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,rgba(0,0,0,.1) 60%);"></div>
+                        <div style="position:absolute;bottom:0;left:0;right:0;padding:25px;">
+                            <div style="font-size:2rem;margin-bottom:8px;">🏊</div>
+                            <h3 style="color:#fff;font-family:'Cormorant Garamond',serif;font-size:1.5rem;margin-bottom:5px;">Piscina Infinita</h3>
+                            <p style="color:rgba(255,255,255,.7);font-size:.85rem;margin-bottom:12px;">Vistas panorámicas únicas</p>
+                            <span style="background:#c9a84c;color:#1a1a1a;padding:6px 18px;border-radius:20px;font-size:.8rem;font-weight:700;">Ver más →</span>
+                        </div>
+                    </div>
+
+                    <div onclick="abrirServicio('spa')" style="cursor:pointer;position:relative;height:320px;border-radius:20px;overflow:hidden;box-shadow:0 15px 40px rgba(0,0,0,.4);transition:transform .3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                        <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&q=80" style="width:100%;height:100%;object-fit:cover;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,rgba(0,0,0,.1) 60%);"></div>
+                        <div style="position:absolute;bottom:0;left:0;right:0;padding:25px;">
+                            <div style="font-size:2rem;margin-bottom:8px;">💆</div>
+                            <h3 style="color:#fff;font-family:'Cormorant Garamond',serif;font-size:1.5rem;margin-bottom:5px;">Spa & Wellness</h3>
+                            <p style="color:rgba(255,255,255,.7);font-size:.85rem;margin-bottom:12px;">Técnicas ancestrales colombianas</p>
+                            <span style="background:#c9a84c;color:#1a1a1a;padding:6px 18px;border-radius:20px;font-size:.8rem;font-weight:700;">Ver más →</span>
+                        </div>
+                    </div>
+
+                    <div onclick="abrirServicio('restaurante')" style="cursor:pointer;position:relative;height:320px;border-radius:20px;overflow:hidden;box-shadow:0 15px 40px rgba(0,0,0,.4);transition:transform .3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80" style="width:100%;height:100%;object-fit:cover;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,rgba(0,0,0,.1) 60%);"></div>
+                        <div style="position:absolute;bottom:0;left:0;right:0;padding:25px;">
+                            <div style="font-size:2rem;margin-bottom:8px;">🍽️</div>
+                            <h3 style="color:#fff;font-family:'Cormorant Garamond',serif;font-size:1.5rem;margin-bottom:5px;">Restaurante Gourmet</h3>
+                            <p style="color:rgba(255,255,255,.7);font-size:.85rem;margin-bottom:12px;">Cocina de autor con ingredientes locales</p>
+                            <span style="background:#c9a84c;color:#1a1a1a;padding:6px 18px;border-radius:20px;font-size:.8rem;font-weight:700;">Ver más →</span>
+                        </div>
+                    </div>
+
+                    <div onclick="abrirServicio('bar')" style="cursor:pointer;position:relative;height:320px;border-radius:20px;overflow:hidden;box-shadow:0 15px 40px rgba(0,0,0,.4);transition:transform .3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                        <img src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=600&q=80" style="width:100%;height:100%;object-fit:cover;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,rgba(0,0,0,.1) 60%);"></div>
+                        <div style="position:absolute;bottom:0;left:0;right:0;padding:25px;">
+                            <div style="font-size:2rem;margin-bottom:8px;">🍸</div>
+                            <h3 style="color:#fff;font-family:'Cormorant Garamond',serif;font-size:1.5rem;margin-bottom:5px;">Bar Lounge</h3>
+                            <p style="color:rgba(255,255,255,.7);font-size:.85rem;margin-bottom:12px;">Cócteles artesanales exclusivos</p>
+                            <span style="background:#c9a84c;color:#1a1a1a;padding:6px 18px;border-radius:20px;font-size:.8rem;font-weight:700;">Ver más →</span>
+                        </div>
+                    </div>
+
+                    <div onclick="abrirServicio('gimnasio')" style="cursor:pointer;position:relative;height:320px;border-radius:20px;overflow:hidden;box-shadow:0 15px 40px rgba(0,0,0,.4);transition:transform .3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=80" style="width:100%;height:100%;object-fit:cover;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,rgba(0,0,0,.1) 60%);"></div>
+                        <div style="position:absolute;bottom:0;left:0;right:0;padding:25px;">
+                            <div style="font-size:2rem;margin-bottom:8px;">💪</div>
+                            <h3 style="color:#fff;font-family:'Cormorant Garamond',serif;font-size:1.5rem;margin-bottom:5px;">Gimnasio</h3>
+                            <p style="color:rgba(255,255,255,.7);font-size:.85rem;margin-bottom:12px;">Equipos de última generación</p>
+                            <span style="background:#c9a84c;color:#1a1a1a;padding:6px 18px;border-radius:20px;font-size:.8rem;font-weight:700;">Ver más →</span>
+                        </div>
+                    </div>
+
+                    <div onclick="abrirServicio('concierge')" style="cursor:pointer;position:relative;height:320px;border-radius:20px;overflow:hidden;box-shadow:0 15px 40px rgba(0,0,0,.4);transition:transform .3s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80" style="width:100%;height:100%;object-fit:cover;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,rgba(0,0,0,.1) 60%);"></div>
+                        <div style="position:absolute;bottom:0;left:0;right:0;padding:25px;">
+                            <div style="font-size:2rem;margin-bottom:8px;">🔔</div>
+                            <h3 style="color:#fff;font-family:'Cormorant Garamond',serif;font-size:1.5rem;margin-bottom:5px;">Concierge 24/7</h3>
+                            <p style="color:rgba(255,255,255,.7);font-size:.85rem;margin-bottom:12px;">Atención personalizada siempre</p>
+                            <span style="background:#c9a84c;color:#1a1a1a;padding:6px 18px;border-radius:20px;font-size:.8rem;font-weight:700;">Ver más →</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- MODAL SERVICIOS -->
+        <div id="servicioModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:99999;align-items:center;justify-content:center;backdrop-filter:blur(8px);">
+            <div style="background:#1a1a1a;border-radius:24px;max-width:700px;width:90%;max-height:85vh;overflow-y:auto;position:relative;animation:modalIn .35s ease;">
+                <button onclick="cerrarServicio()" style="position:absolute;top:15px;right:15px;background:rgba(255,255,255,.1);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:1.2rem;cursor:pointer;z-index:1;">✕</button>
+                <div id="servicioContenido"></div>
             </div>
         </div>
     </section>
 
     <!-- ========== GALERÍA SECTION ========== -->
-    <section class="section galeria" id="galeria">
+    <!-- EL HOTEL + GALERÍA FUSIONADAS -->
+    <section class="section el-hotel" id="hotel" style="background:#f9f7f2;padding:80px 0 0;">
         <div class="container">
-            <div class="section-header">
-                <span class="section-subtitle">Descubre</span>
-                <h2 class="section-title">Nuestra Galería</h2>
-                <p class="section-description">Un vistazo a los espacios que harán memorable tu estadía</p>
+            <div class="section-header" style="margin-bottom:60px;">
+                <span class="section-subtitle">Nuestra Historia</span>
+                <h2 class="section-title">El Alma del Hotel Mirador</h2>
+                <p class="section-description">Cuatro décadas de hospitalidad, elegancia y amor por la naturaleza colombiana</p>
             </div>
-            <div class="gallery-container">
-                <div class="gallery-carousel" id="galleryCarousel">
-                    <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=80" alt="Exterior del Hotel"><div class="gallery-caption">Fachada Principal</div></div>
-                    <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1200&q=80" alt="Piscina"><div class="gallery-caption">Piscina Infinita</div></div>
-                    <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=1200&q=80" alt="Restaurante"><div class="gallery-caption">Restaurante Gourmet</div></div>
-                    <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1200&q=80" alt="Spa"><div class="gallery-caption">Área de Spa</div></div>
-                    <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=1200&q=80" alt="Habitación"><div class="gallery-caption">Suite de Lujo</div></div>
-                    <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1200&q=80" alt="Lobby"><div class="gallery-caption">Lobby Principal</div></div>
-                </div>
-                <button class="gallery-btn gallery-prev" id="galleryPrev" aria-label="Anterior"><i class="fas fa-chevron-left"></i></button>
-                <button class="gallery-btn gallery-next" id="galleryNext" aria-label="Siguiente"><i class="fas fa-chevron-right"></i></button>
-                <div class="gallery-indicators" id="galleryIndicators"></div>
-            </div>
-            <div class="gallery-grid">
-                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=80" alt="Vista aérea"></div>
-                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&q=80" alt="Terraza"></div>
-                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=600&q=80" alt="Habitación detalle"></div>
-                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=600&q=80" alt="Baño de lujo"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========== EL HOTEL SECTION ========== -->
-    <section class="section el-hotel" id="hotel">
-        <div class="container">
-            <div class="hotel-content">
-                <div class="hotel-images">
-                    <div class="hotel-image-main"><img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80" alt="Hotel Mirador"></div>
-                    <div class="hotel-image-secondary"><img src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=600&q=80" alt="Interior del hotel"></div>
-                </div>
-                <div class="hotel-info">
-                    <span class="section-subtitle">Nuestra Historia</span>
-                    <h2 class="section-title">Bienvenidos a Hotel Mirador</h2>
-                    <p class="hotel-description">Desde 1985, Hotel Mirador ha sido sinónimo de elegancia, confort y hospitalidad excepcional. Ubicado en un enclave privilegiado con vistas impresionantes a las montañas, nuestro hotel combina la calidez de la tradición con las comodidades más modernas.</p>
-                    <p class="hotel-description">Cada rincón de nuestras instalaciones ha sido diseñado pensando en su bienestar. Desde nuestras habitaciones cuidadosamente decoradas hasta nuestros jardines paisajísticos, todo invita a la relajación y el disfrute.</p>
-                    <div class="hotel-features">
-                        <div class="hotel-feature"><div class="feature-number">40+</div><div class="feature-text">Años de Experiencia</div></div>
-                        <div class="hotel-feature"><div class="feature-number">50</div><div class="feature-text">Habitaciones</div></div>
-                        <div class="hotel-feature"><div class="feature-number">98%</div><div class="feature-text">Satisfacción</div></div>
+            <div style="display:flex;gap:50px;align-items:center;margin-bottom:80px;flex-wrap:wrap;">
+                <div style="flex:1;min-width:280px;"><img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80" alt="Hotel" style="width:100%;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.15);"></div>
+                <div style="flex:1;min-width:280px;">
+                    <span class="section-subtitle">El Fundador</span>
+                    <h3 style="font-family:'Cormorant Garamond',serif;font-size:2rem;color:#1a1a1a;margin:10px 0 20px;">Don Ernesto Villamizar</h3>
+                    <p style="color:#555;line-height:1.8;margin-bottom:15px;">Nacido en Villa de Leyva en 1948, Don Ernesto soñó desde joven con crear un refugio donde los viajeros pudieran conectar con la majestuosidad de los Andes colombianos. En 1985 convirtió una antigua hacienda colonial en lo que hoy conocemos como el Hotel Mirador.</p>
+                    <p style="color:#555;line-height:1.8;margin-bottom:25px;">Su visión de combinar la arquitectura colonial con el lujo moderno marcó para siempre el espíritu del hotel.</p>
+                    <div style="display:flex;gap:30px;flex-wrap:wrap;">
+                        <div style="text-align:center;"><div style="font-size:2rem;font-weight:700;color:#c9a84c;">1985</div><div style="font-size:.8rem;color:#888;">Fundación</div></div>
+                        <div style="text-align:center;"><div style="font-size:2rem;font-weight:700;color:#c9a84c;">40+</div><div style="font-size:.8rem;color:#888;">Años de historia</div></div>
+                        <div style="text-align:center;"><div style="font-size:2rem;font-weight:700;color:#c9a84c;">50</div><div style="font-size:.8rem;color:#888;">Habitaciones</div></div>
+                        <div style="text-align:center;"><div style="font-size:2rem;font-weight:700;color:#c9a84c;">98%</div><div style="font-size:.8rem;color:#888;">Satisfacción</div></div>
                     </div>
-                    <a href="#contacto" class="btn btn-primary">Conócenos Más</a>
+                </div>
+            </div>
+            <div style="margin-bottom:80px;">
+                <div class="section-header" style="margin-bottom:40px;">
+                    <span class="section-subtitle">Cronología</span>
+                    <h3 class="section-title" style="font-size:1.8rem;">Nuestra Evolución</h3>
+                </div>
+                <div style="position:relative;padding:20px 0;">
+                    <div style="position:absolute;left:50%;top:0;bottom:0;width:2px;background:#c9a84c;transform:translateX(-50%);"></div>
+                    <div style="display:flex;flex-direction:column;gap:40px;">
+                        <div style="display:flex;gap:30px;align-items:center;">
+                            <div style="flex:1;text-align:right;padding-right:40px;"><h4 style="color:#c9a84c;">1985 — Los Comienzos</h4><p style="color:#555;font-size:.9rem;">Don Ernesto inaugura el hotel con 12 habitaciones en una hacienda colonial restaurada. La primera noche se agotó en horas.</p></div>
+                            <div style="width:16px;height:16px;background:#c9a84c;border-radius:50%;flex-shrink:0;z-index:1;border:3px solid #fff;box-shadow:0 0 0 3px #c9a84c;"></div>
+                            <div style="flex:1;padding-left:40px;"><img src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=400&q=80" style="width:100%;max-width:220px;border-radius:12px;"></div>
+                        </div>
+                        <div style="display:flex;gap:30px;align-items:center;">
+                            <div style="flex:1;text-align:right;padding-right:40px;"><img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&q=80" style="width:100%;max-width:220px;border-radius:12px;margin-left:auto;"></div>
+                            <div style="width:16px;height:16px;background:#c9a84c;border-radius:50%;flex-shrink:0;z-index:1;border:3px solid #fff;box-shadow:0 0 0 3px #c9a84c;"></div>
+                            <div style="flex:1;padding-left:40px;"><h4 style="color:#c9a84c;">1995 — La Gran Expansión</h4><p style="color:#555;font-size:.9rem;">Piscina infinita, restaurante La Cumbre y primera estrella de turismo nacional.</p></div>
+                        </div>
+                        <div style="display:flex;gap:30px;align-items:center;">
+                            <div style="flex:1;text-align:right;padding-right:40px;"><h4 style="color:#c9a84c;">2005 — El Spa Mirador</h4><p style="color:#555;font-size:.9rem;">Inauguración del spa con técnicas ancestrales colombianas, reconocido por la Revista Traveler.</p></div>
+                            <div style="width:16px;height:16px;background:#c9a84c;border-radius:50%;flex-shrink:0;z-index:1;border:3px solid #fff;box-shadow:0 0 0 3px #c9a84c;"></div>
+                            <div style="flex:1;padding-left:40px;"><img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400&q=80" style="width:100%;max-width:220px;border-radius:12px;"></div>
+                        </div>
+                        <div style="display:flex;gap:30px;align-items:center;">
+                            <div style="flex:1;text-align:right;padding-right:40px;"><img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=400&q=80" style="width:100%;max-width:220px;border-radius:12px;margin-left:auto;"></div>
+                            <div style="width:16px;height:16px;background:#c9a84c;border-radius:50%;flex-shrink:0;z-index:1;border:3px solid #fff;box-shadow:0 0 0 3px #c9a84c;"></div>
+                            <div style="flex:1;padding-left:40px;"><h4 style="color:#c9a84c;">2015 — Nueva Generación</h4><p style="color:#555;font-size:.9rem;">Isabella Villamizar moderniza el hotel con tecnología sostenible.</p></div>
+                        </div>
+                        <div style="display:flex;gap:30px;align-items:center;">
+                            <div style="flex:1;text-align:right;padding-right:40px;"><h4 style="color:#c9a84c;">2024 — Hotel Mirador Hoy</h4><p style="color:#555;font-size:.9rem;">50 habitaciones de lujo, reconocimiento internacional y el mismo calor humano de siempre.</p></div>
+                            <div style="width:16px;height:16px;background:#1a1a1a;border-radius:50%;flex-shrink:0;z-index:1;border:3px solid #fff;box-shadow:0 0 0 3px #1a1a1a;"></div>
+                            <div style="flex:1;padding-left:40px;"><img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&q=80" style="width:100%;max-width:220px;border-radius:12px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="background:#1a1a1a;padding:60px 0;">
+            <div class="container">
+                <div class="section-header" style="margin-bottom:40px;">
+                    <span class="section-subtitle" style="color:#c9a84c;">Descubre</span>
+                    <h3 class="section-title" style="color:#fff;">Nuestra Galería</h3>
+                    <p class="section-description" style="color:#aaa;">Un vistazo a los espacios que harán memorable tu estadía</p>
+                </div>
+                <div class="gallery-container">
+                    <div class="gallery-carousel" id="galleryCarousel">
+                        <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=80" alt="Exterior"><div class="gallery-caption">Fachada Principal</div></div>
+                        <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1200&q=80" alt="Piscina"><div class="gallery-caption">Piscina Infinita</div></div>
+                        <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=1200&q=80" alt="Restaurante"><div class="gallery-caption">Restaurante Gourmet</div></div>
+                        <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1200&q=80" alt="Spa"><div class="gallery-caption">Área de Spa</div></div>
+                        <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=1200&q=80" alt="Habitación"><div class="gallery-caption">Suite de Lujo</div></div>
+                        <div class="gallery-slide"><img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1200&q=80" alt="Lobby"><div class="gallery-caption">Lobby Principal</div></div>
+                    </div>
+                    <button class="gallery-btn gallery-prev" id="galleryPrev"><i class="fas fa-chevron-left"></i></button>
+                    <button class="gallery-btn gallery-next" id="galleryNext"><i class="fas fa-chevron-right"></i></button>
+                    <div class="gallery-indicators" id="galleryIndicators"></div>
+                </div>
+                <div class="gallery-grid" style="margin-top:30px;">
+                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=80" alt="Vista aérea"></div>
+                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&q=80" alt="Terraza"></div>
+                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=600&q=80" alt="Habitación"></div>
+                    <div class="gallery-item"><img src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=600&q=80" alt="Baño"></div>
                 </div>
             </div>
         </div>
     </section>
-
+    <!-- EL HOTEL + GALERÍA FUSIONADAS -->
     <!-- ========== TESTIMONIOS ========== -->
     <section class="section testimonios">
         <div class="container">
@@ -518,7 +2030,7 @@
             <div class="reservar-content">
                 <h2 class="reservar-title">¿Listo para Vivir la Experiencia?</h2>
                 <p class="reservar-description">Reserva ahora y disfruta de tarifas exclusivas para tu próxima estancia</p>
-                <a href="tel:+573101234567" class="btn btn-primary btn-lg">
+                <a href="tel:+573107761955" class="btn btn-primary btn-lg">
                     <i class="fas fa-phone-alt"></i> Llamar Ahora
                 </a>
             </div>
@@ -533,9 +2045,9 @@
                     <a href="#inicio" class="footer-logo"><i class="fas fa-mountain"></i><span>HOTEL MIRADOR</span></a>
                     <p class="footer-tagline">Donde el lujo se encuentra con la naturaleza</p>
                     <div class="footer-social">
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.facebook.com/leandrocamposanchez" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/yonatantombe/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/573107761955" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                         <a href="#" aria-label="TripAdvisor"><i class="fab fa-tripadvisor"></i></a>
                     </div>
                 </div>
@@ -545,7 +2057,6 @@
                         <li><a href="#inicio">Inicio</a></li>
                         <li><a href="#habitaciones">Habitaciones</a></li>
                         <li><a href="#servicios">Servicios</a></li>
-                        <li><a href="#galeria">Galería</a></li>
                         <li><a href="#hotel">El Hotel</a></li>
                     </ul>
                 </div>
@@ -576,138 +2087,620 @@
         </div>
     </footer>
 
-    <a href="#reservar" class="floating-btn" id="floatingBtn" aria-label="Reservar ahora">
+    <a href="https://www.facebook.com/leandrocamposanchez" target="_blank" class="floating-btn" style="bottom:280px;background:#1877f2;" aria-label="Facebook">
+        <i class="fab fa-facebook-f" style="font-size:1.6rem;"></i>
+        <span>Facebook</span>
+    </a>
+    <a href="https://www.instagram.com/yonatantombe/" target="_blank" class="floating-btn" style="bottom:190px;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);" aria-label="Instagram">
+        <i class="fab fa-instagram" style="font-size:1.6rem;"></i>
+        <span>Instagram</span>
+    </a>
+    <a href="https://wa.me/573107761955" target="_blank" class="floating-btn" style="bottom:100px;background:#25d366;" aria-label="WhatsApp">
+        <i class="fab fa-whatsapp" style="font-size:1.6rem;"></i>
+        <span>WhatsApp</span>
+    </a>
+    <a href="reservas.html" class="floating-btn" id="floatingBtn" aria-label="Reservar ahora">
         <i class="fas fa-calendar-check"></i>
         <span>Reservar</span>
     </a>
 
-    <!-- ========== SCRIPTS ========== -->
-    <script src="script.js"></script>
     <script>
-    // ── Auth Config ────────────────────────────────────────
-    const API_AUTH = 'http://localhost:5000/api/v1/auth';
+    // ========== CONFIGURACIÓN - CONECTADO AL BACKEND REAL ==========
+    const API_AUTH     = 'http://192.168.101.3:5000/api/v1/auth';
+    const API_RESERVAS = 'http://localhost:5000/api/v1/reservations/mis-reservas';
+
     let usuarioActual = null;
 
-    // ── Elementos ──────────────────────────────────────────
-    const authOverlay = document.getElementById('authOverlay');
-    const authClose   = document.getElementById('authClose');
-    const loginBtn    = document.getElementById('loginBtn');
-    const registroBtn = document.getElementById('registroBtn');
-    const loginMsg    = document.getElementById('loginMsg');
-    const registroMsg = document.getElementById('registroMsg');
-    const userMenu    = document.getElementById('userMenu');
-    const userAvatar  = document.getElementById('userAvatar');
-    const userDropdown= document.getElementById('userDropdown');
-    const logoutBtn   = document.getElementById('logoutBtn');
-    const navLoginItem= document.getElementById('navLoginItem');
+    // ========== ELEMENTOS DEL DOM ==========
+    const authOverlay     = document.getElementById('authOverlay');
+    const authClose       = document.getElementById('authClose');
+    const loginBtn        = document.getElementById('loginBtn');
+    const registroBtn     = document.getElementById('registroBtn');
+    const loginMsg        = document.getElementById('loginMsg');
+    const registroMsg     = document.getElementById('registroMsg');
+    const userMenu        = document.getElementById('userMenu');
+    const userAvatar      = document.getElementById('userAvatar');
+    const userDropdown    = document.getElementById('userDropdown');
+    const logoutBtn       = document.getElementById('logoutBtn');
+    const navLoginItem    = document.getElementById('navLoginItem');
+    const misReservasLink = document.getElementById('misReservasLink');
+    const miGuiaLink      = document.getElementById('miGuiaLink');
 
-    // ── Abrir / cerrar ──────────────────────────────────────
+    // ========== HELPERS ==========
+    function msg(el, txt, tipo = 'error') {
+        el.textContent = txt;
+        el.className = `auth-msg ${tipo}`;
+        el.style.display = 'block';
+    }
+
+    function setLoading(btn, v, txt) {
+        btn.disabled = v;
+        btn.textContent = v ? 'Cargando...' : txt;
+    }
+
+    function getToken() {
+        return localStorage.getItem('hm_token');
+    }
+
+    // ========== AUTH MODAL ==========
     function abrirAuth(tab = 'login') {
-      authOverlay.classList.add('show');
-      switchTab(tab);
-      document.body.style.overflow = 'hidden';
+        authOverlay.classList.add('show');
+        switchTab(tab);
+        document.body.style.overflow = 'hidden';
     }
+
     function cerrarAuth() {
-      authOverlay.classList.remove('show');
-      document.body.style.overflow = '';
-      loginMsg.className = registroMsg.className = 'auth-msg';
+        authOverlay.classList.remove('show');
+        document.body.style.overflow = '';
+        loginMsg.className = registroMsg.className = 'auth-msg';
+        loginMsg.style.display = 'none';
+        registroMsg.style.display = 'none';
     }
+
+    function switchTab(tab) {
+        document.querySelectorAll('.auth-tab').forEach(t =>
+            t.classList.toggle('active', t.dataset.tab === tab));
+        document.getElementById('formLogin').classList.toggle('active', tab === 'login');
+        document.getElementById('formRegistro').classList.toggle('active', tab === 'registro');
+        loginMsg.style.display = 'none';
+        registroMsg.style.display = 'none';
+    }
+
+    // ========== LOGIN CON API REAL ==========
+    loginBtn.addEventListener('click', async () => {
+        const email    = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+
+        if (!email || !password) {
+            msg(loginMsg, 'Completa todos los campos');
+            return;
+        }
+
+        setLoading(loginBtn, true, 'Continuar');
+        try {
+            const res  = await fetch(`${API_AUTH}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                msg(loginMsg, data.error || 'Correo o contraseña incorrectos');
+                return;
+            }
+
+            guardarSesion(data.usuario, data.token);
+            msg(loginMsg, `¡Bienvenido ${data.usuario.nombre}!`, 'success');
+            setTimeout(cerrarAuth, 1200);
+
+        } catch (e) {
+            msg(loginMsg, 'Error de conexión con el servidor');
+        } finally {
+            setLoading(loginBtn, false, 'Continuar');
+        }
+    });
+
+    // ========== REGISTRO CON API REAL ==========
+    registroBtn.addEventListener('click', async () => {
+        const nombre   = document.getElementById('regNombre').value.trim();
+        const email    = document.getElementById('regEmail').value.trim();
+        const telefono = document.getElementById('regTelefono').value.trim();
+        const password = document.getElementById('regPassword').value;
+
+        if (!nombre || !email || !password) {
+            msg(registroMsg, 'Nombre, email y contraseña son obligatorios');
+            return;
+        }
+        if (password.length < 6) {
+            msg(registroMsg, 'La contraseña debe tener mínimo 6 caracteres');
+            return;
+        }
+
+        setLoading(registroBtn, true, 'Crear cuenta');
+        try {
+            const res  = await fetch(`${API_AUTH}/registro`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre, email, password, telefono: telefono || undefined })
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                msg(registroMsg, data.error || 'Error al crear la cuenta');
+                return;
+            }
+
+            guardarSesion(data.usuario, data.token);
+            msg(registroMsg, '¡Cuenta creada exitosamente!', 'success');
+            setTimeout(cerrarAuth, 1200);
+
+        } catch (e) {
+            msg(registroMsg, 'Error de conexión con el servidor');
+        } finally {
+            setLoading(registroBtn, false, 'Crear cuenta');
+        }
+    });
+
+    // ========== SESIÓN ==========
+    function guardarSesion(usuario, token) {
+        usuarioActual = usuario;
+        localStorage.setItem('hm_token', token);
+        localStorage.setItem('hm_usuario_actual', JSON.stringify(usuario));
+        actualizarUI();
+    }
+
+    function cerrarSesion() {
+        localStorage.removeItem('hm_usuario_actual');
+        localStorage.removeItem('hm_token');
+        usuarioActual = null;
+        actualizarUI();
+    }
+
+    function actualizarUI() {
+        if (usuarioActual) {
+            navLoginItem.style.display = 'none';
+            userMenu.classList.add('visible');
+
+            const inicial = usuarioActual.nombre.charAt(0).toUpperCase();
+            userAvatar.textContent = inicial;
+
+            // Mostrar foto en avatar del navbar
+            if (usuarioActual.foto) {
+                userAvatar.style.backgroundImage = `url(${usuarioActual.foto})`;
+                userAvatar.style.backgroundSize = 'cover';
+                userAvatar.style.backgroundPosition = 'center';
+                userAvatar.textContent = '';
+            }
+
+            document.getElementById('ddNombre').textContent = usuarioActual.nombre;
+            document.getElementById('ddEmail').textContent  = usuarioActual.email;
+            document.getElementById('ddAvatarPh').textContent = inicial;
+
+            // Foto en dropdown
+            const ddContainer = document.getElementById('ddAvatarContainer');
+            if (usuarioActual.foto) {
+                ddContainer.innerHTML = `<img src="${usuarioActual.foto}" class="dd-avatar-img" alt="${usuarioActual.nombre}">`;
+            } else {
+                ddContainer.innerHTML = `<div class="dd-avatar-ph">${inicial}</div>`;
+            }
+
+            // Rol badge
+            const rolLabels = { usuario: '👤 Usuario', cliente: '🛎️ Cliente', guia: '🧭 Guía', admin: '👑 Admin' };
+            document.getElementById('ddRol').textContent = rolLabels[usuarioActual.rol] || usuarioActual.rol;
+
+            // Mostrar enlaces según rol
+            miGuiaLink.style.display = 'none';
+            document.getElementById('linkPerfilGuia').style.display = usuarioActual.rol === 'guia' ? 'flex' : 'none';
+            document.getElementById('linkAdmin').style.display = usuarioActual.rol === 'admin' ? 'flex' : 'none';
+            document.getElementById('linkEncargado').style.display = ['admin', 'encargado'].includes(usuarioActual.rol) ? 'flex' : 'none';
+
+        } else {
+            navLoginItem.style.display = '';
+            userMenu.classList.remove('visible');
+        }
+    }
+
+    // ========== RESERVACIONES DESDE API ==========
+    async function mostrarReservaciones() {
+        const modal   = document.getElementById('reservasModal');
+        const content = document.getElementById('reservasContent');
+
+        if (!usuarioActual) {
+            content.innerHTML = '<p style="text-align:center;color:#c0392b;">Debes iniciar sesión para ver tus reservaciones.</p>';
+            modal.classList.add('show');
+            return;
+        }
+
+        content.innerHTML = '<p style="text-align:center;color:#666;">Cargando tus reservaciones...</p>';
+        modal.classList.add('show');
+
+        try {
+            const res  = await fetch(API_RESERVAS, {
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            const data = await res.json();
+
+            if (!res.ok || !Array.isArray(data) || data.length === 0) {
+                content.innerHTML = '<p style="text-align:center;color:#666;">No tienes reservaciones aún. <a href="reservas.html" onclick="cerrarReservasModal()">¡Reserva ahora!</a></p>';
+                return;
+            }
+
+            let html = '<div style="display:flex;flex-direction:column;gap:15px;">';
+            data.forEach(r => {
+                html += `
+                    <div style="background:#f9f9f9;padding:15px;border-radius:12px;border-left:4px solid #c9a84c;">
+                        <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;">
+                            <div>
+                                <strong style="font-size:1.1rem;">${r.habitacionId?.nombre || r.habitacionId?.tipo || r.habitacion || 'Habitación'}</strong>
+                                <div style="color:#666;font-size:.85rem;margin-top:5px;">📅 ${new Date(r.fechaEntrada).toLocaleDateString('es-CO')} → ${new Date(r.fechaSalida).toLocaleDateString('es-CO')}</div>
+                                <div style="color:#666;font-size:.85rem;">👥 ${r.huespedes} huéspedes | 💰 $${(r.precioTotal||0).toLocaleString()}</div>
+                            </div>
+                            <span style="background:${r.estado==='confirmada'?'#d4edda':'#e2e3e5'};padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600;">
+                                ${r.estado==='confirmada'?'✓ Confirmada':r.estado}
+                            </span>
+                        </div>
+                    </div>`;
+            });
+            html += '</div><div style="text-align:center;margin-top:15px;"><button onclick="cerrarReservasModal()" style="background:#c9a84c;color:white;border:none;padding:10px 30px;border-radius:25px;font-size:1rem;cursor:pointer;">✖ Cerrar</button></div>';
+            content.innerHTML = html;
+
+        } catch (e) {
+            content.innerHTML = '<p style="text-align:center;color:#c0392b;">Error al cargar reservaciones.</p>';
+        }
+    }
+
+    function cerrarReservasModal() {
+        document.getElementById('reservasModal').classList.remove('show');
+    }
+
+    // ========== EVENT LISTENERS ==========
     authOverlay.addEventListener('click', e => { if (e.target === authOverlay) cerrarAuth(); });
     authClose.addEventListener('click', cerrarAuth);
     document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarAuth(); });
-
-    // ── Tabs ───────────────────────────────────────────────
-    function switchTab(tab) {
-      document.querySelectorAll('.auth-tab').forEach(t =>
-        t.classList.toggle('active', t.dataset.tab === tab));
-      document.getElementById('formLogin').classList.toggle('active',    tab === 'login');
-      document.getElementById('formRegistro').classList.toggle('active', tab === 'registro');
-      loginMsg.className = registroMsg.className = 'auth-msg';
-    }
     document.querySelectorAll('.auth-tab').forEach(t =>
-      t.addEventListener('click', () => switchTab(t.dataset.tab)));
-
-    // ── Msg / Loading ───────────────────────────────────────
-    function msg(el, txt, tipo = 'error') { el.textContent = txt; el.className = `auth-msg ${tipo}`; }
-    function setLoading(btn, v, txt) { btn.disabled = v; btn.textContent = v ? 'Cargando...' : txt; }
-
-    // ── Login ───────────────────────────────────────────────
-    loginBtn.addEventListener('click', async () => {
-      const email    = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
-      if (!email || !password) return msg(loginMsg, 'Completa todos los campos');
-      setLoading(loginBtn, true, 'Continuar');
-      try {
-        const res  = await fetch(`${API_AUTH}/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password}) });
-        const data = await res.json();
-        if (!res.ok) return msg(loginMsg, data.error || 'Error al iniciar sesión');
-        guardarSesion(data.token, data.usuario);
-        msg(loginMsg, data.mensaje, 'success');
-        setTimeout(cerrarAuth, 1200);
-      } catch { msg(loginMsg, 'Error de conexión con el servidor'); }
-      finally { setLoading(loginBtn, false, 'Continuar'); }
-    });
-
-    // ── Registro ────────────────────────────────────────────
-    registroBtn.addEventListener('click', async () => {
-      const nombre   = document.getElementById('regNombre').value.trim();
-      const email    = document.getElementById('regEmail').value.trim();
-      const telefono = document.getElementById('regTelefono').value.trim();
-      const password = document.getElementById('regPassword').value;
-      if (!nombre || !email || !password) return msg(registroMsg, 'Nombre, email y contraseña son obligatorios');
-      if (password.length < 6) return msg(registroMsg, 'La contraseña debe tener mínimo 6 caracteres');
-      setLoading(registroBtn, true, 'Crear cuenta');
-      try {
-        const res  = await fetch(`${API_AUTH}/registro`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({nombre, email, telefono: telefono||null, password}) });
-        const data = await res.json();
-        if (!res.ok) return msg(registroMsg, data.error || 'Error al registrarse');
-        guardarSesion(data.token, data.usuario);
-        msg(registroMsg, data.mensaje, 'success');
-        setTimeout(cerrarAuth, 1200);
-      } catch { msg(registroMsg, 'Error de conexión con el servidor'); }
-      finally { setLoading(registroBtn, false, 'Crear cuenta'); }
-    });
-
-    // ── Sesión ──────────────────────────────────────────────
-    function guardarSesion(token, usuario) {
-      localStorage.setItem('hm_token',   token);
-      localStorage.setItem('hm_usuario', JSON.stringify(usuario));
-      usuarioActual = usuario;
-      actualizarUI();
-    }
-    function cerrarSesion() {
-      localStorage.removeItem('hm_token');
-      localStorage.removeItem('hm_usuario');
-      usuarioActual = null;
-      actualizarUI();
-    }
-    function actualizarUI() {
-      if (usuarioActual) {
-        navLoginItem.style.display = 'none';
-        userMenu.classList.add('visible');
-        userAvatar.textContent = usuarioActual.nombre.charAt(0).toUpperCase();
-        document.getElementById('ddNombre').textContent = usuarioActual.nombre;
-        document.getElementById('ddEmail').textContent  = usuarioActual.email;
-      } else {
-        navLoginItem.style.display = '';
-        userMenu.classList.remove('visible');
-      }
-    }
-
-    // ── Dropdown ────────────────────────────────────────────
+        t.addEventListener('click', () => switchTab(t.dataset.tab)));
     userAvatar.addEventListener('click', e => { e.stopPropagation(); userDropdown.classList.toggle('show'); });
-    document.addEventListener('click',  () => userDropdown.classList.remove('show'));
+    document.addEventListener('click', () => userDropdown.classList.remove('show'));
     logoutBtn.addEventListener('click', () => { cerrarSesion(); userDropdown.classList.remove('show'); });
+    misReservasLink.addEventListener('click', e => { e.preventDefault(); mostrarReservaciones(); });
+    miGuiaLink.addEventListener('click', e => { e.preventDefault(); });
 
-    // ── Cargar sesión al iniciar ────────────────────────────
+    // ========== INICIALIZACIÓN ==========
     document.addEventListener('DOMContentLoaded', () => {
-      const token   = localStorage.getItem('hm_token');
-      const usuario = localStorage.getItem('hm_usuario');
-      if (token && usuario) { usuarioActual = JSON.parse(usuario); actualizarUI(); }
+        // Cargar sesión guardada
+        const usuarioGuardado = localStorage.getItem('hm_usuario_actual');
+        if (usuarioGuardado) {
+            usuarioActual = JSON.parse(usuarioGuardado);
+            actualizarUI();
+        }
+
+        // Menú móvil
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu    = document.getElementById('navMenu');
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => navMenu.classList.toggle('active'));
+        }
+
+        // Header scroll
+        window.addEventListener('scroll', () => {
+            document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // Galería carousel
+        let currentSlide = 0;
+        const slides     = document.querySelectorAll('.gallery-slide');
+        const indicators = document.getElementById('galleryIndicators');
+
+        if (slides.length > 0) {
+            slides.forEach((_, i) => {
+                const ind = document.createElement('div');
+                ind.classList.add('indicator');
+                if (i === 0) ind.classList.add('active');
+                ind.addEventListener('click', () => goToSlide(i));
+                indicators.appendChild(ind);
+            });
+
+            function goToSlide(index) {
+                currentSlide = index;
+                document.getElementById('galleryCarousel').style.transform = `translateX(-${currentSlide * 100}%)`;
+                document.querySelectorAll('.indicator').forEach((ind, i) =>
+                    ind.classList.toggle('active', i === currentSlide));
+            }
+
+            document.getElementById('galleryPrev')?.addEventListener('click', () => {
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                goToSlide(currentSlide);
+            });
+            document.getElementById('galleryNext')?.addEventListener('click', () => {
+                currentSlide = (currentSlide + 1) % slides.length;
+                goToSlide(currentSlide);
+            });
+        }
+
+        // Formulario de contacto
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.addEventListener('submit', e => {
+                e.preventDefault();
+                const successMsg = document.getElementById('formSuccess');
+                successMsg.classList.add('show');
+                setTimeout(() => successMsg.classList.remove('show'), 3000);
+                contactForm.reset();
+            });
+        }
     });
 
-    window.abrirAuth = abrirAuth;
-    window.switchTab = switchTab;
+    window.abrirAuth          = abrirAuth;
+    window.switchTab          = switchTab;
+    window.cerrarReservasModal = cerrarReservasModal;
+
+    let fotoUrl = null;
+    async function previsualizarAvatar(input) {
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById('avatarPreviewImg').src = e.target.result;
+            document.getElementById('avatarPreviewImg').style.display = 'block';
+            document.getElementById('avatarIcon').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', 'hotel-mirador');
+            const res = await fetch('https://api.cloudinary.com/v1_1/doqqzkabi/image/upload', {method:'POST',body:formData});
+            const data = await res.json();
+            if (data.secure_url) fotoUrl = data.secure_url;
+        } catch(e) { console.log('Error foto:', e); }
+    }
+    window.previsualizarAvatar = previsualizarAvatar;
+
+    // ===== SERVICIOS MODAL =====
+    const servicios = {
+        piscina: {
+            titulo: 'Piscina Infinita', emoji: '🏊',
+            descripcion: 'Nuestra piscina infinita es el corazón del Hotel Mirador. Con vistas panorámicas a las montañas de los Andes, es el lugar perfecto para relajarse al amanecer o disfrutar de un atardecer mágico. Temperatura controlada todo el año, área de solárium y servicio de bebidas al borde del agua.',
+            horario: '6:00 AM — 10:00 PM',
+            fotos: ['https://images.unsplash.com/photo-1540541338287-41700207dee6?w=700&q=80','https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=700&q=80','https://images.unsplash.com/photo-1563911302283-d2bc129e7570?w=700&q=80','https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=700&q=80','https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=700&q=80']
+        },
+        spa: {
+            titulo: 'Spa & Wellness', emoji: '💆',
+            descripcion: 'Un santuario de bienestar inspirado en las tradiciones ancestrales colombianas. Masajes con aceites esenciales de flores del páramo, terapias de barro volcánico, circuito de aguas y tratamientos faciales de lujo. Cada sesión es una experiencia transformadora.',
+            horario: '8:00 AM — 9:00 PM',
+            fotos: ['https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=700&q=80','https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=700&q=80','https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=700&q=80','https://images.unsplash.com/photo-1507652313519-d4e9174996dd?w=700&q=80','https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=700&q=80']
+        },
+        restaurante: {
+            titulo: 'Restaurante La Cumbre', emoji: '🍽️',
+            descripcion: 'El Restaurante La Cumbre es una experiencia gastronómica sin igual. Nuestro chef ejecutivo combina ingredientes locales de productores campesinos con técnicas de cocina de autor. El menú cambia con las estaciones y cada plato cuenta la historia del territorio colombiano.',
+            horario: '7:00 AM — 11:00 PM',
+            fotos: ['https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=700&q=80','https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=700&q=80','https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=700&q=80','https://images.unsplash.com/photo-1559339352-11d035aa65de?w=700&q=80','https://images.unsplash.com/photo-1544025162-d76538f2b7f6?w=700&q=80']
+        },
+        bar: {
+            titulo: 'Bar Lounge Mirador', emoji: '🍸',
+            descripcion: 'El Bar Lounge es el punto de encuentro perfecto. Cócteles únicos con aguardiente de caña, frutas exóticas colombianas y hierbas del jardín. Música en vivo los fines de semana y una carta de vinos cuidadosamente seleccionada.',
+            horario: '4:00 PM — 1:00 AM',
+            fotos: ['https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=700&q=80','https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=700&q=80','https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=700&q=80','https://images.unsplash.com/photo-1543418219-44e30b057fea?w=700&q=80','https://images.unsplash.com/photo-1516997121675-4c2d1684aa3e?w=700&q=80']
+        },
+        gimnasio: {
+            titulo: 'Gimnasio & Fitness', emoji: '💪',
+            descripcion: 'Equipos Technogym de última generación, área de pesas libres, zona de yoga con vista al bosque y clases grupales diarias. Entrenador personal disponible bajo reserva para sesiones personalizadas en medio de la naturaleza.',
+            horario: '5:00 AM — 11:00 PM',
+            fotos: ['https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=700&q=80','https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=700&q=80','https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=700&q=80','https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=700&q=80','https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=700&q=80']
+        },
+        concierge: {
+            titulo: 'Concierge 24/7', emoji: '🔔',
+            descripcion: 'Nuestro equipo está disponible las 24 horas para hacer de tu estadía algo perfecto. Tours por la región, transporte privado, reservas en restaurantes, actividades de aventura y cualquier solicitud especial. Tu comodidad es nuestra prioridad absoluta.',
+            horario: '24 horas / 7 días',
+            fotos: ['https://images.unsplash.com/photo-1566073771259-6a8506099945?w=700&q=80','https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=700&q=80','https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=700&q=80','https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=700&q=80','https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=700&q=80']
+        }
+    };
+
+    let carruselIdx = 0;
+    let servicioActual = "";
+    let carruselFotos = [];
+
+    function abrirServicio(id) {
+        servicioActual = id;
+        const s = servicios[id];
+        carruselIdx = 0;
+        carruselFotos = s.fotos;
+        const modal = document.getElementById('servicioModal');
+        document.getElementById('servicioContenido').innerHTML = `
+            <div style="position:relative;height:260px;overflow:hidden;border-radius:24px 24px 0 0;">
+                <img id="carruselImg" src="${s.fotos[0]}" style="width:100%;height:100%;object-fit:cover;transition:opacity .4s;">
+                <button onclick="cambiarFoto(-1)" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.5);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:1.2rem;cursor:pointer;">❮</button>
+                <button onclick="cambiarFoto(1)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.5);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:1.2rem;cursor:pointer;">❯</button>
+                <div id="carruselDots" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;">
+                    ${s.fotos.map((_,i) => `<div onclick="irFoto(${i})" style="width:8px;height:8px;border-radius:50%;background:${i===0?'#c9a84c':'rgba(255,255,255,.5)'};cursor:pointer;transition:background .3s;"></div>`).join('')}
+                </div>
+                <div style="position:absolute;bottom:10px;right:15px;background:rgba(0,0,0,.5);color:#fff;font-size:.75rem;padding:3px 8px;border-radius:10px;" id="carruselCounter">1 / ${s.fotos.length}</div>
+            </div>
+            <div style="padding:30px;">
+                <div style="font-size:2.5rem;margin-bottom:10px;">${s.emoji}</div>
+                <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;color:#fff;margin-bottom:15px;">${s.titulo}</h2>
+                <p style="color:#aaa;line-height:1.8;margin-bottom:20px;">${s.descripcion}</p>
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:25px;padding:12px 18px;background:rgba(201,168,76,.1);border-radius:10px;border-left:3px solid #c9a84c;">
+                    <span style="font-size:1.2rem;">🕐</span>
+                    <div><div style="color:#c9a84c;font-size:.75rem;font-weight:600;letter-spacing:2px;">HORARIO</div><div style="color:#fff;font-weight:600;">${s.horario}</div></div>
+                </div>
+                <button onclick="mostrarFormTicket(servicioActual)" style="display:block;width:100%;text-align:center;background:#c9a84c;color:#1a1a1a;border:none;padding:14px;border-radius:30px;font-weight:700;font-size:1rem;cursor:pointer;">📋 Solicitar este Servicio</button>
+            </div>`;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function cambiarFoto(dir) {
+        carruselIdx = (carruselIdx + dir + carruselFotos.length) % carruselFotos.length;
+        irFoto(carruselIdx);
+    }
+
+    function irFoto(idx) {
+        carruselIdx = idx;
+        const img = document.getElementById('carruselImg');
+        img.style.opacity = '0';
+        setTimeout(() => { img.src = carruselFotos[idx]; img.style.opacity = '1'; }, 200);
+        document.querySelectorAll('#carruselDots div').forEach((d,i) => d.style.background = i===idx ? '#c9a84c' : 'rgba(255,255,255,.5)');
+        document.getElementById('carruselCounter').textContent = `${idx+1} / ${carruselFotos.length}`;
+    }
+
+    function cerrarServicio() {
+        document.getElementById('servicioModal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    document.getElementById('servicioModal').addEventListener('click', function(e) {
+        if (e.target === this) cerrarServicio();
+    });
+
+    // ===== TICKET DE SERVICIO =====
+    function mostrarFormTicket(servicio) {
+        document.getElementById('servicioContenido').innerHTML += `
+        <div id="formTicket" style="padding:0 30px 30px;">
+            <hr style="border:1px solid #333;margin-bottom:20px;">
+            <h3 style="color:#c9a84c;font-family:'Cormorant Garamond',serif;font-size:1.4rem;margin-bottom:15px;">📋 Solicitar este servicio</h3>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                <input id="tk_nombre" placeholder="Tu nombre" style="background:#2a2a2a;border:1px solid #444;border-radius:10px;padding:12px 15px;color:#fff;font-size:.9rem;outline:none;" onfocus="this.style.borderColor='#c9a84c'" onblur="this.style.borderColor='#444'">
+                <input id="tk_email" type="email" placeholder="Tu correo electrónico" style="background:#2a2a2a;border:1px solid #444;border-radius:10px;padding:12px 15px;color:#fff;font-size:.9rem;outline:none;" onfocus="this.style.borderColor='#c9a84c'" onblur="this.style.borderColor='#444'">
+                <input id="tk_telefono" placeholder="Teléfono (opcional)" style="background:#2a2a2a;border:1px solid #444;border-radius:10px;padding:12px 15px;color:#fff;font-size:.9rem;outline:none;" onfocus="this.style.borderColor='#c9a84c'" onblur="this.style.borderColor='#444'">
+                <textarea id="tk_mensaje" placeholder="¿Qué necesitas? Cuéntanos los detalles de tu solicitud..." rows="3" style="background:#2a2a2a;border:1px solid #444;border-radius:10px;padding:12px 15px;color:#fff;font-size:.9rem;outline:none;resize:none;" onfocus="this.style.borderColor='#c9a84c'" onblur="this.style.borderColor='#444'"></textarea>
+                <button onclick="enviarTicket('${servicio}')" style="background:#c9a84c;color:#1a1a1a;border:none;padding:14px;border-radius:30px;font-weight:700;font-size:1rem;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='#b8943a'" onmouseout="this.style.background='#c9a84c'">✉️ Enviar Solicitud</button>
+                <div id="tk_respuesta" style="text-align:center;font-size:.9rem;display:none;"></div>
+            </div>
+        </div>`;
+        document.getElementById('servicioModal').querySelector('div').scrollTo({top:9999,behavior:'smooth'});
+    }
+
+    async function enviarTicket(servicio) {
+        const nombre = document.getElementById('tk_nombre').value.trim();
+        const email = document.getElementById('tk_email').value.trim();
+        const telefono = document.getElementById('tk_telefono').value.trim();
+        const mensaje = document.getElementById('tk_mensaje').value.trim();
+        const resp = document.getElementById('tk_respuesta');
+
+        if (!nombre || !email || !mensaje) {
+            resp.style.display = 'block';
+            resp.style.color = '#e74c3c';
+            resp.textContent = 'Por favor completa nombre, email y mensaje.';
+            return;
+        }
+
+        resp.style.display = 'block';
+        resp.style.color = '#c9a84c';
+        resp.textContent = 'Enviando...';
+
+        try {
+            const res = await fetch('http://localhost:5000/api/v1/contacto', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    nombre, email, telefono: telefono || null,
+                    motivo: 'reserva',
+                    mensaje: `[Servicio: ${servicio}] ${mensaje}`
+                })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                resp.style.color = '#2ecc71';
+                resp.innerHTML = '✅ ' + data.mensajeConfirmacion;
+                document.getElementById('formTicket').querySelector('button').disabled = true;
+            } else {
+                resp.style.color = '#e74c3c';
+                resp.textContent = data.error || 'Error al enviar.';
+            }
+        } catch(e) {
+            resp.style.color = '#e74c3c';
+            resp.textContent = 'Error de conexión con el servidor.';
+        }
+    }
+    </script>
+
+    <script>
+    const SRV_DATA = [
+        {titulo:"Piscina Infinita",emoji:"🏊",color:"#4d96ff",img:"https://images.unsplash.com/photo-1540541338287-41700207dee6?w=700&q=80",desc:"Piscina de borde infinito con vistas panorámicas a los Andes. Temperatura controlada, solárium y servicio de bebidas al borde del agua todo el día.",horario:"6:00 AM – 10:00 PM",tags:["Adultos","Niños","Romántico"]},
+        {titulo:"Spa & Wellness",emoji:"💆",color:"#cc2366",img:"https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=700&q=80",desc:"Masajes con aceites esenciales de flores del páramo boyacense, terapias de barro volcánico y circuito de aguas termales. Una experiencia transformadora.",horario:"8:00 AM – 9:00 PM",tags:["Relajación","Parejas","Premium"]},
+        {titulo:"Restaurante La Cumbre",emoji:"🍽️",color:"#e6683c",img:"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=700&q=80",desc:"Cocina de autor con ingredientes de productores locales boyacenses. Menú que cambia con las estaciones y vinos seleccionados. Chef premiado internacionalmente.",horario:"7:00 AM – 11:00 PM",tags:["Gourmet","Desayuno","Cenas"]},
+        {titulo:"Bar Lounge Mirador",emoji:"🍸",color:"#c9a84c",img:"https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=700&q=80",desc:"Cócteles únicos con aguardiente artesanal boyacense, frutas exóticas y hierbas del jardín. Música en vivo los viernes y sábados con vista a las estrellas.",horario:"4:00 PM – 1:00 AM",tags:["Música Live","Cócteles","Adultos"]},
+        {titulo:"Gimnasio & Fitness",emoji:"💪",color:"#6bcb77",img:"https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=700&q=80",desc:"Equipos Technogym de última generación, sala de yoga con vista al bosque, clases grupales diarias y entrenador personal disponible bajo reserva.",horario:"5:00 AM – 11:00 PM",tags:["Fitness","Yoga","Personal Trainer"]},
+        {titulo:"Concierge 24/7",emoji:"🔔",color:"#fff",img:"https://images.unsplash.com/photo-1566073771259-6a8506099945?w=700&q=80",desc:"Nuestro equipo está siempre disponible para tours, transporte privado, reservas y cualquier solicitud especial. Tu comodidad es nuestra prioridad.",horario:"24 horas / 7 días",tags:["Tours","Transporte","VIP"]},
+        {titulo:"Parqueadero Privado",emoji:"🚗",color:"#4d96ff",img:"https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=700&q=80",desc:"Amplio parqueadero techado con vigilancia 24 horas, cámaras de seguridad y servicio de valet parking para huéspedes. Carga para vehículos eléctricos.",horario:"24 horas",tags:["Seguro","Techado","Valet"]},
+        {titulo:"Playas del Caribe Cercanas",emoji:"🏖️",color:"#25d366",img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=700&q=80",desc:"A solo pocas horas tienes acceso a las playas más hermosas de Colombia. Organizamos tours a Cartagena, Santa Marta y el Parque Tayrona con transporte privado incluido.",horario:"Tours disponibles",tags:["Tour","Playa","Naturaleza"]},
+        {titulo:"Cabalgatas & Naturaleza",emoji:"🐴",color:"#e6683c",img:"https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=700&q=80",desc:"Recorre los senderos del desierto de la Candelaria y las montañas boyacenses a caballo. Guías expertos locales, caballos mansos y paisajes únicos en Colombia.",horario:"7:00 AM – 5:00 PM",tags:["Aventura","Naturaleza","Familias"]},
+        {titulo:"Room Service Premium",emoji:"🛎️",color:"#cc2366",img:"https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=700&q=80",desc:"Servicio a la habitación las 24 horas con menú completo del restaurante. Desayuno en cama, cenas románticas con decoración especial y minibar personalizado.",horario:"24 horas",tags:["Premium","Romántico","Familias"]},
+        {titulo:"Transporte VIP",emoji:"🚐",color:"#c9a84c",img:"https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=700&q=80",desc:"Traslados privados desde y hacia el aeropuerto El Dorado de Bogotá, terminal de transportes y puntos turísticos. Vehículos de lujo con conductor bilingüe.",horario:"Reserva previa",tags:["Aeropuerto","Lujo","Privado"]},
+        {titulo:"Desierto de la Candelaria",emoji:"🏜️",color:"#e6683c",img:"https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=700&q=80",desc:"El único desierto de Boyacá a minutos del hotel. Caminatas guiadas, fotografía al amanecer y visita al Monasterio de la Candelaria del siglo XVII. Imperdible.",horario:"Tours 6:00 AM – 4:00 PM",tags:["Histórico","Fotografía","Aventura"]},
+    ];
+
+    let srvIdx = 0;
+    const srvVisible = () => window.innerWidth < 768 ? 1 : window.innerWidth < 1100 ? 2 : 3;
+
+    function srvBuild() {
+        const track = document.getElementById('srv-track');
+        const dots  = document.getElementById('srv-dots');
+        if (!track) return;
+        track.innerHTML = '';
+        dots.innerHTML  = '';
+        SRV_DATA.forEach((s, i) => {
+            const card = document.createElement('div');
+            card.style.cssText = 'flex-shrink:0;width:360px;border-radius:24px;overflow:hidden;background:#1a1a1a;box-shadow:0 20px 60px rgba(0,0,0,.5);transition:transform .3s;cursor:pointer;';
+            card.onmouseover = () => card.style.transform = 'translateY(-8px)';
+            card.onmouseout  = () => card.style.transform = 'translateY(0)';
+            card.innerHTML = `
+                <div style="position:relative;height:220px;overflow:hidden;">
+                    <img src="${s.img}" style="width:100%;height:100%;object-fit:cover;transition:transform .5s;" onmouseover="this.style.transform='scale(1.07)'" onmouseout="this.style.transform='scale(1)'">
+                    <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.8) 0%,rgba(0,0,0,.1) 60%);"></div>
+                    <div style="position:absolute;top:15px;left:15px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);">
+                        <span style="font-size:1.2rem;">${s.emoji}</span>
+                    </div>
+                    <div style="position:absolute;top:15px;right:15px;background:rgba(0,0,0,.5);color:#c9a84c;font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:1px;">${s.horario}</div>
+                    <div style="position:absolute;bottom:15px;left:15px;">
+                        <h3 style="font-family:'Cormorant Garamond',serif;color:#fff;font-size:1.5rem;text-shadow:0 2px 8px rgba(0,0,0,.5);">${s.titulo}</h3>
+                    </div>
+                </div>
+                <div style="padding:22px;">
+                    <p style="color:#aaa;font-size:.88rem;line-height:1.7;margin-bottom:16px;">${s.desc}</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;">
+                        ${s.tags.map(t => `<span style="background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3);padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600;">${t}</span>`).join('')}
+                    </div>
+                    <button onclick="abrirServicio('${Object.keys({piscina:1,spa:1,restaurante:1,bar:1,gimnasio:1,concierge:1})[i] || ''}')" 
+                        style="width:100%;padding:11px;background:linear-gradient(135deg,#c9a84c,#b8943a);color:#1a1a1a;border:none;border-radius:12px;font-weight:700;font-size:.9rem;cursor:pointer;transition:opacity .2s;"
+                        onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                        Ver detalles →
+                    </button>
+                </div>`;
+            track.appendChild(card);
+        });
+        // Dots
+        const total = Math.ceil(SRV_DATA.length / srvVisible());
+        for (let i = 0; i < total; i++) {
+            const d = document.createElement('div');
+            d.style.cssText = `width:${i===0?'28px':'10px'};height:10px;border-radius:10px;background:${i===0?'#c9a84c':'#444'};cursor:pointer;transition:all .3s;`;
+            d.onclick = () => srvGoTo(i);
+            dots.appendChild(d);
+        }
+    }
+
+    function srvGoTo(idx) {
+        srvIdx = idx;
+        const cardW = 360 + 24;
+        document.getElementById('srv-track').style.transform = `translateX(-${idx * srvVisible() * cardW}px)`;
+        document.querySelectorAll('#srv-dots div').forEach((d,i) => {
+            d.style.width = i===idx ? '28px' : '10px';
+            d.style.background = i===idx ? '#c9a84c' : '#444';
+        });
+    }
+
+    function srvGo(dir) {
+        const total = Math.ceil(SRV_DATA.length / srvVisible());
+        srvIdx = (srvIdx + dir + total) % total;
+        srvGoTo(srvIdx);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        srvBuild();
+        setInterval(() => srvGo(1), 1000);
+    });
     </script>
 </body>
 </html>

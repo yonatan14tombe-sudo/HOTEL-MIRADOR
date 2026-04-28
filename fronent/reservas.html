@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas | Hotel Mirador</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --gold: #c9a84c;
+            --gold-light: #f0e6c8;
+            --dark: #1a1a1a;
+            --gray: #666;
+            --light: #f8f6f2;
+            --white: #fff;
+            --border: #e8e0d0;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: var(--dark);
+            padding: 18px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .header-logo i { color: var(--gold); font-size: 1.4rem; }
+        .header-logo span {
+            color: var(--white);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            padding: 6px 14px;
+            border-radius: 30px;
+            color: var(--white);
+            font-size: .85rem;
+        }
+
+        .user-chip .dot {
+            width: 8px; height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+        }
+
+        .btn-volver {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: .85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color .2s;
+        }
+
+        .btn-volver:hover { color: var(--gold); }
+
+        /* ===== HERO ===== */
+        .hero {
+            background: linear-gradient(135deg, var(--dark) 0%, #2d2418 100%);
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1920&q=80') center/cover;
+            opacity: 0.15;
+        }
+
+        .hero-content { position: relative; z-index: 2; }
+
+        .hero-label {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--dark);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: .75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            color: var(--white);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .hero p { color: rgba(255,255,255,0.7); font-size: 1rem; }
+
+        /* ===== LAYOUT ===== */
+        .page-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        /* ===== FILTROS ===== */
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 18px;
+            border: 2px solid var(--border);
+            border-radius: 30px;
+            background: var(--white);
+            color: var(--gray);
+            font-family: 'Montserrat', sans-serif;
+            font-size: .82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: var(--dark);
+        }
+
+        /* ===== HABITACIONES GRID ===== */
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .room-card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all .3s;
+        }
+
+        .room-card:hover { transform: translateY(-4px); box-shadow: 0 12px 35px rgba(0,0,0,0.12); }
+        .room-card.selected { border-color: var(--gold); }
+
+        .room-img {
+            position: relative;
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .room-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+        .room-card:hover .room-img img { transform: scale(1.05); }
+        .carousel-inner { display: flex; height: 100%; transition: transform .35s ease; }
+        .carousel-slide { min-width: 100%; height: 180px; flex-shrink: 0; }
+        .carousel-slide img { width: 100%; height: 100%; object-fit: cover; }
+        .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.45); color: #fff; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: .75rem; display: flex; align-items: center; justify-content: center; z-index: 10; opacity: 0; transition: opacity .2s; }
+        .room-img:hover .carousel-btn { opacity: 1; }
+        .carousel-btn:hover { background: #c9a84c; color: #1a1a1a; }
+        .carousel-prev { left: 8px; }
+        .carousel-next { right: 8px; }
+        .carousel-dots { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 10; }
+        .carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.6); cursor: pointer; transition: all .2s; border: none; padding: 0; }
+        .carousel-dot.active { background: #c9a84c; width: 14px; border-radius: 4px; }
+
+        .room-tipo-badge {
+            position: absolute;
+            top: 12px; right: 12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: .72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .badge-sencilla  { background: #e8f5e9; color: #2e7d32; }
+        .badge-doble     { background: #e3f2fd; color: #1565c0; }
+        .badge-familiar  { background: #fff3e0; color: #e65100; }
+        .badge-premium   { background: #f3e5f5; color: #6a1b9a; }
+        .badge-suite     { background: #1a1a1a; color: var(--gold); }
+
+        .room-body { padding: 18px; }
+        .room-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .room-desc { color: var(--gray); font-size: .8rem; line-height: 1.5; margin-bottom: 12px; }
+
+        .room-features {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .room-feature {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: .78rem;
+            color: var(--gray);
+        }
+
+        .room-feature i { color: var(--gold); font-size: .75rem; }
+
+        .room-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+        }
+
+        .room-price .amount {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .room-price .period { font-size: .75rem; color: var(--gray); }
+
+        .btn-select {
+            padding: 7px 16px;
+            background: var(--dark);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: .8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .2s;
+        }
+
+        .btn-select:hover { background: var(--gold); color: var(--dark); }
+        .btn-select.selected-btn { background: var(--gold); color: var(--dark); }
+
+        /* ===== PANEL RESERVA ===== */
+        .reserva-panel {
+            position: sticky;
+            top: 90px;
+            height: calc(100vh - 110px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-card {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .panel-header {
+            background: var(--dark);
+            padding: 20px 25px;
+            color: var(--white);
+            flex-shrink: 0;
+        }
+
+        .panel-header h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+        }
+
+        .panel-header p { font-size: .8rem; color: rgba(255,255,255,0.6); }
+
+        .panel-body {
+            padding: 20px 25px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .panel-body::-webkit-scrollbar { width: 4px; }
+        .panel-body::-webkit-scrollbar-track { background: var(--light); }
+        .panel-body::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+
+        /* Habitación seleccionada */
+        .selected-room-preview {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            background: var(--light);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 20px;
+        }
+
+        .selected-room-preview img {
+            width: 60px; height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .selected-room-preview .room-info .name {
+            font-weight: 700;
+            font-size: .9rem;
+            margin-bottom: 3px;
+        }
+
+        .selected-room-preview .room-info .price {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: .85rem;
+        }
+
+        /* Fechas */
+        .fechas-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--gray);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: .88rem;
+            outline: none;
+            transition: border-color .2s;
+            background: var(--white);
+        }
+
+        .form-group input:focus, .form-group select:focus { border-color: var(--gold); }
+
+        /* Plan */
+        .plan-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .plan-option {
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all .2s;
+            text-align: center;
+        }
+
+        .plan-option:hover, .plan-option.selected {
+            border-color: var(--gold);
+            background: var(--gold-light);
+        }
+
+        .plan-option i {
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .plan-option .plan-name {
+            font-weight: 700;
+            font-size: .82rem;
+            margin-bottom: 3px;
+        }
+
+        .plan-option .plan-desc {
+            font-size: .72rem;
+            color: var(--gray);
+            line-height: 1.4;
+        }
+
+        /* Guías */
+        .guias-section {
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .guias-section.visible { display: block; }
+
+        .guia-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .guia-card:hover, .guia-card.selected { border-color: var(--gold); background: var(--gold-light); }
+
+        .guia-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--gold);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: var(--dark); font-size: .9rem;
+            flex-shrink: 0;
+        }
+
+        .guia-info .name { font-weight: 600; font-size: .85rem; }
+        .guia-info .spec { font-size: .75rem; color: var(--gray); }
+        .guia-precio { margin-left: auto; font-weight: 700; color: var(--gold); font-size: .85rem; }
+
+        /* Resumen */
+        .resumen {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .resumen-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: .85rem;
+            margin-bottom: 8px;
+            color: var(--gray);
+        }
+
+        .resumen-row.total {
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+            margin-top: 5px;
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--dark);
+        }
+
+        .resumen-row.total span:last-child { color: var(--gold); }
+
+        .btn-reservar {
+            width: 100%;
+            padding: 14px;
+            background: var(--gold);
+            color: var(--dark);
+            border: none;
+            border-radius: 12px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-reservar:hover { background: #b8943a; transform: translateY(-1px); }
+        .btn-reservar:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+
+        /* No seleccionado */
+        .no-selection {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--gray);
+        }
+
+        .no-selection i { font-size: 2.5rem; color: var(--border); margin-bottom: 10px; display: block; }
+        .no-selection p { font-size: .9rem; }
+
+        /* ===== MODAL CONFIRMACIÓN ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 480px;
+            width: 90%;
+            text-align: center;
+            animation: modalIn .3s ease;
+        }
+
+        @keyframes modalIn {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-icon { font-size: 3.5rem; margin-bottom: 15px; }
+        .modal h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        .modal p { color: var(--gray); margin-bottom: 20px; line-height: 1.6; }
+
+        .codigo-reserva {
+            background: var(--light);
+            border: 2px dashed var(--gold);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .codigo-reserva .label { font-size: .78rem; color: var(--gray); margin-bottom: 5px; }
+        .codigo-reserva .code {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 3px;
+        }
+
+        .modal-btns { display: flex; gap: 12px; }
+        .btn-modal {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-size: .9rem;
+        }
+
+        .btn-modal.primary { background: var(--dark); color: var(--white); }
+        .btn-modal.secondary { background: var(--light); color: var(--dark); }
+
+        /* ===== LOGIN REQUIRED ===== */
+        .login-required {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .login-required i { font-size: 2.5rem; color: var(--gold); margin-bottom: 15px; display: block; }
+        .login-required h3 { margin-bottom: 8px; font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; }
+        .login-required p { color: var(--gray); font-size: .85rem; margin-bottom: 20px; }
+
+        .btn-login-req {
+            padding: 10px 25px;
+            background: var(--gold);
+            color: var(--dark);
+            border: none;
+            border-radius: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: .9rem;
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px; right: 30px;
+            background: var(--dark);
+            color: var(--white);
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: .88rem;
+            font-weight: 500;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all .3s;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { border-left: 4px solid #10b981; }
+        .toast.error { border-left: 4px solid #ef4444; }
+
+        /* ===== LOADING ===== */
+        .loading-rooms {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 60px;
+            color: var(--gray);
+        }
+
+        .loading-rooms i {
+            font-size: 2rem;
+            color: var(--gold);
+            animation: spin 1s linear infinite;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .page-layout { grid-template-columns: 1fr; }
+            .reserva-panel { position: static; }
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2rem; }
+            .page-layout { padding: 20px 15px; }
+            .header { padding: 15px 20px; }
+        }
+        /* ===== MODAL DETALLE HABITACION ===== */
+        .modal-detalle { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.75); backdrop-filter: blur(6px); z-index: 9998; align-items: center; justify-content: center; padding: 20px; }
+        .modal-detalle.show { display: flex; }
+        .detalle-card { background: var(--white); border-radius: 24px; width: 100%; max-width: 900px; max-height: 90vh; overflow-y: auto; animation: modalIn .3s ease; }
+        .detalle-galeria { position: relative; height: 350px; overflow: hidden; border-radius: 24px 24px 0 0; }
+        .detalle-galeria .carousel-inner { height: 350px; }
+        .detalle-galeria .carousel-slide { height: 350px; }
+        .detalle-galeria .carousel-btn { opacity: 1; width: 40px; height: 40px; font-size: 1rem; }
+        .detalle-galeria .carousel-dots { bottom: 15px; }
+        .detalle-galeria .carousel-dot { width: 8px; height: 8px; }
+        .detalle-galeria .carousel-dot.active { width: 20px; }
+        .detalle-body { padding: 30px; }
+        .detalle-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        .detalle-titulo { font-family: "Cormorant Garamond", serif; font-size: 1.8rem; font-weight: 700; }
+        .detalle-precio { font-size: 1.5rem; font-weight: 700; color: var(--gold); }
+        .detalle-precio small { font-size: .8rem; color: var(--gray); font-weight: 400; }
+        .detalle-desc { color: var(--gray); line-height: 1.7; margin-bottom: 20px; }
+        .detalle-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .detalle-info-item { background: var(--light); border-radius: 10px; padding: 12px; text-align: center; }
+        .detalle-info-item i { color: var(--gold); margin-bottom: 5px; display: block; font-size: 1.1rem; }
+        .detalle-info-item .val { font-weight: 700; font-size: .9rem; }
+        .detalle-info-item .lbl { font-size: .75rem; color: var(--gray); }
+        .detalle-servicios { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 25px; }
+        .servicio-tag { background: var(--gold-light); color: var(--dark); padding: 5px 12px; border-radius: 20px; font-size: .78rem; font-weight: 600; }
+        .detalle-btns { display: flex; gap: 12px; }
+        .btn-detalle-reservar { flex: 1; padding: 14px; background: var(--gold); color: var(--dark); border: none; border-radius: 12px; font-family: "Montserrat", sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all .2s; }
+        .btn-detalle-reservar:hover { background: #b8943a; }
+        .btn-detalle-cerrar { padding: 14px 20px; background: var(--light); color: var(--dark); border: none; border-radius: 12px; font-family: "Montserrat", sans-serif; font-weight: 600; cursor: pointer; }
+        .detalle-close { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); color: #fff; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; z-index: 10; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="index.html" class="header-logo">
+            <i class="fas fa-mountain"></i>
+            <span>HOTEL MIRADOR</span>
+        </a>
+        <div class="header-user">
+            <div class="user-chip" id="userChip" style="display:none">
+                <div class="dot"></div>
+                <span id="userName">Usuario</span>
+            </div>
+            <a href="index.html" class="btn-volver">
+                <i class="fas fa-arrow-left"></i> Volver al sitio
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-label">🌴 Costa Caribe</div>
+            <h1>Elige Tu Habitación Perfecta</h1>
+            <p>Desde acogedoras habitaciones hasta suites VIP con acceso privado a la playa</p>
+        </div>
+    </div>
+
+    <!-- Layout -->
+    <div class="page-layout">
+
+        <!-- Lado izquierdo: habitaciones -->
+        <div>
+            <!-- Filtros -->
+            <div class="filters">
+                <button class="filter-btn active" onclick="filtrar('todas', this)">🏨 Todas</button>
+                <button class="filter-btn" onclick="filtrar('sencilla', this)">🌿 Estándar</button>
+                <button class="filter-btn" onclick="filtrar('doble', this)">🌊 Superior</button>
+                <button class="filter-btn" onclick="filtrar('familiar', this)">👨‍👩‍👧 Familiar</button>
+                <button class="filter-btn" onclick="filtrar('premium', this)">⭐ Premium</button>
+                <button class="filter-btn" onclick="filtrar('suite', this)">👑 VIP Suite</button>
+            </div>
+
+            <!-- Grid de habitaciones -->
+            <div class="rooms-grid" id="roomsGrid">
+                <div class="loading-rooms">
+                    <i class="fas fa-spinner"></i>
+                    Cargando habitaciones...
+                </div>
+            </div>
+        </div>
+
+        <!-- Lado derecho: panel reserva -->
+        <div class="reserva-panel">
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h3>🏖️ Tu Reserva</h3>
+                    <p>Completa los detalles para reservar</p>
+                </div>
+                <div class="panel-body" id="panelBody">
+
+                    <!-- Si no está logueado -->
+                    <div class="login-required" id="loginRequired" style="display:none">
+                        <i class="fas fa-lock"></i>
+                        <h3>Inicia sesión</h3>
+                        <p>Necesitas una cuenta para hacer tu reserva</p>
+                        <button class="btn-login-req" onclick="window.location.href='index.html'">
+                            Ir a iniciar sesión
+                        </button>
+                    </div>
+
+                    <!-- Panel de reserva -->
+                    <div id="reservaForm">
+                        <!-- Habitación seleccionada -->
+                        <div id="selectedRoomPreview" class="no-selection">
+                            <i class="fas fa-bed"></i>
+                            <p>Selecciona una habitación de la lista</p>
+                        </div>
+
+                        <!-- Fechas -->
+                        <div class="fechas-grid">
+                            <div class="form-group">
+                                <label>📅 Entrada</label>
+                                <input type="date" id="fechaEntrada" min="">
+                            </div>
+                            <div class="form-group">
+                                <label>📅 Salida</label>
+                                <input type="date" id="fechaSalida" min="">
+                            </div>
+                        </div>
+
+                        <!-- Huéspedes -->
+                        <div class="form-group" style="margin-bottom:15px">
+                            <label>👥 Huéspedes</label>
+                            <select id="huespedes">
+                                <option value="1">1 persona</option>
+                                <option value="2" selected>2 personas</option>
+                                <option value="3">3 personas</option>
+                                <option value="4">4 personas</option>
+                                <option value="5">5 personas</option>
+                                <option value="6">6 personas</option>
+                            </select>
+                        </div>
+
+                        <!-- Plan -->
+                        <div class="form-group" style="margin-bottom:10px">
+                            <label>🎯 Elige tu plan</label>
+                        </div>
+                        <div class="plan-options">
+                            <div class="plan-option selected" onclick="seleccionarPlan('alojamiento', this)">
+                                <i class="fas fa-home"></i>
+                                <div class="plan-name">Solo Alojamiento</div>
+                                <div class="plan-desc">Habitación + servicios del hotel</div>
+                            </div>
+                            <div class="plan-option" onclick="seleccionarPlan('turistico', this)">
+                                <i class="fas fa-map-marked-alt"></i>
+                                <div class="plan-name">Plan Turístico</div>
+                                <div class="plan-desc">Alojamiento + guía + tours Caribe</div>
+                            </div>
+                        </div>
+
+                        <!-- Guías turísticos -->
+                        <div class="guias-section" id="guiasSection">
+                            <div class="form-group" style="margin-bottom:10px;margin-top:5px">
+                                <label>🧭 Elige tu guía turístico</label>
+                            </div>
+                            <div id="guiasList">
+                                <!-- Se llena dinámicamente -->
+                            </div>
+                        </div>
+
+                        <!-- Notas -->
+                        <div class="form-group" style="margin-bottom:15px">
+                            <label>📝 Notas especiales (opcional)</label>
+                            <input type="text" id="notas" placeholder="Ej: llegada tarde, cuna para bebé...">
+                        </div>
+
+                        <!-- Resumen -->
+                        <div class="resumen" id="resumen" style="display:none">
+                            <div class="resumen-row">
+                                <span id="resNights">0 noches × $0</span>
+                                <span id="resHabTotal">$0</span>
+                            </div>
+                            <div class="resumen-row" id="resGuiaRow" style="display:none">
+                                <span>Plan turístico</span>
+                                <span id="resGuiaTotal">$0</span>
+                            </div>
+                            <div class="resumen-row total">
+                                <span>Total a pagar</span>
+                                <span id="resTotal">$0</span>
+                            </div>
+                        </div>
+
+                        <!-- Botón reservar -->
+                        <button class="btn-reservar" id="btnReservar" onclick="hacerReserva()">
+                            <i class="fas fa-calendar-check"></i>
+                            Confirmar Reserva
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal confirmación -->
+    <!-- Modal Detalle Habitacion -->
+    <div class="modal-detalle" id="modalDetalle" onclick="if(event.target===this)cerrarDetalle()">
+        <div class="detalle-card">
+            <div class="detalle-galeria" id="detalleGaleria">
+                <button class="detalle-close" onclick="cerrarDetalle()"><i class="fas fa-times"></i></button>
+                <div class="carousel-inner" id="detalleCarouselInner"></div>
+                <button class="carousel-btn carousel-prev" onclick="moverCarrusel('detalleGaleria',-1)"><i class="fas fa-chevron-left"></i></button>
+                <button class="carousel-btn carousel-next" onclick="moverCarrusel('detalleGaleria',1)"><i class="fas fa-chevron-right"></i></button>
+                <div class="carousel-dots" id="detalleDots"></div>
+            </div>
+            <div class="detalle-body">
+                <div class="detalle-header">
+                    <div class="detalle-titulo" id="detalleTitulo"></div>
+                    <div class="detalle-precio" id="detallePrecio"></div>
+                </div>
+                <div class="detalle-desc" id="detalleDesc"></div>
+                <div class="detalle-info" id="detalleInfo"></div>
+                <div class="detalle-servicios" id="detalleServicios"></div>
+                <div class="detalle-btns">
+                    <button class="btn-detalle-cerrar" onclick="cerrarDetalle()">Volver</button>
+                    <button class="btn-detalle-reservar" id="btnDetalleReservar"><i class="fas fa-calendar-check"></i> Reservar esta habitación</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="modalConfirmacion">
+        <div class="modal">
+            <div class="modal-icon">🎉</div>
+            <h2>¡Reserva Confirmada!</h2>
+            <p>Tu reserva ha sido registrada exitosamente. Te esperamos en el Hotel Mirador.</p>
+            <div class="codigo-reserva">
+                <div class="label">Código de reserva</div>
+                <div class="code" id="codigoReserva">HM-000000</div>
+            </div>
+            <div class="modal-btns">
+                <button class="btn-modal secondary" onclick="cerrarModal()">Seguir viendo</button>
+                <button class="btn-modal primary" onclick="window.location.href='index.html'">Ir al inicio</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+    const API = 'http://192.168.101.3:5000/api/v1';
+    const carouselState = {};
+    function moverCarrusel(id, dir) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const slides = el.querySelectorAll('.carousel-slide');
+        if (!carouselState[id]) carouselState[id] = 0;
+        carouselState[id] = (carouselState[id] + dir + slides.length) % slides.length;
+        el.querySelector('.carousel-inner').style.transform = `translateX(-${carouselState[id] * 100}%)`;
+        el.querySelectorAll('.carousel-dot').forEach((d,i) => d.classList.toggle('active', i === carouselState[id]));
+    }
+    function irSlide(id, idx) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        carouselState[id] = idx;
+        el.querySelector('.carousel-inner').style.transform = `translateX(-${idx * 100}%)`;
+        el.querySelectorAll('.carousel-dot').forEach((d,i) => d.classList.toggle('active', i === idx));
+    }
+    let habitaciones = [];
+    let habitacionSeleccionada = null;
+    let planSeleccionado = 'alojamiento';
+    let guiaSeleccionado = null;
+    let usuario = null;
+    let token = null;
+
+    let guiasReales = [];
+
+    // ===== INICIALIZACIÓN =====
+    window.addEventListener('DOMContentLoaded', () => {
+        // Verificar sesión
+        const savedUsuario = localStorage.getItem('hm_usuario_actual');
+        const savedToken   = localStorage.getItem('hm_token');
+
+        if (savedUsuario && savedToken) {
+            usuario = JSON.parse(savedUsuario);
+            token   = savedToken;
+            document.getElementById('userChip').style.display = 'flex';
+            document.getElementById('userName').textContent   = usuario.nombre;
+            document.getElementById('loginRequired').style.display = 'none';
+            document.getElementById('reservaForm').style.display   = 'block';
+        } else {
+            document.getElementById('loginRequired').style.display = 'block';
+            document.getElementById('reservaForm').style.display   = 'none';
+        }
+
+        // Fecha mínima hoy
+        const hoy = new Date().toISOString().split('T')[0];
+        document.getElementById('fechaEntrada').min = hoy;
+        document.getElementById('fechaSalida').min  = hoy;
+        document.getElementById('fechaEntrada').value = hoy;
+
+        const manana = new Date();
+        manana.setDate(manana.getDate() + 1);
+        document.getElementById('fechaSalida').value = manana.toISOString().split('T')[0];
+
+        // Listeners fechas
+        document.getElementById('fechaEntrada').addEventListener('change', calcularResumen);
+        document.getElementById('fechaSalida').addEventListener('change', calcularResumen);
+
+        // Cargar guías reales desde API
+        cargarGuiasReales();
+
+        // Cargar habitaciones
+        cargarHabitaciones();
+    });
+
+    // ===== CARGAR HABITACIONES =====
+    async function cargarHabitaciones() {
+        try {
+            const res  = await fetch(`${API}/rooms`);
+            const data = await res.json();
+            habitaciones = Array.isArray(data) ? data : (data.habitaciones || data.rooms || []);
+            renderHabitaciones(habitaciones);
+        } catch (e) {
+            document.getElementById('roomsGrid').innerHTML =
+                '<div class="loading-rooms"><i class="fas fa-exclamation-triangle" style="animation:none;color:#ef4444"></i>Error al cargar habitaciones</div>';
+        }
+    }
+
+    // ===== RENDER HABITACIONES =====
+    function renderHabitaciones(lista) {
+        const grid = document.getElementById('roomsGrid');
+
+        if (lista.length === 0) {
+            grid.innerHTML = '<div class="loading-rooms"><i class="fas fa-bed" style="animation:none;color:#ccc"></i>No hay habitaciones disponibles</div>';
+            return;
+        }
+
+        const tipoLabels = { sencilla: 'Estándar', doble: 'Superior', familiar: 'Familiar', premium: 'Premium', suite: 'VIP Suite' };
+        const servicioIcons = { wifi: 'fa-wifi', tv: 'fa-tv', minibar: 'fa-wine-bottle', aire: 'fa-wind', jacuzzi: 'fa-hot-tub', terraza: 'fa-umbrella-beach', desayuno: 'fa-coffee' };
+
+        grid.innerHTML = lista.map(h => {
+            const tipo      = h.tipo || 'sencilla';
+            const imagen    = h.imagenes && h.imagenes[0] ? h.imagenes[0] : 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800';
+            const precio    = h.precioBase || 0;
+            const servicios = (h.servicios || []).slice(0, 4);
+            const isSelected = habitacionSeleccionada && habitacionSeleccionada._id === h._id;
+
+            const imagenes = (h.imagenes && h.imagenes.length > 0) ? h.imagenes : [imagen];
+            const carouselId = "car-" + h._id;
+            return `
+                <div class="room-card ${isSelected ? "selected" : ""}" onclick="abrirDetalle('${h._id}')">
+                    <div class="room-img" id="${carouselId}">
+                        <div class="carousel-inner" style="transform:translateX(0)">
+                            ${imagenes.map(src => `<div class="carousel-slide"><img src="${src}" alt="${h.nombre}" loading="lazy"></div>`).join("")}
+                        </div>
+                        <button class="carousel-btn carousel-prev" onclick="event.stopPropagation();moverCarrusel('${carouselId}',-1)"><i class="fas fa-chevron-left"></i></button>
+                        <button class="carousel-btn carousel-next" onclick="event.stopPropagation();moverCarrusel('${carouselId}',1)"><i class="fas fa-chevron-right"></i></button>
+                        <div class="carousel-dots">${imagenes.map((_,i) => `<button class="carousel-dot${i===0?" active":""}" onclick="event.stopPropagation();irSlide('${carouselId}',${i})"></button>`).join("")}</div>
+                        <span class="room-tipo-badge badge-${tipo}">${tipoLabels[tipo] || tipo}</span>
+                    </div>
+                    <div class="room-body">
+                        <div class="room-name">${h.nombre}</div>
+                        <div class="room-desc">${h.descripcion || ''}</div>
+                        <div class="room-features">
+                            <div class="room-feature"><i class="fas fa-users"></i> ${h.capacidad} personas</div>
+                            <div class="room-feature"><i class="fas fa-bed"></i> ${h.camas || '1 cama'}</div>
+                            <div class="room-feature"><i class="fas fa-ruler-combined"></i> ${h.tamanio || '?'} m²</div>
+                            ${servicios.map(s => `<div class="room-feature"><i class="fas ${servicioIcons[s] || 'fa-check'}"></i> ${s}</div>`).join('')}
+                        </div>
+                        <div class="room-footer">
+                            <div class="room-price">
+                                <span class="amount">$${precio.toLocaleString()}</span>
+                                <span class="period"> / noche</span>
+                            </div>
+                            <button class="btn-select ${isSelected ? 'selected-btn' : ''}" onclick="event.stopPropagation(); seleccionarHabitacion('${h._id}')">
+                                ${isSelected ? '✓ Seleccionada' : 'Seleccionar'}
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+        }).join('');
+    }
+
+    // ===== FILTRAR =====
+    function filtrar(tipo, btn) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filtradas = tipo === 'todas' ? habitaciones : habitaciones.filter(h => h.tipo === tipo);
+        renderHabitaciones(filtradas);
+    }
+
+    // ===== SELECCIONAR HABITACIÓN =====
+    function seleccionarHabitacion(id) {
+        habitacionSeleccionada = habitaciones.find(h => h._id === id);
+        if (!habitacionSeleccionada) return;
+
+        // Actualizar preview
+        const imagen = habitacionSeleccionada.imagenes && habitacionSeleccionada.imagenes[0]
+            ? habitacionSeleccionada.imagenes[0]
+            : 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800';
+
+        document.getElementById('selectedRoomPreview').innerHTML = `
+            <div class="selected-room-preview">
+                <img src="${imagen}" alt="${habitacionSeleccionada.nombre}">
+                <div class="room-info">
+                    <div class="name">${habitacionSeleccionada.nombre}</div>
+                    <div class="price">$${(habitacionSeleccionada.precioBase || 0).toLocaleString()} / noche</div>
+                </div>
+            </div>`;
+
+        renderHabitaciones(habitaciones.filter(h => true)); // re-render con selección
+        calcularResumen();
+        // Botón siempre activo
+        document.getElementById('btnReservar').disabled = false;
+
+        // Scroll al panel en móvil
+        if (window.innerWidth < 1024) {
+            document.querySelector('.reserva-panel').scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    // ===== PLAN =====
+    function seleccionarPlan(plan, el) {
+        planSeleccionado = plan;
+        document.querySelectorAll('.plan-option').forEach(p => p.classList.remove('selected'));
+        el.classList.add('selected');
+
+        const guiasSection = document.getElementById('guiasSection');
+        if (plan === 'turistico') {
+            guiasSection.classList.add('visible');
+        } else {
+            guiasSection.classList.remove('visible');
+            guiaSeleccionado = null;
+            document.querySelectorAll('.guia-card').forEach(g => g.classList.remove('selected'));
+        }
+        calcularResumen();
+    }
+
+    // ===== CARGAR GUÍAS REALES =====
+    async function cargarGuiasReales() {
+        try {
+            const res  = await fetch(`${API}/guides`);
+            const data = await res.json();
+            guiasReales = Array.isArray(data) ? data.filter(g => g.disponibilidad !== false) : [];
+            renderGuias();
+        } catch (e) {
+            console.error('Error cargando guías:', e);
+            guiasReales = [];
+            renderGuias();
+        }
+    }
+
+    // ===== RENDER GUÍAS =====
+    function renderGuias() {
+        const lista = document.getElementById('guiasList');
+        if (guiasReales.length === 0) {
+            lista.innerHTML = '<p style="color:#888;font-size:.85rem;text-align:center;padding:10px">No hay guías disponibles</p>';
+            return;
+        }
+        lista.innerHTML = guiasReales.map(g => {
+            const u      = g.usuarioId || {};
+            const nombre = u.nombre || 'Guía';
+            const inicial = nombre.charAt(0).toUpperCase();
+            const precio  = g.experiencias && g.experiencias[0] ? g.experiencias[0].precio : 150000;
+            const tours   = (g.experiencias || []).slice(0, 2).map(t => t.titulo).join(' · ');
+            const avatar  = g.foto
+                ? `<img src="${g.foto}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #c9a84c" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+                : '';
+            const avatarPh = `<div class="guia-avatar" style="${g.foto ? 'display:none' : ''}">${inicial}</div>`;
+            const espec = {aventura:'🏄 Aventura', cultural:'🏛️ Cultural', naturaleza:'🌿 Naturaleza', ciudad:'🏙️ Ciudad', montaña:'⛰️ Montaña'}[g.especialidad] || g.especialidad;
+
+            return `
+                <div class="guia-card" onclick="seleccionarGuia('${g._id}', this)" id="guia-${g._id}">
+                    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+                        ${avatar}${avatarPh}
+                    </div>
+                    <div class="guia-info">
+                        <div class="name">${nombre}</div>
+                        <div class="spec">${espec}</div>
+                        <div class="spec" style="margin-top:3px;color:#c9a84c;font-size:.72rem">${tours}</div>
+                    </div>
+                    <div class="guia-precio">+$${precio.toLocaleString()}</div>
+                </div>`;
+        }).join('');
+    }
+
+    function seleccionarGuia(id, el) {
+        const g = guiasReales.find(x => x._id === id);
+        if (!g) return;
+        const u = g.usuarioId || {};
+        const precio = g.experiencias && g.experiencias[0] ? g.experiencias[0].precio : 150000;
+        guiaSeleccionado = {
+            id:          g._id,
+            nombre:      u.nombre || 'Guía',
+            especialidad: g.especialidad,
+            precio:      precio
+        };
+        document.querySelectorAll('.guia-card').forEach(x => x.classList.remove('selected'));
+        el.classList.add('selected');
+        calcularResumen();
+    }
+
+    // ===== CALCULAR RESUMEN =====
+    function calcularResumen() {
+        if (!habitacionSeleccionada) return;
+
+        const entrada = new Date(document.getElementById('fechaEntrada').value);
+        const salida  = new Date(document.getElementById('fechaSalida').value);
+
+        if (salida <= entrada) {
+            document.getElementById('resumen').style.display = 'none';
+            return;
+        }
+
+        const noches     = Math.ceil((salida - entrada) / (1000 * 60 * 60 * 24));
+        const precioNoche = habitacionSeleccionada.precioBase || 0;
+        const subtotalHab = noches * precioNoche;
+        const subtotalGuia = (planSeleccionado === 'turistico' && guiaSeleccionado) ? guiaSeleccionado.precio * noches : 0;
+        const total = subtotalHab + subtotalGuia;
+
+        document.getElementById('resNights').textContent   = `${noches} noche${noches > 1 ? 's' : ''} × $${precioNoche.toLocaleString()}`;
+        document.getElementById('resHabTotal').textContent = `$${subtotalHab.toLocaleString()}`;
+
+        const resGuiaRow = document.getElementById('resGuiaRow');
+        if (subtotalGuia > 0) {
+            resGuiaRow.style.display = 'flex';
+            document.getElementById('resGuiaTotal').textContent = `$${subtotalGuia.toLocaleString()}`;
+        } else {
+            resGuiaRow.style.display = 'none';
+        }
+
+        document.getElementById('resTotal').textContent = `$${total.toLocaleString()}`;
+        document.getElementById('resumen').style.display = 'block';
+    }
+
+    // ===== HACER RESERVA =====
+    async function hacerReserva() {
+        if (!usuario || !token) {
+            mostrarToast('Debes iniciar sesión para reservar', 'error');
+            return;
+        }
+
+        if (!habitacionSeleccionada) {
+            mostrarToast('Selecciona una habitación', 'error');
+            return;
+        }
+
+        const fechaEntrada = document.getElementById('fechaEntrada').value;
+        const fechaSalida  = document.getElementById('fechaSalida').value;
+        const huespedes    = parseInt(document.getElementById('huespedes').value);
+        const notas        = document.getElementById('notas').value;
+
+        if (!fechaEntrada || !fechaSalida) {
+            mostrarToast('Selecciona las fechas de entrada y salida', 'error');
+            return;
+        }
+
+        if (new Date(fechaSalida) <= new Date(fechaEntrada)) {
+            mostrarToast('La fecha de salida debe ser posterior a la entrada', 'error');
+            return;
+        }
+
+        if (planSeleccionado === 'turistico' && !guiaSeleccionado) {
+            mostrarToast('Selecciona un guía turístico', 'error');
+            document.getElementById('guiasSection').scrollIntoView({ behavior: 'smooth' });
+            return;
+        }
+
+        if (!habitacionSeleccionada) {
+            mostrarToast('Selecciona una habitación primero', 'error');
+            return;
+        }
+
+        const noches      = Math.ceil((new Date(fechaSalida) - new Date(fechaEntrada)) / (1000 * 60 * 60 * 24));
+        const precioTotal = (habitacionSeleccionada.precioBase * noches) +
+                            (planSeleccionado === 'turistico' && guiaSeleccionado ? guiaSeleccionado.precio * noches : 0);
+
+        // Guardar datos de la reserva y redirigir a pagos
+        const pendingReserva = {
+            habitacion:   habitacionSeleccionada,
+            fechaEntrada,
+            fechaSalida,
+            huespedes,
+            notas:        notas || null,
+            plan:         planSeleccionado,
+            guia:         guiaSeleccionado || null,
+            precioTotal
+        };
+
+        localStorage.setItem('pendingReserva', JSON.stringify(pendingReserva));
+        window.location.href = 'pagos.html';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalConfirmacion').classList.remove('show');
+        habitacionSeleccionada = null;
+        document.getElementById('selectedRoomPreview').innerHTML = `
+            <div class="no-selection">
+                <i class="fas fa-bed"></i>
+                <p>Selecciona una habitación de la lista</p>
+            </div>`;
+        document.getElementById('resumen').style.display = 'none';
+        document.getElementById('btnReservar').disabled = true;
+        renderHabitaciones(habitaciones);
+    }
+
+
+    const servicioLabels = { wifi: "WiFi", tv: "Smart TV", minibar: "Minibar", aire: "Aire Acondicionado", jacuzzi: "Jacuzzi", terraza: "Terraza", desayuno: "Desayuno Incluido" };
+
+    function abrirDetalle(id) {
+        const h = habitaciones.find(x => x._id === id);
+        if (!h) return;
+        const imagenes = (h.imagenes && h.imagenes.length) ? h.imagenes : ["https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800"];
+        const inner = document.getElementById("detalleCarouselInner");
+        const dots  = document.getElementById("detalleDots");
+        inner.innerHTML = imagenes.map(src => `<div class="carousel-slide"><img src="${src}" alt="${h.nombre}" loading="lazy"></div>`).join("");
+        dots.innerHTML  = imagenes.map((_,i) => `<button class="carousel-dot${i===0?" active":""}" onclick="irSlide('detalleGaleria',${i})"></button>`).join("");
+        carouselState["detalleGaleria"] = 0;
+        inner.style.transform = "translateX(0)";
+        document.getElementById("detalleTitulo").textContent = h.nombre;
+        document.getElementById("detallePrecio").innerHTML = `$${(h.precioBase||0).toLocaleString()} <small>/ noche</small>`;
+        document.getElementById("detalleDesc").textContent = h.descripcion || "";
+        const tipoLabels = { sencilla: "Estándar", doble: "Superior", familiar: "Familiar", premium: "Premium", suite: "VIP Suite" };
+        document.getElementById("detalleInfo").innerHTML = `
+            <div class="detalle-info-item"><i class="fas fa-tag"></i><div class="val">${tipoLabels[h.tipo]||h.tipo}</div><div class="lbl">Categoría</div></div>
+            <div class="detalle-info-item"><i class="fas fa-users"></i><div class="val">${h.capacidad} personas</div><div class="lbl">Capacidad</div></div>
+            <div class="detalle-info-item"><i class="fas fa-bed"></i><div class="val">${h.camas||"1 cama"}</div><div class="lbl">Camas</div></div>
+            <div class="detalle-info-item"><i class="fas fa-ruler-combined"></i><div class="val">${h.tamanio||"?"} m²</div><div class="lbl">Tamaño</div></div>`;
+        document.getElementById("detalleServicios").innerHTML = (h.servicios||[]).map(s => `<span class="servicio-tag"><i class="fas fa-check"></i> ${servicioLabels[s]||s}</span>`).join("");
+        document.getElementById("btnDetalleReservar").onclick = () => { cerrarDetalle(); seleccionarHabitacion(id); };
+        document.getElementById("modalDetalle").classList.add("show");
+        document.body.style.overflow = "hidden";
+    }
+
+    function cerrarDetalle() {
+        document.getElementById("modalDetalle").classList.remove("show");
+        document.body.style.overflow = "";
+    }
+    function mostrarToast(msg, tipo = 'success') {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.className = `toast ${tipo} show`;
+        setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+    </script>
+</body>
+</html>

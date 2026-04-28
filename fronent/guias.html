@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guías Turísticos | Hotel Mirador</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --gold: #c9a84c;
+            --gold-light: #f0e6c8;
+            --dark: #1a1a1a;
+            --gray: #666;
+            --light: #f8f6f2;
+            --white: #fff;
+            --border: #e8e0d0;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --blue: #2980b9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--light); color: var(--dark); }
+
+        /* HEADER */
+        .header {
+            background: var(--dark); padding: 18px 40px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        }
+        .header-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .header-logo i { color: var(--gold); font-size: 1.4rem; }
+        .header-logo span { color: var(--white); font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 700; letter-spacing: 2px; }
+        .header-nav { display: flex; align-items: center; gap: 20px; }
+        .nav-link { color: rgba(255,255,255,0.7); text-decoration: none; font-size: .85rem; font-weight: 500; transition: color .2s; }
+        .nav-link:hover, .nav-link.active { color: var(--gold); }
+        .btn-reservar { background: var(--gold); color: var(--dark); padding: 8px 20px; border-radius: 30px; font-weight: 700; font-size: .85rem; text-decoration: none; transition: all .2s; }
+        .btn-reservar:hover { background: #b8943a; }
+
+        /* HERO CARRUSEL */
+        .hero {
+            position: relative; height: 500px;
+            display: flex; align-items: center; justify-content: center; text-align: center;
+            overflow: hidden;
+        }
+        .hero-carousel { position: absolute; inset: 0; display: flex; transition: transform .3s ease; }
+        .hero-slide { min-width: 100%; height: 100%; background-size: cover; background-position: center; flex-shrink: 0; }
+        .hero::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.52); z-index: 1; }
+        .hero-content { position: relative; z-index: 2; }
+        .hero-nav { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 3; }
+        .hero-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.5); border: none; cursor: pointer; transition: all .3s; padding: 0; }
+        .hero-dot.active { background: var(--gold); width: 20px; border-radius: 4px; }
+        .hero-arrows { position: absolute; top: 50%; transform: translateY(-50%); width: 100%; display: flex; justify-content: space-between; padding: 0 20px; z-index: 3; pointer-events: none; }
+        .hero-arr { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.15); color: #fff; border: none; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; pointer-events: all; transition: background .2s; backdrop-filter: blur(4px); }
+        .hero-arr:hover { background: rgba(201,168,76,0.7); }
+        .hero-label { display: inline-block; background: var(--gold); color: var(--dark); padding: 5px 18px; border-radius: 20px; font-size: .75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; }
+        .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; color: var(--white); margin-bottom: 12px; letter-spacing: 2px; }
+        .hero p { color: rgba(255,255,255,0.8); font-size: 1.05rem; max-width: 550px; margin: 0 auto; }
+
+        /* FILTROS */
+        .filtros-section { background: var(--white); padding: 25px 40px; box-shadow: var(--shadow); }
+        .filtros-inner { max-width: 1200px; margin: 0 auto; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .filtro-btn { padding: 8px 18px; border: 2px solid var(--border); border-radius: 30px; background: var(--white); color: var(--gray); font-family: 'Montserrat', sans-serif; font-size: .82rem; font-weight: 600; cursor: pointer; transition: all .2s; }
+        .filtro-btn:hover, .filtro-btn.active { background: var(--gold); border-color: var(--gold); color: var(--dark); }
+
+        /* CONTENIDO */
+        .page-content { max-width: 1200px; margin: 0 auto; padding: 50px 30px; }
+
+        .section-header { text-align: center; margin-bottom: 50px; }
+        .section-label { font-size: .82rem; color: var(--gold); text-transform: uppercase; letter-spacing: 3px; font-weight: 700; display: block; margin-bottom: 10px; }
+        .section-title { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; color: var(--dark); margin-bottom: 12px; }
+        .section-desc { color: var(--gray); font-size: .95rem; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+
+        /* GRID DE GUÍAS */
+        .guias-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
+
+        .guia-card {
+            background: var(--white); border-radius: 24px;
+            box-shadow: var(--shadow); overflow: hidden;
+            transition: transform .3s, box-shadow .3s;
+            cursor: pointer;
+        }
+        .guia-card:hover { transform: translateY(-6px); box-shadow: 0 15px 40px rgba(0,0,0,0.12); }
+
+        /* Galería del guía */
+        .guia-galeria { position: relative; height: 220px; overflow: hidden; }
+        .galeria-carousel { display: flex; height: 100%; transition: transform .4s ease; }
+        .galeria-slide { min-width: 100%; height: 220px; flex-shrink: 0; }
+        .galeria-slide img { width: 100%; height: 100%; object-fit: cover; }
+        .galeria-slide .no-foto { width: 100%; height: 100%; background: linear-gradient(135deg, #1a3a5c, #2980b9); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: rgba(255,255,255,0.3); }
+        .galeria-prev, .galeria-next { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.4); color: #fff; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: .8rem; display: flex; align-items: center; justify-content: center; z-index: 5; opacity: 0; transition: opacity .2s; }
+        .guia-galeria:hover .galeria-prev, .guia-galeria:hover .galeria-next { opacity: 1; }
+        .galeria-prev { left: 10px; }
+        .galeria-next { right: 10px; }
+        .galeria-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 5; }
+        .galeria-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.6); cursor: pointer; border: none; padding: 0; transition: all .2s; }
+        .galeria-dot.active { background: var(--gold); width: 14px; border-radius: 4px; }
+
+        /* Badge especialidad */
+        .especialidad-badge { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.65); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: .72rem; font-weight: 600; backdrop-filter: blur(4px); z-index: 5; }
+        .disponible-badge { position: absolute; top: 12px; right: 12px; background: #10b981; color: #fff; padding: 4px 10px; border-radius: 20px; font-size: .7rem; font-weight: 700; z-index: 5; }
+        .no-disponible-badge { background: #ef4444; }
+
+        /* Cuerpo de la tarjeta */
+        .guia-body { padding: 22px; }
+
+        .guia-top { display: flex; align-items: center; gap: 14px; margin-bottom: 15px; }
+        .guia-avatar { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 3px solid var(--blue); flex-shrink: 0; }
+        .guia-avatar-placeholder { width: 55px; height: 55px; border-radius: 50%; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 700; border: 3px solid var(--blue); flex-shrink: 0; }
+        .guia-info .nombre { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 2px; }
+        .guia-info .especialidad-txt { color: var(--gray); font-size: .78rem; }
+        .guia-estrellas { margin-left: auto; text-align: right; }
+        .guia-estrellas .stars { color: #ffc107; font-size: .9rem; }
+        .guia-estrellas .calif { font-size: .75rem; color: var(--gray); }
+
+        .guia-desc { color: var(--gray); font-size: .85rem; line-height: 1.6; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+        .guia-idiomas { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 15px; }
+        .idioma-tag { background: var(--light); color: var(--dark); padding: 3px 10px; border-radius: 15px; font-size: .72rem; font-weight: 600; }
+
+        .guia-tours { margin-bottom: 18px; }
+        .guia-tours-title { font-size: .78rem; font-weight: 700; color: var(--dark); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+        .tour-tag { display: flex; justify-content: space-between; align-items: center; background: var(--light); border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; }
+        .tour-tag .t-nombre { font-size: .8rem; font-weight: 600; }
+        .tour-tag .t-info { font-size: .75rem; color: var(--gray); }
+        .tour-tag .t-precio { font-size: .82rem; font-weight: 700; color: var(--gold); }
+
+        .guia-footer { display: flex; gap: 10px; }
+        .btn-ver-perfil { flex: 1; padding: 10px; background: var(--dark); color: var(--white); border: none; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: .85rem; font-weight: 600; cursor: pointer; transition: background .2s; }
+        .btn-ver-perfil:hover { background: #333; }
+        .btn-reservar-guia { flex: 1; padding: 10px; background: var(--gold); color: var(--dark); border: none; border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: .85rem; font-weight: 700; cursor: pointer; transition: background .2s; }
+        .btn-reservar-guia:hover { background: #b8943a; }
+
+        /* MODAL PERFIL COMPLETO */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(6px); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.show { display: flex; }
+        .modal-guia { background: var(--white); border-radius: 24px; width: 100%; max-width: 750px; max-height: 90vh; overflow-y: auto; animation: modalIn .3s ease; }
+        @keyframes modalIn { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .modal-galeria { position: relative; height: 300px; overflow: hidden; border-radius: 24px 24px 0 0; }
+        .modal-galeria .galeria-carousel { height: 300px; }
+        .modal-galeria .galeria-slide { height: 300px; }
+        .modal-galeria .galeria-prev, .modal-galeria .galeria-next { opacity: 1; }
+        .modal-close { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); color: #fff; border: none; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; z-index: 10; display: flex; align-items: center; justify-content: center; }
+
+        .modal-body { padding: 30px; }
+        .modal-top { display: flex; gap: 20px; align-items: start; margin-bottom: 20px; flex-wrap: wrap; }
+        .modal-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 4px solid var(--blue); flex-shrink: 0; }
+        .modal-avatar-ph { width: 80px; height: 80px; border-radius: 50%; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 700; border: 4px solid var(--blue); flex-shrink: 0; }
+        .modal-nombre { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
+        .modal-sub { color: var(--gray); font-size: .88rem; margin-bottom: 8px; }
+        .modal-contacto { display: flex; gap: 15px; flex-wrap: wrap; }
+        .modal-contacto span { display: flex; align-items: center; gap: 6px; font-size: .82rem; color: var(--gray); }
+        .modal-contacto i { color: var(--gold); }
+
+        .modal-section-title { font-weight: 700; font-size: .88rem; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 12px; margin-top: 20px; color: var(--dark); display: flex; align-items: center; gap: 8px; }
+        .modal-desc { color: var(--gray); line-height: 1.7; font-size: .9rem; margin-bottom: 20px; }
+
+        .modal-tour-item { background: var(--light); border-radius: 12px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .modal-tour-item .t-left .t-titulo { font-weight: 700; font-size: .9rem; margin-bottom: 3px; }
+        .modal-tour-item .t-left .t-desc { font-size: .8rem; color: var(--gray); }
+        .modal-tour-item .t-right { text-align: right; }
+        .modal-tour-item .t-precio { font-size: 1.1rem; font-weight: 700; color: var(--gold); }
+        .modal-tour-item .t-dur { font-size: .75rem; color: var(--gray); }
+
+        .modal-fotos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .modal-foto { border-radius: 10px; overflow: hidden; aspect-ratio: 1; }
+        .modal-foto img { width: 100%; height: 100%; object-fit: cover; }
+
+        .modal-btns { display: flex; gap: 12px; margin-top: 25px; }
+        .btn-modal-reservar { flex: 1; padding: 14px; background: var(--gold); color: var(--dark); border: none; border-radius: 12px; font-family: 'Montserrat', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all .2s; }
+        .btn-modal-reservar:hover { background: #b8943a; }
+        .btn-modal-cerrar { padding: 14px 20px; background: var(--light); color: var(--dark); border: none; border-radius: 12px; font-family: 'Montserrat', sans-serif; font-weight: 600; cursor: pointer; }
+
+        /* Loading */
+        .loading { text-align: center; padding: 80px; color: var(--gray); }
+        .loading i { font-size: 2.5rem; color: var(--gold); animation: spin 1s linear infinite; display: block; margin-bottom: 15px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Sin guías */
+        .empty { text-align: center; padding: 80px; color: var(--gray); }
+        .empty i { font-size: 3rem; color: var(--border); display: block; margin-bottom: 15px; }
+
+        /* Footer simple */
+        .footer { background: var(--dark); color: rgba(255,255,255,0.6); text-align: center; padding: 25px; font-size: .85rem; margin-top: 60px; }
+        .footer a { color: var(--gold); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .header { padding: 15px 20px; }
+            .hero h1 { font-size: 2.2rem; }
+            .page-content { padding: 30px 15px; }
+            .guias-grid { grid-template-columns: 1fr; }
+            .filtros-section { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="index.html" class="header-logo">
+            <i class="fas fa-mountain"></i>
+            <span>HOTEL MIRADOR</span>
+        </a>
+        <nav class="header-nav">
+            <a href="index.html" class="nav-link">Inicio</a>
+            <a href="reservas.html" class="nav-link">Habitaciones</a>
+            <a href="guias.html" class="nav-link active">Guías</a>
+            <a href="reservas.html" class="btn-reservar">Reservar</a>
+        </nav>
+    </header>
+
+    <!-- Hero con Carrusel -->
+    <div class="hero" id="heroSection">
+        <div class="hero-carousel" id="heroCarousel">
+            <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1920&q=80')"></div>
+            <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=1920&q=80')"></div>
+            <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80')"></div>
+            <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1920&q=80')"></div>
+            <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1518684079-3c830dcef090?w=1920&q=80')"></div>
+            <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?w=1920&q=80')"></div>
+            <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1471922694854-ff1b63b20054?w=1920&q=80')"></div>
+            <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1582967788606-a171c1080cb0?w=1920&q=80')"></div>
+            <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1568430462989-44163eb1752f?w=1920&q=80')"></div>
+            <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=1920&q=80')"></div>
+        </div>
+        <div class="hero-arrows">
+            <button class="hero-arr" onclick="moverHero(-1)"><i class="fas fa-chevron-left"></i></button>
+            <button class="hero-arr" onclick="moverHero(1)"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="hero-content">
+            <div class="hero-label">🌴 Costa Caribe</div>
+            <h1>Nuestros Guías Turísticos</h1>
+            <p>Expertos locales que te llevarán a descubrir los secretos del Caribe colombiano</p>
+        </div>
+        <div class="hero-nav" id="heroDots"></div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filtros-section">
+        <div class="filtros-inner">
+            <span style="font-size:.82rem;font-weight:700;color:var(--gray);margin-right:5px">Filtrar por:</span>
+            <button class="filtro-btn active" onclick="filtrar('todos', this)">🌟 Todos</button>
+            <button class="filtro-btn" onclick="filtrar('aventura', this)">🏄 Aventura & Playas</button>
+            <button class="filtro-btn" onclick="filtrar('cultural', this)">🏛️ Cultural</button>
+            <button class="filtro-btn" onclick="filtrar('naturaleza', this)">🌿 Naturaleza</button>
+            <button class="filtro-btn" onclick="filtrar('ciudad', this)">🏙️ Ciudad</button>
+            <button class="filtro-btn" onclick="filtrar('montaña', this)">⛰️ Montaña</button>
+        </div>
+    </div>
+
+    <!-- Contenido -->
+    <div class="page-content">
+        <div class="section-header">
+            <span class="section-label">Experiencias únicas</span>
+            <h2 class="section-title">Conoce a Tu Guía Perfecto</h2>
+            <p class="section-desc">Cada guía tiene una historia que contar y lugares especiales que mostrarte en el Caribe</p>
+        </div>
+
+        <div id="guiasGrid" class="guias-grid">
+            <div class="loading" style="grid-column:1/-1">
+                <i class="fas fa-spinner"></i>
+                Cargando guías turísticos...
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal perfil completo -->
+    <div class="modal-overlay" id="modalGuia" onclick="if(event.target===this)cerrarModal()">
+        <div class="modal-guia">
+            <div class="modal-galeria" id="modalGaleria">
+                <button class="modal-close" onclick="cerrarModal()"><i class="fas fa-times"></i></button>
+                <div class="galeria-carousel" id="modalCarousel"></div>
+                <button class="galeria-prev" onclick="moverModal(-1)"><i class="fas fa-chevron-left"></i></button>
+                <button class="galeria-next" onclick="moverModal(1)"><i class="fas fa-chevron-right"></i></button>
+                <div class="galeria-dots" id="modalDots"></div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-top">
+                    <div id="modalAvatarContainer"></div>
+                    <div>
+                        <div class="modal-nombre" id="modalNombre"></div>
+                        <div class="modal-sub" id="modalEspec"></div>
+                        <div class="modal-contacto">
+                            <span><i class="fas fa-phone"></i> <span id="modalTel">—</span></span>
+                            <span><i class="fas fa-envelope"></i> <span id="modalEmail">—</span></span>
+                        </div>
+                    </div>
+                    <div style="margin-left:auto;text-align:right">
+                        <div style="color:#ffc107;font-size:1.1rem" id="modalStars">★★★★★</div>
+                        <div style="font-size:.8rem;color:var(--gray)" id="modalCalif">5.0 / 5.0</div>
+                        <div id="modalDispBadge" style="margin-top:5px"></div>
+                    </div>
+                </div>
+
+                <div class="modal-section-title"><i class="fas fa-user" style="color:var(--gold)"></i> Sobre el guía</div>
+                <div class="modal-desc" id="modalDesc"></div>
+
+                <div class="modal-section-title"><i class="fas fa-language" style="color:var(--gold)"></i> Idiomas</div>
+                <div id="modalIdiomas" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px"></div>
+
+                <div id="modalToursSection">
+                    <div class="modal-section-title"><i class="fas fa-map-marked-alt" style="color:var(--gold)"></i> Tours y Experiencias</div>
+                    <div id="modalTours"></div>
+                </div>
+
+                <div id="modalFotosSection">
+                    <div class="modal-section-title"><i class="fas fa-images" style="color:var(--gold)"></i> Galería de Experiencias</div>
+                    <div class="modal-fotos-grid" id="modalFotos"></div>
+                </div>
+
+                <div class="modal-btns">
+                    <button class="btn-modal-cerrar" onclick="cerrarModal()">Cerrar</button>
+                    <button class="btn-modal-reservar" id="btnModalReservar">
+                        <i class="fas fa-calendar-check"></i> Reservar con este guía
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2024 Hotel Mirador — <a href="index.html">Volver al inicio</a> | <a href="reservas.html">Reservar habitación</a></p>
+    </footer>
+
+    <script>
+    const API = 'http://localhost:5000/api/v1';
+    let guias = [];
+    let modalIdx = 0;
+    let modalFotos = [];
+    const carouselStates = {};
+
+    const especLabels = {
+        aventura: '🏄 Aventura & Playas',
+        cultural: '🏛️ Cultural & Histórico',
+        naturaleza: '🌿 Naturaleza & Ecoturismo',
+        ciudad: '🏙️ Ciudad & Gastronomía',
+        montaña: '⛰️ Montaña & Senderismo'
+    };
+
+    // Cargar guías
+    async function cargarGuias() {
+        try {
+            const res  = await fetch(`${API}/guides`);
+            const data = await res.json();
+            guias = Array.isArray(data) ? data : [];
+            renderGuias(guias);
+        } catch (e) {
+            document.getElementById('guiasGrid').innerHTML =
+                '<div class="empty" style="grid-column:1/-1"><i class="fas fa-exclamation-triangle"></i><p>Error al cargar guías. Verifica que el servidor esté activo.</p></div>';
+        }
+    }
+
+    // Render guías
+    function renderGuias(lista) {
+        const grid = document.getElementById('guiasGrid');
+
+        if (lista.length === 0) {
+            grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><i class="fas fa-compass"></i><p>No hay guías disponibles en este momento.</p></div>';
+            return;
+        }
+
+        grid.innerHTML = lista.map((g, i) => {
+            const u        = g.usuarioId || {};
+            const nombre   = u.nombre || 'Guía';
+            const inicial  = nombre.charAt(0).toUpperCase();
+            const espec    = especLabels[g.especialidad] || g.especialidad;
+            const calif    = g.calificacion || 5;
+            const stars    = '★'.repeat(Math.round(calif)) + '☆'.repeat(5 - Math.round(calif));
+            const tours    = g.experiencias || [];
+            const fotos    = g.fotos || [];
+            const todas    = g.foto ? [g.foto, ...fotos] : fotos;
+            const dispBadge = g.disponibilidad !== false
+                ? '<span class="disponible-badge">● Disponible</span>'
+                : '<span class="disponible-badge no-disponible-badge">● No disponible</span>';
+
+            // Galería
+            const slides = todas.length > 0
+                ? todas.map(src => `<div class="galeria-slide"><img src="${src}" alt="${nombre}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'no-foto\\'><i class=\\'fas fa-mountain\\'></i></div>'"></div>`).join('')
+                : `<div class="galeria-slide"><div class="no-foto"><i class="fas fa-compass"></i></div></div>`;
+
+            const dots = todas.length > 1
+                ? todas.map((_, di) => `<button class="galeria-dot${di===0?' active':''}" onclick="event.stopPropagation();irSlideCard('card-${i}',${di})"></button>`).join('')
+                : '';
+
+            const prevNext = todas.length > 1
+                ? `<button class="galeria-prev" onclick="event.stopPropagation();moverCard('card-${i}',-1)"><i class="fas fa-chevron-left"></i></button>
+                   <button class="galeria-next" onclick="event.stopPropagation();moverCard('card-${i}',1)"><i class="fas fa-chevron-right"></i></button>`
+                : '';
+
+            // Avatar
+            const avatar = g.foto
+                ? `<img src="${g.foto}" class="guia-avatar" alt="${nombre}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+                : `<div class="guia-avatar-placeholder">${inicial}</div>`;
+
+            // Tours preview (máx 2)
+            const toursHtml = tours.slice(0, 2).map(t => `
+                <div class="tour-tag">
+                    <div>
+                        <div class="t-nombre">${t.titulo}</div>
+                        <div class="t-info">⏱ ${t.duracion}h</div>
+                    </div>
+                    <div class="t-precio">$${(t.precio||0).toLocaleString()}</div>
+                </div>`).join('');
+
+            // Idiomas
+            const idiomasHtml = (g.idiomas || []).map(id => `<span class="idioma-tag">${id}</span>`).join('');
+
+            return `
+                <div class="guia-card" onclick="abrirModal(${i})">
+                    <div class="guia-galeria" id="card-${i}">
+                        <div class="galeria-carousel">${slides}</div>
+                        ${prevNext}
+                        <div class="galeria-dots">${dots}</div>
+                        <span class="especialidad-badge">${espec}</span>
+                        ${dispBadge}
+                    </div>
+                    <div class="guia-body">
+                        <div class="guia-top">
+                            ${avatar}
+                            <div class="guia-info">
+                                <div class="nombre">${nombre}</div>
+                                <div class="especialidad-txt">${espec}</div>
+                            </div>
+                            <div class="guia-estrellas">
+                                <div class="stars">${stars}</div>
+                                <div class="calif">${calif.toFixed(1)}</div>
+                            </div>
+                        </div>
+                        <div class="guia-desc">${g.descripcion || 'Guía turístico del Hotel Mirador.'}</div>
+                        <div class="guia-idiomas">${idiomasHtml}</div>
+                        ${tours.length > 0 ? `<div class="guia-tours"><div class="guia-tours-title">🗺️ Tours destacados</div>${toursHtml}</div>` : ''}
+                        <div class="guia-footer">
+                            <button class="btn-ver-perfil" onclick="event.stopPropagation();abrirModal(${i})">Ver perfil</button>
+                            <button class="btn-reservar-guia" onclick="event.stopPropagation();reservarConGuia(${i})">Reservar</button>
+                        </div>
+                    </div>
+                </div>`;
+        }).join('');
+    }
+
+    // Carrusel de tarjetas
+    function moverCard(id, dir) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const carousel = el.querySelector('.galeria-carousel');
+        const slides   = el.querySelectorAll('.galeria-slide');
+        if (!carouselStates[id]) carouselStates[id] = 0;
+        carouselStates[id] = (carouselStates[id] + dir + slides.length) % slides.length;
+        carousel.style.transform = `translateX(-${carouselStates[id] * 100}%)`;
+        el.querySelectorAll('.galeria-dot').forEach((d,i) => d.classList.toggle('active', i === carouselStates[id]));
+    }
+
+    function irSlideCard(id, idx) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        carouselStates[id] = idx;
+        el.querySelector('.galeria-carousel').style.transform = `translateX(-${idx * 100}%)`;
+        el.querySelectorAll('.galeria-dot').forEach((d,i) => d.classList.toggle('active', i === idx));
+    }
+
+    // Filtrar
+    function filtrar(espec, btn) {
+        document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filtrados = espec === 'todos' ? guias : guias.filter(g => g.especialidad === espec);
+        renderGuias(filtrados);
+    }
+
+    // Modal perfil completo
+    function abrirModal(idx) {
+        const g = guias[idx];
+        if (!g) return;
+        const u      = g.usuarioId || {};
+        const nombre = u.nombre || 'Guía';
+        const fotos  = g.fotos || [];
+        const todas  = g.foto ? [g.foto, ...fotos] : fotos;
+        modalFotos   = todas;
+        modalIdx     = 0;
+
+        // Galería modal
+        const carousel = document.getElementById('modalCarousel');
+        const dots     = document.getElementById('modalDots');
+        carousel.innerHTML = todas.length > 0
+            ? todas.map(src => `<div class="galeria-slide" style="height:300px"><img src="${src}" alt="${nombre}" style="width:100%;height:100%;object-fit:cover" onerror="this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800'"></div>`).join('')
+            : `<div class="galeria-slide" style="height:300px;background:linear-gradient(135deg,#1a3a5c,#2980b9);display:flex;align-items:center;justify-content:center;font-size:5rem;color:rgba(255,255,255,.2)"><i class="fas fa-compass"></i></div>`;
+        carousel.style.transform = 'translateX(0)';
+        dots.innerHTML = todas.length > 1
+            ? todas.map((_, i) => `<button class="galeria-dot${i===0?' active':''}" onclick="irSlideModal(${i})"></button>`).join('')
+            : '';
+
+        // Avatar
+        const avatarContainer = document.getElementById('modalAvatarContainer');
+        avatarContainer.innerHTML = g.foto
+            ? `<img src="${g.foto}" class="modal-avatar" alt="${nombre}">`
+            : `<div class="modal-avatar-ph">${nombre.charAt(0).toUpperCase()}</div>`;
+
+        // Info
+        document.getElementById('modalNombre').textContent = nombre;
+        document.getElementById('modalEspec').textContent  = especLabels[g.especialidad] || g.especialidad;
+        document.getElementById('modalTel').textContent    = u.telefono || 'No disponible';
+        document.getElementById('modalEmail').textContent  = u.email || 'No disponible';
+        document.getElementById('modalDesc').textContent   = g.descripcion || '';
+
+        const calif = g.calificacion || 5;
+        document.getElementById('modalStars').textContent = '★'.repeat(Math.round(calif)) + '☆'.repeat(5 - Math.round(calif));
+        document.getElementById('modalCalif').textContent = calif.toFixed(1) + ' / 5.0';
+
+        const disp = g.disponibilidad !== false;
+        document.getElementById('modalDispBadge').innerHTML = disp
+            ? '<span style="background:#10b981;color:#fff;padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:700">● Disponible</span>'
+            : '<span style="background:#ef4444;color:#fff;padding:3px 10px;border-radius:15px;font-size:.72rem;font-weight:700">● No disponible</span>';
+
+        // Idiomas
+        document.getElementById('modalIdiomas').innerHTML =
+            (g.idiomas || []).map(id => `<span class="idioma-tag">${id}</span>`).join('') || '<span style="color:var(--gray);font-size:.85rem">No especificado</span>';
+
+        // Tours
+        const tours = g.experiencias || [];
+        document.getElementById('modalToursSection').style.display = tours.length > 0 ? 'block' : 'none';
+        document.getElementById('modalTours').innerHTML = tours.map(t => `
+            <div class="modal-tour-item">
+                <div class="t-left">
+                    <div class="t-titulo">${t.titulo}</div>
+                    <div class="t-desc">${t.descripcion || ''}</div>
+                </div>
+                <div class="t-right">
+                    <div class="t-precio">$${(t.precio||0).toLocaleString()}</div>
+                    <div class="t-dur">⏱ ${t.duracion}h</div>
+                </div>
+            </div>`).join('');
+
+        // Fotos de experiencias
+        const fotosExp = g.fotos || [];
+        document.getElementById('modalFotosSection').style.display = fotosExp.length > 0 ? 'block' : 'none';
+        document.getElementById('modalFotos').innerHTML = fotosExp.map(url =>
+            `<div class="modal-foto"><img src="${url}" alt="Experiencia" onerror="this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400'"></div>`
+        ).join('');
+
+        // Botón reservar
+        document.getElementById('btnModalReservar').onclick = () => { cerrarModal(); reservarConGuia(idx); };
+
+        document.getElementById('modalGuia').classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalGuia').classList.remove('show');
+        document.body.style.overflow = '';
+    }
+
+    function moverModal(dir) {
+        if (modalFotos.length === 0) return;
+        modalIdx = (modalIdx + dir + modalFotos.length) % modalFotos.length;
+        document.getElementById('modalCarousel').style.transform = `translateX(-${modalIdx * 100}%)`;
+        document.querySelectorAll('#modalDots .galeria-dot').forEach((d,i) => d.classList.toggle('active', i === modalIdx));
+    }
+
+    function irSlideModal(idx) {
+        modalIdx = idx;
+        document.getElementById('modalCarousel').style.transform = `translateX(-${idx * 100}%)`;
+        document.querySelectorAll('#modalDots .galeria-dot').forEach((d,i) => d.classList.toggle('active', i === idx));
+    }
+
+    // Reservar con guía
+    function reservarConGuia(idx) {
+        const g = guias[idx];
+        if (!g) return;
+        localStorage.setItem('guiaSeleccionado', JSON.stringify({
+            id:          g._id,
+            nombre:      (g.usuarioId || {}).nombre || 'Guía',
+            especialidad: g.especialidad,
+            precio:      (g.experiencias && g.experiencias[0]) ? g.experiencias[0].precio : 150000
+        }));
+        window.location.href = 'reservas.html';
+    }
+
+    // ===== CARRUSEL HERO =====
+    let heroIdx = 0;
+    const heroSlides = 10;
+    let heroInterval = null;
+
+    function initHero() {
+        const dots = document.getElementById('heroDots');
+        dots.innerHTML = Array.from({length: heroSlides}, (_, i) =>
+            `<button class="hero-dot${i===0?' active':''}" onclick="irHero(${i})"></button>`
+        ).join('');
+        heroInterval = setInterval(() => moverHero(1), 5000);
+    }
+
+    function moverHero(dir) {
+        heroIdx = (heroIdx + dir + heroSlides) % heroSlides;
+        actualizarHero();
+        resetHeroInterval();
+    }
+
+    function irHero(idx) {
+        heroIdx = idx;
+        actualizarHero();
+        resetHeroInterval();
+    }
+
+    function actualizarHero() {
+        document.getElementById('heroCarousel').style.transform = `translateX(-${heroIdx * 100}%)`;
+        document.querySelectorAll('.hero-dot').forEach((d, i) => d.classList.toggle('active', i === heroIdx));
+    }
+
+    function resetHeroInterval() {
+        clearInterval(heroInterval);
+        heroInterval = setInterval(() => moverHero(1), 5000);
+    }
+
+    // Inicializar
+    window.addEventListener('DOMContentLoaded', () => {
+        cargarGuias();
+        initHero();
+    });
+    </script>
+</body>
+</html>
