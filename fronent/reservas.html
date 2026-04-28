@@ -771,7 +771,7 @@
                         <i class="fas fa-lock"></i>
                         <h3>Inicia sesión</h3>
                         <p>Necesitas una cuenta para hacer tu reserva</p>
-                        <button class="btn-login-req" onclick="window.location.href='index.html'">
+                        <button class="btn-login-req" onclick="window.location.href='index.html#inicio'; setTimeout(()=>{if(window.abrirAuth) abrirAuth('login');}, 500)">
                             Ir a iniciar sesión
                         </button>
                     </div>
@@ -906,7 +906,7 @@
             </div>
             <div class="modal-btns">
                 <button class="btn-modal secondary" onclick="cerrarModal()">Seguir viendo</button>
-                <button class="btn-modal primary" onclick="window.location.href='index.html'">Ir al inicio</button>
+                <button class="btn-modal primary" onclick="window.location.href='index.html#inicio'; setTimeout(()=>{if(window.abrirAuth) abrirAuth('login');}, 500)">Ir al inicio</button>
             </div>
         </div>
     </div>

@@ -2386,7 +2386,16 @@
         const menuToggle = document.getElementById('menuToggle');
         const navMenu    = document.getElementById('navMenu');
         if (menuToggle) {
-    
+            menuToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+            });
+            navMenu.querySelectorAll('a').forEach(a => {
+                a.addEventListener('click', () => {
+                    navMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
         }
 
         // Header scroll
