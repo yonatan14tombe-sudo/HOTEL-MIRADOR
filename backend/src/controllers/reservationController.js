@@ -52,11 +52,11 @@ const crearReserva = async (req, res) => {
       notas
     });
     
-    // Cambiar rol a cliente automáticamente
-    await User.findByIdAndUpdate(req.user.id, { rol: "cliente" });
+    // Cambiar rol a cliente solo si es usuario básico
+    if (req.user.rol === "usuario") {
+        await User.findByIdAndUpdate(req.user.id, { rol: "cliente" });
+    }
 
-    // Cambiar rol a cliente automáticamente
-    await User.findByIdAndUpdate(req.user.id, { rol: "cliente" });
 
     const reservaCompleta = await Reservation.findById(reserva._id)
       .populate('habitacionId', 'nombre numero tipo')
