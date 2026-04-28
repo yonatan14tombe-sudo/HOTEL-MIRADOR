@@ -15,7 +15,7 @@ const cambiarRol = async (req, res) => {
     const { id } = req.params;
     const { rol } = req.body;
 
-    if (!['usuario', 'cliente', 'guia', 'admin'].includes(rol)) {
+    if (!['usuario', 'cliente', 'guia', 'encargado', 'admin'].includes(rol)) {
       return res.status(400).json({ error: 'Rol inválido' });
     }
 
